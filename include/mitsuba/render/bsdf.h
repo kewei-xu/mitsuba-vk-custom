@@ -318,6 +318,18 @@ public:
            const Point2f &sample2,
            Mask active = true) const = 0;
 
+    // An additional sample function for 2D sampled random numbers, 
+    // used to generate surface normal directions when the micro-surface is diffuse.
+    virtual std::pair<BSDFSample3f, Spectrum> 
+    sample(const BSDFContext &ctx, 
+           const SurfaceInteraction3f &si, 
+           Float sample1, 
+           const Point2f &sample2, 
+           const Point2f &sample2_extra, 
+           Mask active=true) const {
+        return sample(ctx, si, sample1, sample2, active);
+    }
+
     /**
      * \brief Evaluate the BSDF f(wi, wo) or its adjoint version f^{*}(wi, wo)
      * and multiply by the cosine foreshortening term.
@@ -347,6 +359,16 @@ public:
                           const SurfaceInteraction3f &si,
                           const Vector3f &wo,
                           Mask active = true) const = 0;
+
+    // An additional eval function for 2D sampled random numbers,
+    // used to generate surface normal directions when the micro-surface is diffuse.
+    virtual Spectrum eval(const BSDFContext &ctx,
+                          const SurfaceInteraction3f &si, 
+                          const Vector3f &wo,
+                          const Point2f &sample2_extra,
+                          Mask active = true) const {
+        return eval(ctx, si, wo, active);
+    }
 
     /**
      * \brief Compute the probability per unit solid angle of sampling a
@@ -416,6 +438,13 @@ public:
                                                 const SurfaceInteraction3f &si,
                                                 const Vector3f &wo,
                                                 Mask active = true) const;
+    // An additional eval_pdf function for 2D sampled random numbers,
+    // used to generate surface normal directions when the micro-surface is diffuse.
+    virtual std::pair<Spectrum, Float> eval_pdf(const BSDFContext &ctx,
+                                                const SurfaceInteraction3f &si,
+                                                const Vector3f &wo,
+                                                const Point2f &sample2_extra,
+                                                Mask active = true) const;
 
     /**
      * \brief Jointly evaluate the BSDF f(wi, wo), the probability per unit
@@ -455,7 +484,16 @@ public:
                     Float sample1,
                     const Point2f &sample2,
                     Mask active = true) const;
-
+    // An additional eval_pdf_sample function for 2D sampled random numbers,
+    // used to generate surface normal directions when the micro-surface is diffuse.
+    virtual std::tuple<Spectrum, Float, BSDFSample3f, Spectrum>
+    eval_pdf_sample(const BSDFContext &ctx, 
+                    const SurfaceInteraction3f &si,
+                    const Vector3f &wo, 
+                    Float sample1, 
+                    const Point2f &sample2,
+                    const Point2f &sample2_extra,
+                    Mask active = true) const;
 
     /**
      * \brief Evaluate un-scattered transmission component of the BSDF
