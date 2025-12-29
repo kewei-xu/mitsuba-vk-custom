@@ -1,0 +1,940 @@
+{
+	"artifacts" : 
+	[
+		{
+			"path" : "src/render/CMakeFiles/mitsuba-render.dir/./bsdf.cpp.obj"
+		},
+		{
+			"path" : "src/render/CMakeFiles/mitsuba-render.dir/./emitter.cpp.obj"
+		},
+		{
+			"path" : "src/render/CMakeFiles/mitsuba-render.dir/./endpoint.cpp.obj"
+		},
+		{
+			"path" : "src/render/CMakeFiles/mitsuba-render.dir/./film.cpp.obj"
+		},
+		{
+			"path" : "src/render/CMakeFiles/mitsuba-render.dir/./imageblock.cpp.obj"
+		},
+		{
+			"path" : "src/render/CMakeFiles/mitsuba-render.dir/./integrator.cpp.obj"
+		},
+		{
+			"path" : "src/render/CMakeFiles/mitsuba-render.dir/./medium.cpp.obj"
+		},
+		{
+			"path" : "src/render/CMakeFiles/mitsuba-render.dir/./mesh.cpp.obj"
+		},
+		{
+			"path" : "src/render/CMakeFiles/mitsuba-render.dir/./microfacet.cpp.obj"
+		},
+		{
+			"path" : "src/render/CMakeFiles/mitsuba-render.dir/./phase.cpp.obj"
+		},
+		{
+			"path" : "src/render/CMakeFiles/mitsuba-render.dir/./sampler.cpp.obj"
+		},
+		{
+			"path" : "src/render/CMakeFiles/mitsuba-render.dir/./scene.cpp.obj"
+		},
+		{
+			"path" : "src/render/CMakeFiles/mitsuba-render.dir/./sensor.cpp.obj"
+		},
+		{
+			"path" : "src/render/CMakeFiles/mitsuba-render.dir/./shape.cpp.obj"
+		},
+		{
+			"path" : "src/render/CMakeFiles/mitsuba-render.dir/./texture.cpp.obj"
+		},
+		{
+			"path" : "src/render/CMakeFiles/mitsuba-render.dir/./spiral.cpp.obj"
+		},
+		{
+			"path" : "src/render/CMakeFiles/mitsuba-render.dir/./srgb.cpp.obj"
+		},
+		{
+			"path" : "src/render/CMakeFiles/mitsuba-render.dir/./optix_api.cpp.obj"
+		},
+		{
+			"path" : "src/render/CMakeFiles/mitsuba-render.dir/./shapegroup.cpp.obj"
+		},
+		{
+			"path" : "src/render/CMakeFiles/mitsuba-render.dir/./volume.cpp.obj"
+		},
+		{
+			"path" : "src/render/CMakeFiles/mitsuba-render.dir/./volumegrid.cpp.obj"
+		},
+		{
+			"path" : "src/render/CMakeFiles/mitsuba-render.dir/./optixdenoiser.cpp.obj"
+		},
+		{
+			"path" : "src/render/CMakeFiles/mitsuba-render.dir/./librender_ptx.cpp.obj"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_library",
+			"target_link_libraries",
+			"add_compile_options",
+			"include",
+			"add_definitions",
+			"target_compile_definitions",
+			"include_directories"
+		],
+		"files" : 
+		[
+			"src/render/CMakeLists.txt",
+			"ext/drjit/ext/drjit-core/ext/nanothread/ext/cmake-defaults/CMakeLists.txt",
+			"CMakeLists.txt",
+			"src/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 47,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 102,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 92,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 96,
+				"parent" : 0
+			},
+			{
+				"file" : 2
+			},
+			{
+				"command" : 3,
+				"file" : 2,
+				"line" : 79,
+				"parent" : 5
+			},
+			{
+				"file" : 1,
+				"parent" : 6
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 158,
+				"parent" : 7
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 182,
+				"parent" : 7
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 333,
+				"parent" : 5
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 336,
+				"parent" : 5
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 339,
+				"parent" : 5
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 342,
+				"parent" : 5
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 345,
+				"parent" : 5
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 348,
+				"parent" : 5
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 351,
+				"parent" : 5
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 354,
+				"parent" : 5
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 357,
+				"parent" : 5
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 360,
+				"parent" : 5
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 363,
+				"parent" : 5
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 366,
+				"parent" : 5
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 372,
+				"parent" : 5
+			},
+			{
+				"command" : 4,
+				"file" : 2,
+				"line" : 380,
+				"parent" : 5
+			},
+			{
+				"command" : 5,
+				"file" : 0,
+				"line" : 82,
+				"parent" : 0
+			},
+			{
+				"command" : 4,
+				"file" : 2,
+				"line" : 321,
+				"parent" : 5
+			},
+			{
+				"command" : 4,
+				"file" : 2,
+				"line" : 305,
+				"parent" : 5
+			},
+			{
+				"command" : 4,
+				"file" : 2,
+				"line" : 314,
+				"parent" : 5
+			},
+			{
+				"command" : 4,
+				"file" : 2,
+				"line" : 309,
+				"parent" : 5
+			},
+			{
+				"command" : 4,
+				"file" : 1,
+				"line" : 195,
+				"parent" : 7
+			},
+			{
+				"command" : 6,
+				"file" : 2,
+				"line" : 297,
+				"parent" : 5
+			},
+			{
+				"command" : 6,
+				"file" : 2,
+				"line" : 313,
+				"parent" : 5
+			},
+			{
+				"file" : 3
+			},
+			{
+				"command" : 6,
+				"file" : 3,
+				"line" : 6,
+				"parent" : 32
+			},
+			{
+				"command" : 6,
+				"file" : 0,
+				"line" : 29,
+				"parent" : 0
+			},
+			{
+				"command" : 6,
+				"file" : 0,
+				"line" : 32,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 99,
+				"parent" : 0
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "/DWIN32 /D_WINDOWS /GR /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /GL"
+				},
+				{
+					"backtrace" : 8,
+					"fragment" : "/arch:AVX2"
+				},
+				{
+					"backtrace" : 9,
+					"fragment" : "/W4"
+				},
+				{
+					"backtrace" : 10,
+					"fragment" : "/wd4251"
+				},
+				{
+					"backtrace" : 11,
+					"fragment" : "/wd4714"
+				},
+				{
+					"backtrace" : 12,
+					"fragment" : "/wd4505"
+				},
+				{
+					"backtrace" : 13,
+					"fragment" : "/wd4458"
+				},
+				{
+					"backtrace" : 13,
+					"fragment" : "/wd4459"
+				},
+				{
+					"backtrace" : 14,
+					"fragment" : "/wd4554"
+				},
+				{
+					"backtrace" : 15,
+					"fragment" : "/wd4324"
+				},
+				{
+					"backtrace" : 16,
+					"fragment" : "/wd4127"
+				},
+				{
+					"backtrace" : 17,
+					"fragment" : "/wd4702"
+				},
+				{
+					"backtrace" : 18,
+					"fragment" : "/MP"
+				},
+				{
+					"backtrace" : 19,
+					"fragment" : "/bigobj"
+				},
+				{
+					"backtrace" : 20,
+					"fragment" : "/wd4910"
+				},
+				{
+					"backtrace" : 21,
+					"fragment" : "/utf-8"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-D_DISABLE_CONSTEXPR_MUTEX_CONSTRUCTOR"
+				},
+				{
+					"backtrace" : 2,
+					"fragment" : "/EHs"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 23,
+					"define" : "LITTLE_ENDIAN"
+				},
+				{
+					"backtrace" : 24,
+					"define" : "MI_BUILD_MODULE=MI_MODULE_LIB"
+				},
+				{
+					"backtrace" : 25,
+					"define" : "MI_ENABLE_AUTODIFF=1"
+				},
+				{
+					"backtrace" : 26,
+					"define" : "MI_ENABLE_CUDA=1"
+				},
+				{
+					"backtrace" : 27,
+					"define" : "MI_ENABLE_EMBREE=1"
+				},
+				{
+					"backtrace" : 28,
+					"define" : "MI_ENABLE_LLVM=1"
+				},
+				{
+					"backtrace" : 29,
+					"define" : "NOMINMAX"
+				},
+				{
+					"backtrace" : 29,
+					"define" : "_CRT_NONSTDC_NO_DEPRECATE"
+				},
+				{
+					"backtrace" : 29,
+					"define" : "_CRT_SECURE_NO_WARNINGS"
+				},
+				{
+					"backtrace" : 2,
+					"define" : "_DISABLE_CONSTEXPR_MUTEX_CONSTRUCTOR"
+				},
+				{
+					"backtrace" : 29,
+					"define" : "_SCL_SECURE_NO_WARNINGS"
+				},
+				{
+					"backtrace" : 29,
+					"define" : "_SILENCE_CXX17_UNCAUGHT_EXCEPTION_DEPRECATION_WARNING"
+				},
+				{
+					"backtrace" : 2,
+					"define" : "__F16C__"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 30,
+					"path" : "E:/THESE/Code/mitsuba-3.7.1/mitsuba3/include"
+				},
+				{
+					"backtrace" : 30,
+					"path" : "E:/THESE/Code/mitsuba-3.7.1/mitsuba3/ext/tinyformat"
+				},
+				{
+					"backtrace" : 30,
+					"path" : "E:/THESE/Code/mitsuba-3.7.1/mitsuba3/ext/nanobind/include"
+				},
+				{
+					"backtrace" : 30,
+					"path" : "E:/THESE/Code/mitsuba-3.7.1/mitsuba3/out/build/x64-Debug/include"
+				},
+				{
+					"backtrace" : 31,
+					"path" : "E:/THESE/Code/mitsuba-3.7.1/mitsuba3/ext/embree/include"
+				},
+				{
+					"backtrace" : 33,
+					"path" : "E:/THESE/Code/mitsuba-3.7.1/mitsuba3/src/../ext/nanobind/ext/robin_map/include"
+				},
+				{
+					"backtrace" : 34,
+					"path" : "E:/THESE/Code/mitsuba-3.7.1/mitsuba3/out/build/x64-Debug/src/render"
+				},
+				{
+					"backtrace" : 35,
+					"path" : "E:/THESE/Code/mitsuba-3.7.1/mitsuba3/ext/rgb2spec"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "E:/THESE/Code/mitsuba-3.7.1/mitsuba3/ext/drjit/ext/drjit-core/ext/nanothread/include"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "E:/THESE/Code/mitsuba-3.7.1/mitsuba3/ext/embree/kernels/../include"
+				},
+				{
+					"backtrace" : 36,
+					"path" : "E:/THESE/Code/mitsuba-3.7.1/mitsuba3/ext/drjit/include"
+				},
+				{
+					"backtrace" : 36,
+					"path" : "E:/THESE/Code/mitsuba-3.7.1/mitsuba3/ext/drjit/ext/drjit-core/include"
+				},
+				{
+					"backtrace" : 36,
+					"path" : "E:/THESE/Code/mitsuba-3.7.1/mitsuba3/ext/drjit/ext/drjit-core/ext/lz4"
+				}
+			],
+			"language" : "CXX",
+			"languageStandard" : 
+			{
+				"backtraces" : 
+				[
+					36
+				],
+				"standard" : "17"
+			},
+			"sourceIndexes" : 
+			[
+				4,
+				6,
+				8,
+				10,
+				13,
+				15,
+				18,
+				20,
+				22,
+				24,
+				26,
+				28,
+				30,
+				32,
+				34,
+				37,
+				39,
+				42,
+				44,
+				46,
+				48,
+				50,
+				52
+			]
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 2,
+			"id" : "drjit-core::@5b9a3dded2238b5e144f"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "nanothread::@06ff9ba2dfdc4e7a81bf"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "embree::@2cb1f9781e56fdf70b7c"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "rgb2spec::@e469e67664a75ea66964"
+		}
+	],
+	"id" : "mitsuba-render::@e50e1ac4f031f1d89846",
+	"name" : "mitsuba-render",
+	"paths" : 
+	{
+		"build" : "src/render",
+		"source" : "src/render"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Header Files",
+			"sourceIndexes" : 
+			[
+				0,
+				1,
+				2,
+				3,
+				5,
+				7,
+				9,
+				11,
+				12,
+				14,
+				16,
+				17,
+				19,
+				21,
+				23,
+				25,
+				27,
+				29,
+				31,
+				33,
+				35,
+				36,
+				38,
+				40,
+				41,
+				43,
+				45,
+				47,
+				49,
+				51,
+				53
+			]
+		},
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				4,
+				6,
+				8,
+				10,
+				13,
+				15,
+				18,
+				20,
+				22,
+				24,
+				26,
+				28,
+				30,
+				32,
+				34,
+				37,
+				39,
+				42,
+				44,
+				46,
+				48,
+				50,
+				52
+			]
+		},
+		{
+			"name" : "CMake Rules",
+			"sourceIndexes" : 
+			[
+				54
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"path" : "include/mitsuba/render/fwd.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/mitsuba/render/ior.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/mitsuba/render/microfacet.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/mitsuba/render/records.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/render/bsdf.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/mitsuba/render/bsdf.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/render/emitter.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/mitsuba/render/emitter.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/render/endpoint.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/mitsuba/render/endpoint.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/render/film.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/mitsuba/render/film.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/mitsuba/render/fresnel.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/render/imageblock.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/mitsuba/render/imageblock.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/render/integrator.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/mitsuba/render/integrator.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/mitsuba/render/interaction.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/render/medium.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/mitsuba/render/medium.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/render/mesh.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/mitsuba/render/mesh.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/render/microfacet.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/mitsuba/render/mueller.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/render/phase.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/mitsuba/render/phase.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/render/sampler.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/mitsuba/render/sampler.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/render/scene.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/mitsuba/render/scene.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/render/sensor.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/mitsuba/render/sensor.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/render/shape.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/mitsuba/render/shape.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/render/texture.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/mitsuba/render/texture.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/mitsuba/render/microflake.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/render/spiral.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/mitsuba/render/spiral.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/render/srgb.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/mitsuba/render/srgb.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/mitsuba/render/optix/common.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/render/optix_api.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/mitsuba/render/optix_api.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/render/shapegroup.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/mitsuba/render/shapegroup.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/render/volume.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/mitsuba/render/volume.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/render/volumegrid.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/mitsuba/render/volumegrid.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/render/optixdenoiser.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/mitsuba/render/optixdenoiser.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/render/librender_ptx.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/render/librender_ptx.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 0,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/render/librender_ptx.cpp.rule",
+			"sourceGroupIndex" : 2
+		}
+	],
+	"type" : "OBJECT_LIBRARY"
+}

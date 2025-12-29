@@ -1,0 +1,94 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"install"
+		],
+		"files" : 
+		[
+			"ext/zlib/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 234,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 244,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 247,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 250,
+				"parent" : 0
+			}
+		]
+	},
+	"installers" : 
+	[
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "E:/THESE/Code/mitsuba-3.7.1/mitsuba3/out/install/x64-Debug/bin",
+			"paths" : 
+			[
+				"Debug/zlib1.dll"
+			],
+			"targetId" : "zlib::@ba14d366ba4ca6e90c54",
+			"targetIndex" : 172,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 2,
+			"component" : "Unspecified",
+			"destination" : "E:/THESE/Code/mitsuba-3.7.1/mitsuba3/out/install/x64-Debug/include",
+			"paths" : 
+			[
+				"out/build/x64-Debug/ext/zlib/zconf.h",
+				"ext/zlib/zlib.h"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 3,
+			"component" : "Unspecified",
+			"destination" : "E:/THESE/Code/mitsuba-3.7.1/mitsuba3/out/install/x64-Debug/share/man/man3",
+			"paths" : 
+			[
+				"ext/zlib/zlib.3"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 4,
+			"component" : "Unspecified",
+			"destination" : "E:/THESE/Code/mitsuba-3.7.1/mitsuba3/out/install/x64-Debug/share/pkgconfig",
+			"paths" : 
+			[
+				"out/build/x64-Debug/ext/zlib/zlib.pc"
+			],
+			"type" : "file"
+		}
+	],
+	"paths" : 
+	{
+		"build" : "ext/zlib",
+		"source" : "ext/zlib"
+	}
+}

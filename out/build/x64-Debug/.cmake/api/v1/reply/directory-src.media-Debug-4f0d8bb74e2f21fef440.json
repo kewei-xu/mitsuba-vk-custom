@@ -1,0 +1,103 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"install",
+			"add_plugin"
+		],
+		"files" : 
+		[
+			"CMakeLists.txt",
+			"src/media/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 1
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 3,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 412,
+				"parent" : 1
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 4,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 412,
+				"parent" : 3
+			}
+		]
+	},
+	"installers" : 
+	[
+		{
+			"backtrace" : 2,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"src/media/homogeneous.lib"
+			],
+			"targetId" : "homogeneous::@75b8b8d758a74e7d2cbc",
+			"targetIndex" : 61,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 2,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"Debug/plugins/homogeneous.dll"
+			],
+			"targetId" : "homogeneous::@75b8b8d758a74e7d2cbc",
+			"targetIndex" : 61,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 4,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"src/media/heterogeneous.lib"
+			],
+			"targetId" : "heterogeneous::@75b8b8d758a74e7d2cbc",
+			"targetIndex" : 59,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 4,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"Debug/plugins/heterogeneous.dll"
+			],
+			"targetId" : "heterogeneous::@75b8b8d758a74e7d2cbc",
+			"targetIndex" : 59,
+			"type" : "target"
+		}
+	],
+	"paths" : 
+	{
+		"build" : "src/media",
+		"source" : "src/media"
+	}
+}

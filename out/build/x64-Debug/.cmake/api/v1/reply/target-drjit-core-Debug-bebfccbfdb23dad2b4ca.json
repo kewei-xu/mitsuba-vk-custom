@@ -1,0 +1,1168 @@
+{
+	"artifacts" : 
+	[
+		{
+			"path" : "Debug/drjit-core.dll"
+		},
+		{
+			"path" : "ext/drjit/ext/drjit-core/drjit-core.lib"
+		},
+		{
+			"path" : "Debug/drjit-core.pdb"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_library",
+			"install",
+			"target_link_libraries",
+			"target_compile_options",
+			"target_compile_definitions",
+			"add_definitions",
+			"include",
+			"target_include_directories",
+			"set_directory_properties",
+			"target_compile_features"
+		],
+		"files" : 
+		[
+			"ext/drjit/ext/drjit-core/CMakeLists.txt",
+			"CMakeLists.txt",
+			"ext/drjit/ext/drjit-core/ext/nanothread/ext/cmake-defaults/CMakeLists.txt",
+			"ext/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 95,
+				"parent" : 0
+			},
+			{
+				"file" : 1
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 548,
+				"parent" : 2
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 230,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 252,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 200,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 203,
+				"parent" : 0
+			},
+			{
+				"command" : 4,
+				"file" : 0,
+				"line" : 229,
+				"parent" : 0
+			},
+			{
+				"command" : 4,
+				"file" : 0,
+				"line" : 233,
+				"parent" : 0
+			},
+			{
+				"command" : 4,
+				"file" : 0,
+				"line" : 241,
+				"parent" : 0
+			},
+			{
+				"command" : 4,
+				"file" : 0,
+				"line" : 250,
+				"parent" : 0
+			},
+			{
+				"command" : 4,
+				"file" : 0,
+				"line" : 222,
+				"parent" : 0
+			},
+			{
+				"command" : 6,
+				"file" : 1,
+				"line" : 79,
+				"parent" : 2
+			},
+			{
+				"file" : 2,
+				"parent" : 13
+			},
+			{
+				"command" : 5,
+				"file" : 2,
+				"line" : 195,
+				"parent" : 14
+			},
+			{
+				"command" : 4,
+				"file" : 0,
+				"line" : 213,
+				"parent" : 0
+			},
+			{
+				"command" : 4,
+				"file" : 0,
+				"line" : 207,
+				"parent" : 0
+			},
+			{
+				"command" : 7,
+				"file" : 0,
+				"line" : 185,
+				"parent" : 0
+			},
+			{
+				"command" : 7,
+				"file" : 0,
+				"line" : 186,
+				"parent" : 0
+			},
+			{
+				"command" : 7,
+				"file" : 0,
+				"line" : 190,
+				"parent" : 0
+			},
+			{
+				"command" : 7,
+				"file" : 0,
+				"line" : 224,
+				"parent" : 0
+			},
+			{
+				"file" : 3
+			},
+			{
+				"command" : 8,
+				"file" : 3,
+				"line" : 26,
+				"parent" : 22
+			},
+			{
+				"command" : 9,
+				"file" : 0,
+				"line" : 188,
+				"parent" : 0
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "/DWIN32 /D_WINDOWS /GR /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd"
+				},
+				{
+					"backtrace" : 23,
+					"fragment" : "/arch:AVX2"
+				},
+				{
+					"backtrace" : 23,
+					"fragment" : "/W4"
+				},
+				{
+					"backtrace" : 6,
+					"fragment" : "/wd4127"
+				},
+				{
+					"backtrace" : 6,
+					"fragment" : "/wd4324"
+				},
+				{
+					"backtrace" : 6,
+					"fragment" : "/wd6800"
+				},
+				{
+					"backtrace" : 7,
+					"fragment" : "/EHs"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 8,
+					"define" : "DRJIT_BUILD=1"
+				},
+				{
+					"backtrace" : 9,
+					"define" : "DRJIT_DYNAMIC_CUDA=1"
+				},
+				{
+					"backtrace" : 10,
+					"define" : "DRJIT_DYNAMIC_LLVM=1"
+				},
+				{
+					"backtrace" : 11,
+					"define" : "DRJIT_ENABLE_OPTIX=1"
+				},
+				{
+					"backtrace" : 12,
+					"define" : "LZ4LIB_VISIBILITY="
+				},
+				{
+					"backtrace" : 15,
+					"define" : "NOMINMAX"
+				},
+				{
+					"backtrace" : 15,
+					"define" : "_CRT_NONSTDC_NO_DEPRECATE"
+				},
+				{
+					"backtrace" : 15,
+					"define" : "_CRT_SECURE_NO_WARNINGS"
+				},
+				{
+					"backtrace" : 16,
+					"define" : "_DISABLE_CONSTEXPR_MUTEX_CONSTRUCTOR"
+				},
+				{
+					"backtrace" : 15,
+					"define" : "_SCL_SECURE_NO_WARNINGS"
+				},
+				{
+					"backtrace" : 15,
+					"define" : "_SILENCE_CXX17_UNCAUGHT_EXCEPTION_DEPRECATION_WARNING"
+				},
+				{
+					"backtrace" : 17,
+					"define" : "__F16C__"
+				},
+				{
+					"define" : "drjit_core_EXPORTS"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 18,
+					"path" : "E:/THESE/Code/mitsuba-3.7.1/mitsuba3/ext/drjit/ext/drjit-core"
+				},
+				{
+					"backtrace" : 19,
+					"path" : "E:/THESE/Code/mitsuba-3.7.1/mitsuba3/out/build/x64-Debug/ext/drjit/ext/drjit-core"
+				},
+				{
+					"backtrace" : 20,
+					"path" : "E:/THESE/Code/mitsuba-3.7.1/mitsuba3/ext/drjit/ext/drjit-core/ext/nanothread/include"
+				},
+				{
+					"backtrace" : 20,
+					"path" : "E:/THESE/Code/mitsuba-3.7.1/mitsuba3/ext/drjit/ext/drjit-core/ext/robin_map/include"
+				},
+				{
+					"backtrace" : 20,
+					"path" : "E:/THESE/Code/mitsuba-3.7.1/mitsuba3/ext/drjit/ext/drjit-core/ext/lz4"
+				},
+				{
+					"backtrace" : 21,
+					"path" : "E:/THESE/Code/mitsuba-3.7.1/mitsuba3/ext/drjit/ext/drjit-core/include"
+				}
+			],
+			"language" : "CXX",
+			"languageStandard" : 
+			{
+				"backtraces" : 
+				[
+					24
+				],
+				"standard" : "17"
+			},
+			"sourceIndexes" : 
+			[
+				11,
+				13,
+				15,
+				17,
+				19,
+				21,
+				23,
+				25,
+				27,
+				29,
+				31,
+				33,
+				34,
+				36,
+				37,
+				39,
+				41,
+				43,
+				45,
+				47,
+				50,
+				52,
+				53,
+				55,
+				57,
+				58,
+				59,
+				60,
+				62,
+				65,
+				67,
+				69,
+				71,
+				73,
+				75,
+				77,
+				79,
+				81,
+				83,
+				84,
+				85,
+				87,
+				89
+			]
+		},
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "/DWIN32 /D_WINDOWS /Zi /Ob0 /Od /RTC1 -MDd"
+				},
+				{
+					"backtrace" : 6,
+					"fragment" : "/wd4127"
+				},
+				{
+					"backtrace" : 6,
+					"fragment" : "/wd4324"
+				},
+				{
+					"backtrace" : 6,
+					"fragment" : "/wd6800"
+				},
+				{
+					"backtrace" : 7,
+					"fragment" : "/EHs"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 8,
+					"define" : "DRJIT_BUILD=1"
+				},
+				{
+					"backtrace" : 9,
+					"define" : "DRJIT_DYNAMIC_CUDA=1"
+				},
+				{
+					"backtrace" : 10,
+					"define" : "DRJIT_DYNAMIC_LLVM=1"
+				},
+				{
+					"backtrace" : 11,
+					"define" : "DRJIT_ENABLE_OPTIX=1"
+				},
+				{
+					"backtrace" : 12,
+					"define" : "LZ4LIB_VISIBILITY="
+				},
+				{
+					"backtrace" : 15,
+					"define" : "NOMINMAX"
+				},
+				{
+					"backtrace" : 15,
+					"define" : "_CRT_NONSTDC_NO_DEPRECATE"
+				},
+				{
+					"backtrace" : 15,
+					"define" : "_CRT_SECURE_NO_WARNINGS"
+				},
+				{
+					"backtrace" : 16,
+					"define" : "_DISABLE_CONSTEXPR_MUTEX_CONSTRUCTOR"
+				},
+				{
+					"backtrace" : 15,
+					"define" : "_SCL_SECURE_NO_WARNINGS"
+				},
+				{
+					"backtrace" : 15,
+					"define" : "_SILENCE_CXX17_UNCAUGHT_EXCEPTION_DEPRECATION_WARNING"
+				},
+				{
+					"backtrace" : 17,
+					"define" : "__F16C__"
+				},
+				{
+					"define" : "drjit_core_EXPORTS"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 18,
+					"path" : "E:/THESE/Code/mitsuba-3.7.1/mitsuba3/ext/drjit/ext/drjit-core"
+				},
+				{
+					"backtrace" : 19,
+					"path" : "E:/THESE/Code/mitsuba-3.7.1/mitsuba3/out/build/x64-Debug/ext/drjit/ext/drjit-core"
+				},
+				{
+					"backtrace" : 20,
+					"path" : "E:/THESE/Code/mitsuba-3.7.1/mitsuba3/ext/drjit/ext/drjit-core/ext/nanothread/include"
+				},
+				{
+					"backtrace" : 20,
+					"path" : "E:/THESE/Code/mitsuba-3.7.1/mitsuba3/ext/drjit/ext/drjit-core/ext/robin_map/include"
+				},
+				{
+					"backtrace" : 20,
+					"path" : "E:/THESE/Code/mitsuba-3.7.1/mitsuba3/ext/drjit/ext/drjit-core/ext/lz4"
+				},
+				{
+					"backtrace" : 21,
+					"path" : "E:/THESE/Code/mitsuba-3.7.1/mitsuba3/ext/drjit/ext/drjit-core/include"
+				}
+			],
+			"language" : "C",
+			"sourceIndexes" : 
+			[
+				91,
+				94,
+				96
+			]
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 4,
+			"id" : "nanothread::@06ff9ba2dfdc4e7a81bf"
+		}
+	],
+	"folder" : 
+	{
+		"name" : "drjit"
+	},
+	"id" : "drjit-core::@5b9a3dded2238b5e144f",
+	"install" : 
+	{
+		"destinations" : 
+		[
+			{
+				"backtrace" : 3,
+				"path" : "bin"
+			}
+		],
+		"prefix" : 
+		{
+			"path" : "E:/THESE/Code/mitsuba-3.7.1/mitsuba3/out/install/x64-Debug"
+		}
+	},
+	"link" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "/machine:x64 /debug /INCREMENTAL",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 4,
+				"fragment" : "ext\\drjit\\ext\\drjit-core\\ext\\nanothread\\nanothread.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "Cfgmgr32.lib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib",
+				"role" : "libraries"
+			}
+		],
+		"language" : "CXX"
+	},
+	"name" : "drjit-core",
+	"nameOnDisk" : "drjit-core.dll",
+	"paths" : 
+	{
+		"build" : "ext/drjit/ext/drjit-core",
+		"source" : "ext/drjit/ext/drjit-core"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Header Files",
+			"sourceIndexes" : 
+			[
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8,
+				9,
+				10,
+				12,
+				14,
+				16,
+				18,
+				20,
+				22,
+				24,
+				26,
+				28,
+				30,
+				32,
+				35,
+				38,
+				40,
+				42,
+				44,
+				46,
+				48,
+				49,
+				51,
+				54,
+				56,
+				61,
+				63,
+				64,
+				66,
+				68,
+				70,
+				72,
+				74,
+				76,
+				78,
+				80,
+				82,
+				86,
+				88,
+				90,
+				92,
+				93,
+				95
+			]
+		},
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				11,
+				13,
+				15,
+				17,
+				19,
+				21,
+				23,
+				25,
+				27,
+				29,
+				31,
+				33,
+				34,
+				36,
+				37,
+				39,
+				41,
+				43,
+				45,
+				47,
+				50,
+				52,
+				53,
+				55,
+				57,
+				58,
+				59,
+				60,
+				62,
+				65,
+				67,
+				69,
+				71,
+				73,
+				75,
+				77,
+				79,
+				81,
+				83,
+				84,
+				85,
+				87,
+				89,
+				91,
+				94,
+				96
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/include/drjit-core/jit.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/include/drjit-core/traits.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/include/drjit-core/hash.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/include/drjit-core/array.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/include/drjit-core/texture.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/include/drjit-core/half.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/common.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/internal.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/alloc.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/hash.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/log.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/log.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/strbuf.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/strbuf.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/var.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/var.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/array.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/array.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/op.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/op.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/malloc.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/malloc.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/registry.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/registry.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/util.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/util.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/record_ts.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/record_ts.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/coop_vec.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/coop_vec.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/reorder.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/reorder.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/cuda_api.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/cuda_api.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/cuda_core.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/cuda_tex.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/cuda_tex.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/cuda_eval.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/cuda_ts.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/cuda_ts.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/cuda_scatter.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/cuda_scatter.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/cuda_packet.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/cuda_packet.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/cuda_array.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/cuda_array.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/include/drjit-core/gl_interop.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/gl_interop.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/optix.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/optix_api.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/optix_api.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/optix_coop_vec.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/optix_coop_vec.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/optix_core.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/llvm_api.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/llvm_api.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/llvm_memmgr.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/llvm_memmgr.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/llvm_core.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/llvm_mcjit.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/llvm_orcv2.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/llvm_eval.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/llvm_eval.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/llvm_red.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/llvm_ts.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/llvm_ts.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/llvm_scatter.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/llvm_scatter.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/llvm_packet.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/llvm_packet.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/llvm_array.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/llvm_array.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/llvm_coop_vec.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/llvm_coop_vec.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/io.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/io.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/eval.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/eval.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/call.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/call.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/loop.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/loop.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/cond.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/cond.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/init.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/api.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/nvtx_api.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/nvtx_api.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/src/profile.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "ext/drjit/ext/drjit-core/src/profile.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/ext/lz4/lz4.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "ext/drjit/ext/drjit-core/ext/lz4/lz4.c",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/ext/lz4/xxhash.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/ext/lz4/xxh3.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "ext/drjit/ext/drjit-core/ext/lz4/xxhash.c",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ext/drjit/ext/drjit-core/resources/kernels.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "out/build/x64-Debug/ext/drjit/ext/drjit-core/resources/kernels.c",
+			"sourceGroupIndex" : 1
+		}
+	],
+	"type" : "SHARED_LIBRARY"
+}

@@ -24,4 +24,8 @@ add_plugin(pplastic             pplastic.cpp)
 add_plugin(principled           principled.cpp)
 add_plugin(principledthin       principledthin.cpp)
 
+#-----------Custom plugins--------------
+add_subdirectory(micrograin)
+#------------------------------------------
+
 set(MI_PLUGIN_TARGETS "${MI_PLUGIN_TARGETS}" PARENT_SCOPE)

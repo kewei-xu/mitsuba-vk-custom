@@ -1,0 +1,381 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"install"
+		],
+		"files" : 
+		[
+			"CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 238,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 243,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 248,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 548,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 554,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 559,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 564,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 582,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 605,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 626,
+				"parent" : 0
+			}
+		]
+	},
+	"installers" : 
+	[
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : ".",
+			"paths" : 
+			[
+				"out/build/x64-Debug/setpath.sh"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 2,
+			"component" : "Unspecified",
+			"destination" : ".",
+			"paths" : 
+			[
+				"out/build/x64-Debug/resources/setpath.bat"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 3,
+			"component" : "Unspecified",
+			"destination" : ".",
+			"paths" : 
+			[
+				"out/build/x64-Debug/resources/setpath.ps1"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 4,
+			"component" : "Unspecified",
+			"destination" : "bin",
+			"paths" : 
+			[
+				"Debug/mitsuba.exe"
+			],
+			"targetId" : "mitsuba-bin::@65b9da80dca809d17e2d",
+			"targetIndex" : 85,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 4,
+			"component" : "Unspecified",
+			"destination" : "bin",
+			"paths" : 
+			[
+				"Debug/mitsuba.dll"
+			],
+			"targetId" : "mitsuba::@145eef247bfb46b6828c",
+			"targetIndex" : 84,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 4,
+			"component" : "Unspecified",
+			"destination" : "bin",
+			"paths" : 
+			[
+				"Debug/IlmImf-mitsuba.dll"
+			],
+			"targetId" : "IlmImf::@f32ba8242b8a9b800c71",
+			"targetIndex" : 3,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 4,
+			"component" : "Unspecified",
+			"destination" : "bin",
+			"paths" : 
+			[
+				"Debug/IlmThread-mitsuba.dll"
+			],
+			"targetId" : "IlmThread::@278aebe4a71d44f9a80e",
+			"targetIndex" : 5,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 4,
+			"component" : "Unspecified",
+			"destination" : "bin",
+			"paths" : 
+			[
+				"Debug/Imath-mitsuba.dll"
+			],
+			"targetId" : "Imath::@0291210b44218159d33e",
+			"targetIndex" : 6,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 4,
+			"component" : "Unspecified",
+			"destination" : "bin",
+			"paths" : 
+			[
+				"Debug/Iex-mitsuba.dll"
+			],
+			"targetId" : "Iex::@6fd788319ac26029346c",
+			"targetIndex" : 1,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 4,
+			"component" : "Unspecified",
+			"destination" : "bin",
+			"paths" : 
+			[
+				"Debug/IexMath-mitsuba.dll"
+			],
+			"targetId" : "IexMath::@fc750b9da3a58bd2fac8",
+			"targetIndex" : 2,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 4,
+			"component" : "Unspecified",
+			"destination" : "bin",
+			"paths" : 
+			[
+				"Debug/Half-mitsuba.dll"
+			],
+			"targetId" : "Half::@4a7ae0dea943a56d8a66",
+			"targetIndex" : 0,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 4,
+			"component" : "Unspecified",
+			"destination" : "bin",
+			"paths" : 
+			[
+				"Debug/pugixml.dll"
+			],
+			"targetId" : "pugixml::@a9f99adfd9f636cea434",
+			"targetIndex" : 132,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 4,
+			"component" : "Unspecified",
+			"destination" : "bin",
+			"paths" : 
+			[
+				"Debug/asmjit-mitsuba.dll"
+			],
+			"targetId" : "asmjit::@e695f9df9e4caa51c123",
+			"targetIndex" : 9,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 4,
+			"component" : "Unspecified",
+			"destination" : "bin",
+			"paths" : 
+			[
+				"Debug/png-mitsuba.dll"
+			],
+			"targetId" : "png::@2fba0b78d25f2193a53c",
+			"targetIndex" : 123,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 4,
+			"component" : "Unspecified",
+			"destination" : "bin",
+			"paths" : 
+			[
+				"Debug/jpeg-mitsuba.dll"
+			],
+			"targetId" : "jpeg::@f79ce0f69b2b60d010e4",
+			"targetIndex" : 67,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 4,
+			"component" : "Unspecified",
+			"destination" : "bin",
+			"paths" : 
+			[
+				"Debug/zlib1.dll"
+			],
+			"targetId" : "zlib::@ba14d366ba4ca6e90c54",
+			"targetIndex" : 172,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 4,
+			"component" : "Unspecified",
+			"destination" : "bin",
+			"paths" : 
+			[
+				"Debug/embree3.dll"
+			],
+			"targetId" : "embree::@2cb1f9781e56fdf70b7c",
+			"targetIndex" : 50,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 4,
+			"component" : "Unspecified",
+			"destination" : "bin",
+			"paths" : 
+			[
+				"Debug/nanothread.dll"
+			],
+			"targetId" : "nanothread::@06ff9ba2dfdc4e7a81bf",
+			"targetIndex" : 112,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 4,
+			"component" : "Unspecified",
+			"destination" : "bin",
+			"paths" : 
+			[
+				"Debug/drjit-core.dll"
+			],
+			"targetId" : "drjit-core::@5b9a3dded2238b5e144f",
+			"targetIndex" : 43,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 4,
+			"component" : "Unspecified",
+			"destination" : "bin",
+			"paths" : 
+			[
+				"Debug/drjit-extra.dll"
+			],
+			"targetId" : "drjit-extra::@eb75b61d00d58a806b71",
+			"targetIndex" : 44,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 5,
+			"component" : "Unspecified",
+			"destination" : "include",
+			"paths" : 
+			[
+				"include/mitsuba"
+			],
+			"type" : "directory"
+		},
+		{
+			"backtrace" : 6,
+			"component" : "Unspecified",
+			"destination" : "include",
+			"paths" : 
+			[
+				"ext/tinyformat/tinyformat.h"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 7,
+			"component" : "Unspecified",
+			"destination" : "include/mitsuba/core",
+			"paths" : 
+			[
+				"out/build/x64-Debug/include/mitsuba/core/config.h"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 8,
+			"component" : "Unspecified",
+			"destination" : "share",
+			"paths" : 
+			[
+				"out/build/x64-Debug/data/srgb.coeff"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 9,
+			"component" : "Unspecified",
+			"destination" : "share",
+			"paths" : 
+			[
+				"out/build/x64-Debug/Debug/data/ior"
+			],
+			"type" : "directory"
+		},
+		{
+			"backtrace" : 10,
+			"component" : "Unspecified",
+			"destination" : "share",
+			"paths" : 
+			[
+				"out/build/x64-Debug/Debug/data/sunsky"
+			],
+			"type" : "directory"
+		}
+	],
+	"paths" : 
+	{
+		"build" : ".",
+		"source" : "."
+	}
+}

@@ -1,0 +1,39 @@
+{
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_custom_target"
+		],
+		"files" : 
+		[
+			"ext/libpng/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 444,
+				"parent" : 0
+			}
+		]
+	},
+	"folder" : 
+	{
+		"name" : "dependencies"
+	},
+	"id" : "png_genfiles::@2fba0b78d25f2193a53c",
+	"name" : "png_genfiles",
+	"paths" : 
+	{
+		"build" : "ext/libpng",
+		"source" : "ext/libpng"
+	},
+	"sources" : [],
+	"type" : "UTILITY"
+}

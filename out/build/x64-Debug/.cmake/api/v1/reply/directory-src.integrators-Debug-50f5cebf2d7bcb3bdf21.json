@@ -1,0 +1,399 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"install",
+			"add_plugin"
+		],
+		"files" : 
+		[
+			"CMakeLists.txt",
+			"src/integrators/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 1
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 3,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 412,
+				"parent" : 1
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 4,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 412,
+				"parent" : 3
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 5,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 412,
+				"parent" : 5
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 6,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 412,
+				"parent" : 7
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 7,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 412,
+				"parent" : 9
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 10,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 412,
+				"parent" : 11
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 13,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 412,
+				"parent" : 13
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 14,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 412,
+				"parent" : 15
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 15,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 412,
+				"parent" : 17
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 16,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 412,
+				"parent" : 19
+			}
+		]
+	},
+	"installers" : 
+	[
+		{
+			"backtrace" : 2,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"src/integrators/aov.lib"
+			],
+			"targetId" : "aov::@cc645d70eca185fd34e2",
+			"targetIndex" : 7,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 2,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"Debug/plugins/aov.dll"
+			],
+			"targetId" : "aov::@cc645d70eca185fd34e2",
+			"targetIndex" : 7,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 4,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"src/integrators/depth.lib"
+			],
+			"targetId" : "depth::@cc645d70eca185fd34e2",
+			"targetIndex" : 33,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 4,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"Debug/plugins/depth.dll"
+			],
+			"targetId" : "depth::@cc645d70eca185fd34e2",
+			"targetIndex" : 33,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 6,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"src/integrators/direct.lib"
+			],
+			"targetId" : "direct::@cc645d70eca185fd34e2",
+			"targetIndex" : 36,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 6,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"Debug/plugins/direct.dll"
+			],
+			"targetId" : "direct::@cc645d70eca185fd34e2",
+			"targetIndex" : 36,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 8,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"src/integrators/moment.lib"
+			],
+			"targetId" : "moment::@cc645d70eca185fd34e2",
+			"targetIndex" : 108,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 8,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"Debug/plugins/moment.dll"
+			],
+			"targetId" : "moment::@cc645d70eca185fd34e2",
+			"targetIndex" : 108,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 10,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"src/integrators/path.lib"
+			],
+			"targetId" : "path::@cc645d70eca185fd34e2",
+			"targetIndex" : 118,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 10,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"Debug/plugins/path.dll"
+			],
+			"targetId" : "path::@cc645d70eca185fd34e2",
+			"targetIndex" : 118,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 12,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"src/integrators/pathv2.lib"
+			],
+			"targetId" : "pathv2::@cc645d70eca185fd34e2",
+			"targetIndex" : 119,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 12,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"Debug/plugins/pathv2.dll"
+			],
+			"targetId" : "pathv2::@cc645d70eca185fd34e2",
+			"targetIndex" : 119,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 14,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"src/integrators/ptracer.lib"
+			],
+			"targetId" : "ptracer::@cc645d70eca185fd34e2",
+			"targetIndex" : 131,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 14,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"Debug/plugins/ptracer.dll"
+			],
+			"targetId" : "ptracer::@cc645d70eca185fd34e2",
+			"targetIndex" : 131,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 16,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"src/integrators/stokes.lib"
+			],
+			"targetId" : "stokes::@cc645d70eca185fd34e2",
+			"targetIndex" : 156,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 16,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"Debug/plugins/stokes.dll"
+			],
+			"targetId" : "stokes::@cc645d70eca185fd34e2",
+			"targetIndex" : 156,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 18,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"src/integrators/volpath.lib"
+			],
+			"targetId" : "volpath::@cc645d70eca185fd34e2",
+			"targetIndex" : 169,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 18,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"Debug/plugins/volpath.dll"
+			],
+			"targetId" : "volpath::@cc645d70eca185fd34e2",
+			"targetIndex" : 169,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 20,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"src/integrators/volpathmis.lib"
+			],
+			"targetId" : "volpathmis::@cc645d70eca185fd34e2",
+			"targetIndex" : 170,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 20,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"Debug/plugins/volpathmis.dll"
+			],
+			"targetId" : "volpathmis::@cc645d70eca185fd34e2",
+			"targetIndex" : 170,
+			"type" : "target"
+		}
+	],
+	"paths" : 
+	{
+		"build" : "src/integrators",
+		"source" : "src/integrators"
+	}
+}

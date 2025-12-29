@@ -1,0 +1,111 @@
+{
+	"backtrace" : 2,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_custom_target",
+			"nanobind_add_stub"
+		],
+		"files" : 
+		[
+			"ext/nanobind/cmake/nanobind-config.cmake",
+			"src/python/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 1
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 263,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 698,
+				"parent" : 1
+			}
+		]
+	},
+	"dependencies" : 
+	[
+		{
+			"id" : "cuda_ad_rgb::@ab362f55af289f26d4ad"
+		},
+		{
+			"id" : "scalar_rgb::@ab362f55af289f26d4ad"
+		},
+		{
+			"id" : "scalar_spectral::@ab362f55af289f26d4ad"
+		},
+		{
+			"id" : "mitsuba_ext::@ab362f55af289f26d4ad"
+		},
+		{
+			"id" : "mitsuba-copy-python-src::@ab362f55af289f26d4ad"
+		},
+		{
+			"id" : "llvm_ad_spectral::@ab362f55af289f26d4ad"
+		},
+		{
+			"id" : "mitsuba_alias::@ab362f55af289f26d4ad"
+		},
+		{
+			"id" : "copy-targets-python::@ab362f55af289f26d4ad"
+		},
+		{
+			"id" : "llvm_ad_rgb::@ab362f55af289f26d4ad"
+		}
+	],
+	"id" : "mitsuba-stub-detail::@ab362f55af289f26d4ad",
+	"name" : "mitsuba-stub-detail",
+	"paths" : 
+	{
+		"build" : "src/python",
+		"source" : "src/python"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "",
+			"sourceIndexes" : 
+			[
+				0
+			]
+		},
+		{
+			"name" : "CMake Rules",
+			"sourceIndexes" : 
+			[
+				1,
+				2
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 2,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/python/CMakeFiles/mitsuba-stub-detail",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 0,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/python/CMakeFiles/mitsuba-stub-detail.rule",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 0,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/(CONFIG)/python/mitsuba/_detail_stubs.pyi.rule",
+			"sourceGroupIndex" : 1
+		}
+	],
+	"type" : "UTILITY"
+}

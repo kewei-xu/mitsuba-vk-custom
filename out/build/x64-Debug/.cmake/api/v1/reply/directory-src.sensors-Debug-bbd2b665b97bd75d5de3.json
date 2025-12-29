@@ -1,0 +1,288 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"install",
+			"add_plugin"
+		],
+		"files" : 
+		[
+			"CMakeLists.txt",
+			"src/sensors/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 1
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 3,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 412,
+				"parent" : 1
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 4,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 412,
+				"parent" : 3
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 5,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 412,
+				"parent" : 5
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 6,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 412,
+				"parent" : 7
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 7,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 412,
+				"parent" : 9
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 8,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 412,
+				"parent" : 11
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 9,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 412,
+				"parent" : 13
+			}
+		]
+	},
+	"installers" : 
+	[
+		{
+			"backtrace" : 2,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"src/sensors/perspective.lib"
+			],
+			"targetId" : "perspective::@8d2b3ec0edc5ac3fa2bf",
+			"targetIndex" : 120,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 2,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"Debug/plugins/perspective.dll"
+			],
+			"targetId" : "perspective::@8d2b3ec0edc5ac3fa2bf",
+			"targetIndex" : 120,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 4,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"src/sensors/orthographic.lib"
+			],
+			"targetId" : "orthographic::@8d2b3ec0edc5ac3fa2bf",
+			"targetIndex" : 117,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 4,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"Debug/plugins/orthographic.dll"
+			],
+			"targetId" : "orthographic::@8d2b3ec0edc5ac3fa2bf",
+			"targetIndex" : 117,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 6,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"src/sensors/radiancemeter.lib"
+			],
+			"targetId" : "radiancemeter::@8d2b3ec0edc5ac3fa2bf",
+			"targetIndex" : 133,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 6,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"Debug/plugins/radiancemeter.dll"
+			],
+			"targetId" : "radiancemeter::@8d2b3ec0edc5ac3fa2bf",
+			"targetIndex" : 133,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 8,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"src/sensors/thinlens.lib"
+			],
+			"targetId" : "thinlens::@8d2b3ec0edc5ac3fa2bf",
+			"targetIndex" : 164,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 8,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"Debug/plugins/thinlens.dll"
+			],
+			"targetId" : "thinlens::@8d2b3ec0edc5ac3fa2bf",
+			"targetIndex" : 164,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 10,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"src/sensors/irradiancemeter.lib"
+			],
+			"targetId" : "irradiancemeter::@8d2b3ec0edc5ac3fa2bf",
+			"targetIndex" : 64,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 10,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"Debug/plugins/irradiancemeter.dll"
+			],
+			"targetId" : "irradiancemeter::@8d2b3ec0edc5ac3fa2bf",
+			"targetIndex" : 64,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 12,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"src/sensors/distant.lib"
+			],
+			"targetId" : "distant::@8d2b3ec0edc5ac3fa2bf",
+			"targetIndex" : 40,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 12,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"Debug/plugins/distant.dll"
+			],
+			"targetId" : "distant::@8d2b3ec0edc5ac3fa2bf",
+			"targetIndex" : 40,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 14,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"src/sensors/batch.lib"
+			],
+			"targetId" : "batch::@8d2b3ec0edc5ac3fa2bf",
+			"targetIndex" : 10,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 14,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"Debug/plugins/batch.dll"
+			],
+			"targetId" : "batch::@8d2b3ec0edc5ac3fa2bf",
+			"targetIndex" : 10,
+			"type" : "target"
+		}
+	],
+	"paths" : 
+	{
+		"build" : "src/sensors",
+		"source" : "src/sensors"
+	}
+}

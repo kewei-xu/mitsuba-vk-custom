@@ -1,0 +1,13 @@
+prefix=E:/THESE/Code/mitsuba-3.7.1/mitsuba3/out/install/x64-Debug
+exec_prefix=E:/THESE/Code/mitsuba-3.7.1/mitsuba3/out/install/x64-Debug
+libdir=E:/THESE/Code/mitsuba-3.7.1/mitsuba3/out/install/x64-Debug/lib
+sharedlibdir=E:/THESE/Code/mitsuba-3.7.1/mitsuba3/out/install/x64-Debug/lib
+includedir=E:/THESE/Code/mitsuba-3.7.1/mitsuba3/out/install/x64-Debug/include
+
+Name: zlib
+Description: zlib compression library
+Version: 1.2.11
+
+Requires:
+Libs: -L${libdir} -L${sharedlibdir} -lz
+Cflags: -I${includedir}

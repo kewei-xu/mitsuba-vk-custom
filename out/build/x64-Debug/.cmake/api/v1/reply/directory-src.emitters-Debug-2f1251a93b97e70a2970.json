@@ -1,0 +1,399 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"install",
+			"add_plugin"
+		],
+		"files" : 
+		[
+			"CMakeLists.txt",
+			"src/emitters/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 1
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 3,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 412,
+				"parent" : 1
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 4,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 412,
+				"parent" : 3
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 5,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 412,
+				"parent" : 5
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 6,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 412,
+				"parent" : 7
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 7,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 412,
+				"parent" : 9
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 8,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 412,
+				"parent" : 11
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 9,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 412,
+				"parent" : 13
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 10,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 412,
+				"parent" : 15
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 11,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 412,
+				"parent" : 17
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 12,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 412,
+				"parent" : 19
+			}
+		]
+	},
+	"installers" : 
+	[
+		{
+			"backtrace" : 2,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"src/emitters/area.lib"
+			],
+			"targetId" : "area::@40d60837f3021c48fe74",
+			"targetIndex" : 8,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 2,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"Debug/plugins/area.dll"
+			],
+			"targetId" : "area::@40d60837f3021c48fe74",
+			"targetIndex" : 8,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 4,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"src/emitters/point.lib"
+			],
+			"targetId" : "point::@40d60837f3021c48fe74",
+			"targetIndex" : 125,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 4,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"Debug/plugins/point.dll"
+			],
+			"targetId" : "point::@40d60837f3021c48fe74",
+			"targetIndex" : 125,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 6,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"src/emitters/constant.lib"
+			],
+			"targetId" : "constant::@40d60837f3021c48fe74",
+			"targetIndex" : 23,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 6,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"Debug/plugins/constant.dll"
+			],
+			"targetId" : "constant::@40d60837f3021c48fe74",
+			"targetIndex" : 23,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 8,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"src/emitters/envmap.lib"
+			],
+			"targetId" : "envmap::@40d60837f3021c48fe74",
+			"targetIndex" : 54,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 8,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"Debug/plugins/envmap.dll"
+			],
+			"targetId" : "envmap::@40d60837f3021c48fe74",
+			"targetIndex" : 54,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 10,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"src/emitters/directional.lib"
+			],
+			"targetId" : "directional::@40d60837f3021c48fe74",
+			"targetIndex" : 37,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 10,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"Debug/plugins/directional.dll"
+			],
+			"targetId" : "directional::@40d60837f3021c48fe74",
+			"targetIndex" : 37,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 12,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"src/emitters/directionalarea.lib"
+			],
+			"targetId" : "directionalarea::@40d60837f3021c48fe74",
+			"targetIndex" : 38,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 12,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"Debug/plugins/directionalarea.dll"
+			],
+			"targetId" : "directionalarea::@40d60837f3021c48fe74",
+			"targetIndex" : 38,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 14,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"src/emitters/spot.lib"
+			],
+			"targetId" : "spot::@40d60837f3021c48fe74",
+			"targetIndex" : 154,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 14,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"Debug/plugins/spot.dll"
+			],
+			"targetId" : "spot::@40d60837f3021c48fe74",
+			"targetIndex" : 154,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 16,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"src/emitters/projector.lib"
+			],
+			"targetId" : "projector::@40d60837f3021c48fe74",
+			"targetIndex" : 130,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 16,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"Debug/plugins/projector.dll"
+			],
+			"targetId" : "projector::@40d60837f3021c48fe74",
+			"targetIndex" : 130,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 18,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"src/emitters/sunsky.lib"
+			],
+			"targetId" : "sunsky::@40d60837f3021c48fe74",
+			"targetIndex" : 158,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 18,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"Debug/plugins/sunsky.dll"
+			],
+			"targetId" : "sunsky::@40d60837f3021c48fe74",
+			"targetIndex" : 158,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 20,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"src/emitters/timed_sunsky.lib"
+			],
+			"targetId" : "timed_sunsky::@40d60837f3021c48fe74",
+			"targetIndex" : 165,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 20,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"Debug/plugins/timed_sunsky.dll"
+			],
+			"targetId" : "timed_sunsky::@40d60837f3021c48fe74",
+			"targetIndex" : 165,
+			"type" : "target"
+		}
+	],
+	"paths" : 
+	{
+		"build" : "src/emitters",
+		"source" : "src/emitters"
+	}
+}

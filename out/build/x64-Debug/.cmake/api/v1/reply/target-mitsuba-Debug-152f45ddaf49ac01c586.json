@@ -1,0 +1,885 @@
+{
+	"artifacts" : 
+	[
+		{
+			"path" : "Debug/mitsuba.dll"
+		},
+		{
+			"path" : "src/mitsuba.lib"
+		},
+		{
+			"path" : "Debug/mitsuba.pdb"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_library",
+			"install",
+			"target_link_libraries",
+			"openexr_define_library",
+			"ilmbase_define_library",
+			"add_compile_options",
+			"include",
+			"add_definitions",
+			"include_directories"
+		],
+		"files" : 
+		[
+			"src/CMakeLists.txt",
+			"CMakeLists.txt",
+			"src/core/CMakeLists.txt",
+			"ext/libpng/CMakeLists.txt",
+			"ext/openexr/OpenEXR/config/LibraryDefine.cmake",
+			"ext/openexr/OpenEXR/IlmImf/CMakeLists.txt",
+			"ext/openexr/IlmBase/config/LibraryDefine.cmake",
+			"ext/openexr/IlmBase/Imath/CMakeLists.txt",
+			"src/render/CMakeLists.txt",
+			"ext/drjit/ext/drjit-core/ext/nanothread/ext/cmake-defaults/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 11,
+				"parent" : 0
+			},
+			{
+				"file" : 1
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 548,
+				"parent" : 2
+			},
+			{
+				"file" : 2
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 82,
+				"parent" : 4
+			},
+			{
+				"file" : 3
+			},
+			{
+				"command" : 2,
+				"file" : 3,
+				"line" : 680,
+				"parent" : 6
+			},
+			{
+				"file" : 5
+			},
+			{
+				"command" : 3,
+				"file" : 5,
+				"line" : 4,
+				"parent" : 8
+			},
+			{
+				"command" : 2,
+				"file" : 4,
+				"line" : 48,
+				"parent" : 9
+			},
+			{
+				"file" : 7
+			},
+			{
+				"command" : 4,
+				"file" : 7,
+				"line" : 4,
+				"parent" : 11
+			},
+			{
+				"command" : 2,
+				"file" : 6,
+				"line" : 50,
+				"parent" : 12
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 93,
+				"parent" : 4
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 108,
+				"parent" : 4
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 104,
+				"parent" : 4
+			},
+			{
+				"file" : 8
+			},
+			{
+				"command" : 2,
+				"file" : 8,
+				"line" : 92,
+				"parent" : 17
+			},
+			{
+				"command" : 2,
+				"file" : 8,
+				"line" : 96,
+				"parent" : 17
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 12,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 13,
+				"parent" : 0
+			},
+			{
+				"command" : 6,
+				"file" : 1,
+				"line" : 79,
+				"parent" : 2
+			},
+			{
+				"file" : 9,
+				"parent" : 22
+			},
+			{
+				"command" : 5,
+				"file" : 9,
+				"line" : 158,
+				"parent" : 23
+			},
+			{
+				"command" : 5,
+				"file" : 9,
+				"line" : 182,
+				"parent" : 23
+			},
+			{
+				"command" : 5,
+				"file" : 1,
+				"line" : 333,
+				"parent" : 2
+			},
+			{
+				"command" : 5,
+				"file" : 1,
+				"line" : 336,
+				"parent" : 2
+			},
+			{
+				"command" : 5,
+				"file" : 1,
+				"line" : 339,
+				"parent" : 2
+			},
+			{
+				"command" : 5,
+				"file" : 1,
+				"line" : 342,
+				"parent" : 2
+			},
+			{
+				"command" : 5,
+				"file" : 1,
+				"line" : 345,
+				"parent" : 2
+			},
+			{
+				"command" : 5,
+				"file" : 1,
+				"line" : 348,
+				"parent" : 2
+			},
+			{
+				"command" : 5,
+				"file" : 1,
+				"line" : 351,
+				"parent" : 2
+			},
+			{
+				"command" : 5,
+				"file" : 1,
+				"line" : 354,
+				"parent" : 2
+			},
+			{
+				"command" : 5,
+				"file" : 1,
+				"line" : 357,
+				"parent" : 2
+			},
+			{
+				"command" : 5,
+				"file" : 1,
+				"line" : 360,
+				"parent" : 2
+			},
+			{
+				"command" : 5,
+				"file" : 1,
+				"line" : 363,
+				"parent" : 2
+			},
+			{
+				"command" : 5,
+				"file" : 1,
+				"line" : 366,
+				"parent" : 2
+			},
+			{
+				"command" : 5,
+				"file" : 1,
+				"line" : 372,
+				"parent" : 2
+			},
+			{
+				"command" : 7,
+				"file" : 1,
+				"line" : 380,
+				"parent" : 2
+			},
+			{
+				"command" : 7,
+				"file" : 1,
+				"line" : 321,
+				"parent" : 2
+			},
+			{
+				"command" : 7,
+				"file" : 1,
+				"line" : 305,
+				"parent" : 2
+			},
+			{
+				"command" : 7,
+				"file" : 1,
+				"line" : 314,
+				"parent" : 2
+			},
+			{
+				"command" : 7,
+				"file" : 1,
+				"line" : 309,
+				"parent" : 2
+			},
+			{
+				"command" : 7,
+				"file" : 9,
+				"line" : 195,
+				"parent" : 23
+			},
+			{
+				"command" : 8,
+				"file" : 1,
+				"line" : 297,
+				"parent" : 2
+			},
+			{
+				"command" : 8,
+				"file" : 1,
+				"line" : 313,
+				"parent" : 2
+			},
+			{
+				"command" : 8,
+				"file" : 0,
+				"line" : 6,
+				"parent" : 0
+			}
+		]
+	},
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 20,
+			"id" : "drjit-core::@5b9a3dded2238b5e144f"
+		},
+		{
+			"backtrace" : 20,
+			"id" : "pugixml::@a9f99adfd9f636cea434"
+		},
+		{
+			"backtrace" : 20,
+			"id" : "nanothread::@06ff9ba2dfdc4e7a81bf"
+		},
+		{
+			"backtrace" : 20,
+			"id" : "drjit-extra::@eb75b61d00d58a806b71"
+		},
+		{
+			"backtrace" : 21,
+			"id" : "embree::@2cb1f9781e56fdf70b7c"
+		},
+		{
+			"backtrace" : 20,
+			"id" : "zlib::@ba14d366ba4ca6e90c54"
+		},
+		{
+			"backtrace" : 20,
+			"id" : "Half::@4a7ae0dea943a56d8a66"
+		},
+		{
+			"backtrace" : 20,
+			"id" : "Iex::@6fd788319ac26029346c"
+		},
+		{
+			"backtrace" : 20,
+			"id" : "Imath::@0291210b44218159d33e"
+		},
+		{
+			"backtrace" : 20,
+			"id" : "IexMath::@fc750b9da3a58bd2fac8"
+		},
+		{
+			"backtrace" : 20,
+			"id" : "IlmThread::@278aebe4a71d44f9a80e"
+		},
+		{
+			"backtrace" : 20,
+			"id" : "IlmImf::@f32ba8242b8a9b800c71"
+		},
+		{
+			"backtrace" : 20,
+			"id" : "jpeg::@f79ce0f69b2b60d010e4"
+		},
+		{
+			"backtrace" : 20,
+			"id" : "png::@2fba0b78d25f2193a53c"
+		},
+		{
+			"backtrace" : 20,
+			"id" : "asmjit::@e695f9df9e4caa51c123"
+		},
+		{
+			"backtrace" : 21,
+			"id" : "rgb2spec::@e469e67664a75ea66964"
+		},
+		{
+			"backtrace" : 20,
+			"id" : "mitsuba-core::@0618756b1ff51bca1a0e"
+		},
+		{
+			"backtrace" : 21,
+			"id" : "mitsuba-render::@e50e1ac4f031f1d89846"
+		}
+	],
+	"id" : "mitsuba::@145eef247bfb46b6828c",
+	"install" : 
+	{
+		"destinations" : 
+		[
+			{
+				"backtrace" : 3,
+				"path" : "bin"
+			}
+		],
+		"prefix" : 
+		{
+			"path" : "E:/THESE/Code/mitsuba-3.7.1/mitsuba3/out/install/x64-Debug"
+		}
+	},
+	"link" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "/machine:x64 /debug /INCREMENTAL",
+				"role" : "flags"
+			},
+			{
+				"fragment" : "/INCREMENTAL:NO /LTCG",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "ext\\pugixml.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "ext\\libpng\\png-mitsuba.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "ext\\libjpeg\\jpeg-mitsuba.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "ext\\openexr\\OpenEXR\\IlmImf\\IlmImf-mitsuba.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 7,
+				"fragment" : "ext\\zlib\\zlib.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 10,
+				"fragment" : "ext\\openexr\\IlmBase\\Imath\\Imath-mitsuba.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 10,
+				"fragment" : "ext\\openexr\\IlmBase\\Half\\Half-mitsuba.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "ext\\openexr\\IlmBase\\IexMath\\IexMath-mitsuba.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 10,
+				"fragment" : "ext\\openexr\\IlmBase\\IlmThread\\IlmThread-mitsuba.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 10,
+				"fragment" : "ext\\openexr\\IlmBase\\Iex\\Iex-mitsuba.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 14,
+				"fragment" : "ext\\asmjit\\asmjit-mitsuba.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 15,
+				"fragment" : "ext\\drjit\\src\\extra\\drjit-extra.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 16,
+				"fragment" : "ext\\drjit\\ext\\drjit-core\\drjit-core.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "ext\\drjit\\ext\\drjit-core\\ext\\nanothread\\nanothread.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 18,
+				"fragment" : "ext\\rgb2spec\\rgb2spec.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 19,
+				"fragment" : "ext\\embree\\embree3.lib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib",
+				"role" : "libraries"
+			}
+		],
+		"language" : "CXX",
+		"lto" : true
+	},
+	"name" : "mitsuba",
+	"nameOnDisk" : "mitsuba.dll",
+	"paths" : 
+	{
+		"build" : "src",
+		"source" : "src"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Object Libraries",
+			"sourceIndexes" : 
+			[
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8,
+				9,
+				10,
+				11,
+				12,
+				13,
+				14,
+				15,
+				16,
+				17,
+				18,
+				19,
+				20,
+				21,
+				22,
+				23,
+				24,
+				25,
+				26,
+				27,
+				28,
+				29,
+				30,
+				31,
+				32,
+				33,
+				34,
+				35,
+				36,
+				37,
+				38,
+				39,
+				40,
+				41,
+				42,
+				43,
+				44,
+				45,
+				46,
+				47,
+				48,
+				49,
+				50,
+				51
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 20,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/core/CMakeFiles/mitsuba-core.dir/string.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 20,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/core/CMakeFiles/mitsuba-core.dir/appender.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 20,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/core/CMakeFiles/mitsuba-core.dir/argparser.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 20,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/core/CMakeFiles/mitsuba-core.dir/bitmap.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 20,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/core/CMakeFiles/mitsuba-core.dir/dstream.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 20,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/core/CMakeFiles/mitsuba-core.dir/filesystem.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 20,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/core/CMakeFiles/mitsuba-core.dir/formatter.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 20,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/core/CMakeFiles/mitsuba-core.dir/fresolver.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 20,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/core/CMakeFiles/mitsuba-core.dir/fstream.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 20,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/core/CMakeFiles/mitsuba-core.dir/jit.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 20,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/core/CMakeFiles/mitsuba-core.dir/logger.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 20,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/core/CMakeFiles/mitsuba-core.dir/mmap.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 20,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/core/CMakeFiles/mitsuba-core.dir/tensor.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 20,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/core/CMakeFiles/mitsuba-core.dir/mstream.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 20,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/core/CMakeFiles/mitsuba-core.dir/object.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 20,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/core/CMakeFiles/mitsuba-core.dir/plugin.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 20,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/core/CMakeFiles/mitsuba-core.dir/profiler.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 20,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/core/CMakeFiles/mitsuba-core.dir/progress.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 20,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/core/CMakeFiles/mitsuba-core.dir/properties.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 20,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/core/CMakeFiles/mitsuba-core.dir/qmc.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 20,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/core/CMakeFiles/mitsuba-core.dir/rfilter.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 20,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/core/CMakeFiles/mitsuba-core.dir/spectrum.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 20,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/core/CMakeFiles/mitsuba-core.dir/stream.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 20,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/core/CMakeFiles/mitsuba-core.dir/struct.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 20,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/core/CMakeFiles/mitsuba-core.dir/thread.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 20,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/core/CMakeFiles/mitsuba-core.dir/util.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 20,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/core/CMakeFiles/mitsuba-core.dir/parser.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 20,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/core/CMakeFiles/mitsuba-core.dir/zstream.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 20,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/core/CMakeFiles/mitsuba-core.dir/dither-matrix256.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 21,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/render/CMakeFiles/mitsuba-render.dir/bsdf.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 21,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/render/CMakeFiles/mitsuba-render.dir/emitter.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 21,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/render/CMakeFiles/mitsuba-render.dir/endpoint.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 21,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/render/CMakeFiles/mitsuba-render.dir/film.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 21,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/render/CMakeFiles/mitsuba-render.dir/imageblock.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 21,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/render/CMakeFiles/mitsuba-render.dir/integrator.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 21,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/render/CMakeFiles/mitsuba-render.dir/medium.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 21,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/render/CMakeFiles/mitsuba-render.dir/mesh.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 21,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/render/CMakeFiles/mitsuba-render.dir/microfacet.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 21,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/render/CMakeFiles/mitsuba-render.dir/phase.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 21,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/render/CMakeFiles/mitsuba-render.dir/sampler.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 21,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/render/CMakeFiles/mitsuba-render.dir/scene.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 21,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/render/CMakeFiles/mitsuba-render.dir/sensor.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 21,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/render/CMakeFiles/mitsuba-render.dir/shape.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 21,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/render/CMakeFiles/mitsuba-render.dir/texture.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 21,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/render/CMakeFiles/mitsuba-render.dir/spiral.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 21,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/render/CMakeFiles/mitsuba-render.dir/srgb.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 21,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/render/CMakeFiles/mitsuba-render.dir/optix_api.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 21,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/render/CMakeFiles/mitsuba-render.dir/shapegroup.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 21,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/render/CMakeFiles/mitsuba-render.dir/volume.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 21,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/render/CMakeFiles/mitsuba-render.dir/volumegrid.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 21,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/render/CMakeFiles/mitsuba-render.dir/optixdenoiser.cpp.obj",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 21,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/src/render/CMakeFiles/mitsuba-render.dir/librender_ptx.cpp.obj",
+			"sourceGroupIndex" : 0
+		}
+	],
+	"type" : "SHARED_LIBRARY"
+}

@@ -1,0 +1,140 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"install",
+			"add_plugin"
+		],
+		"files" : 
+		[
+			"CMakeLists.txt",
+			"src/bsdfs/micrograin/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 1
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 1,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 412,
+				"parent" : 1
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 2,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 412,
+				"parent" : 3
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 3,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 412,
+				"parent" : 5
+			}
+		]
+	},
+	"installers" : 
+	[
+		{
+			"backtrace" : 2,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"src/bsdfs/micrograin/micrograin_conductor.lib"
+			],
+			"targetId" : "micrograin_conductor::@bfa41aa3791cb790347b",
+			"targetIndex" : 80,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 2,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"Debug/plugins/micrograin_conductor.dll"
+			],
+			"targetId" : "micrograin_conductor::@bfa41aa3791cb790347b",
+			"targetIndex" : 80,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 4,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"src/bsdfs/micrograin/micrograin_diffuse.lib"
+			],
+			"targetId" : "micrograin_diffuse::@bfa41aa3791cb790347b",
+			"targetIndex" : 81,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 4,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"Debug/plugins/micrograin_diffuse.dll"
+			],
+			"targetId" : "micrograin_diffuse::@bfa41aa3791cb790347b",
+			"targetIndex" : 81,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 6,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"src/bsdfs/micrograin/micrograin_plastic.lib"
+			],
+			"targetId" : "micrograin_plastic::@bfa41aa3791cb790347b",
+			"targetIndex" : 82,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 6,
+			"component" : "Unspecified",
+			"destination" : "bin/plugins",
+			"paths" : 
+			[
+				"Debug/plugins/micrograin_plastic.dll"
+			],
+			"targetId" : "micrograin_plastic::@bfa41aa3791cb790347b",
+			"targetIndex" : 82,
+			"type" : "target"
+		}
+	],
+	"paths" : 
+	{
+		"build" : "src/bsdfs/micrograin",
+		"source" : "src/bsdfs/micrograin"
+	}
+}

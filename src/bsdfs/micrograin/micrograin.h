@@ -1,0 +1,539 @@
+#pragma once
+
+#include <mitsuba/core/profiler.h>
+#include <mitsuba/render/interaction.h>
+#include <drjit/call.h>
+#include <mitsuba/render/bsdf.h>
+
+NAMESPACE_BEGIN(mitsuba)
+
+/**
+ * \brief 2x2 surface stretching matrix for anisotropic micrograin scattering
+ */
+//template <typename Float>
+//struct StretchMatrix2D {
+//    Float a, b, c, d;
+//    
+//    /// Default constructor - identity matrix
+//    StretchMatrix2D() : a(Float(1.f)), b(Float(0.f)), c(Float(0.f)), d(Float(1.f)) {}
+//    /// Parameterized constructor
+//    StretchMaatrix2D(Float a_, Float b_, Float c_, Float d_)
+//        : a(a_), b(b_), c(c_), d(d_) {}
+//
+//};
+
+
+
+template <typename Float, typename Spectrum> 
+class MicrograinBSDF : public BSDF<Float, Spectrum> {
+public:
+    MI_IMPORT_BASE(BSDF)
+    MI_IMPORT_TYPES()
+
+protected:
+
+    MI_INLINE Float eval_tau_0(const SurfaceInteraction3f &si, 
+                               Mask active=true) const {
+        return dr::clamp(m_tau_0->eval_1(si, active), 0.f, 0.9999f);
+    }
+    MI_INLINE Float eval_a(const SurfaceInteraction3f &si,
+                           Mask active = true) const {
+        return m_a->eval_1(si, active);
+    }
+    MI_INLINE Float eval_b(const SurfaceInteraction3f &si,
+                           Mask active = true) const {
+        return m_b->eval_1(si, active);
+    }
+    MI_INLINE Float eval_c(const SurfaceInteraction3f &si,
+                           Mask active = true) const {
+        return m_c->eval_1(si, active);
+    }
+    MI_INLINE Float eval_d(const SurfaceInteraction3f &si,
+                           Mask active = true) const {
+        return m_d->eval_1(si, active);
+    }
+
+    MI_INLINE Float eval_radius(const SurfaceInteraction3f &si,
+                                Mask active = true) const {
+        return dr::maximum(m_radius->eval_1(si, active), 0.f);
+    }
+
+    MI_INLINE Matrix2f eval_stretching_matrix2f(const SurfaceInteraction3f &si,
+                                                Mask active = true) const {
+        Float a = eval_a(si, active);
+        Float b = eval_b(si, active);
+        Float c = eval_c(si, active);
+        Float d = eval_d(si, active);
+        return Matrix2f(a, b, 
+                        c, d);
+    }
+
+    MI_INLINE Matrix3f eval_stretching_matrix3f(const SurfaceInteraction3f &si,
+                                                Mask active = true) const {
+        Float a = eval_a(si, active);
+        Float b = eval_b(si, active);
+        Float c = eval_c(si, active);
+        Float d = eval_d(si, active);
+        return Matrix3f(a, b, 0, 
+                        c, d, 0, 
+                        0, 0, 1);
+    }
+
+    Float D(const SurfaceInteraction3f &si, 
+            const Vector3f &m, 
+            Mask active = true) const {
+        Float tau_0    = eval_tau_0(si, active);
+        Matrix3f M     = eval_stretching_matrix3f(si, active);
+        Matrix3f M_T   = dr::transpose(M);
+        Vector3f m_1   = dr::normalize(M_T * m);
+        Float norm_sqr = dr::squared_norm(M_T * m);
+        Float coeff    = dr::abs(dr::det(M)) / (norm_sqr * norm_sqr);
+        return coeff * NDF_1<Float>(tau_0, m_1);
+    }
+
+    Float G2(const SurfaceInteraction3f &si, 
+             const Vector3f &m,
+             const Vector3f &wo, 
+             Mask active = true) const {
+        Float tau_0    = eval_tau_0(si, active);
+        Matrix3f M     = eval_stretching_matrix3f(si, active);
+        Matrix3f M_inv = dr::inverse(M);
+        Matrix3f M_T   = dr::transpose(M);
+        Vector3f wi_1  = dr::normalize(M_inv * si.wi);
+        Vector3f wo_1  = dr::normalize(M_inv * wo);
+        Vector3f m_1   = dr::normalize(M_T * m);
+        Float h_m_1    = Frame3f::cos_theta(m_1);
+        Mask G2_local  = (dr::dot(si.wi, m) > 0.f) & (dr::dot(wo, m) > 0.f);
+        Float G2_dist  = G2_HD<Float>(tau_0, wi_1, wo_1, h_m_1);
+        return dr::select(G2_local, G2_dist, 0.f);
+    }
+
+    Vector3f square_to_micrograin(const SurfaceInteraction3f &si,
+                                  const Point2f &sample2,
+                                   Mask active = true) const {
+        Float tau_0      = eval_tau_0(si, active);
+        Matrix3f M       = eval_stretching_matrix3f(si, active);
+        Matrix3f M_inv_T = dr::transpose(dr::inverse(M));
+        Vector3f m_1     = square_to_sphere_micrograin<Float>(tau_0, sample2);
+        Vector3f m       = dr::normalize(M_inv_T * m_1);
+        return m;
+    }
+
+    Float square_to_micrograin_pdf(const SurfaceInteraction3f &si,
+                                   const Vector<Float, 3> &m,
+                                   Mask active = true) const {
+        Float cos_theta_m = Frame3f::cos_theta(m);
+        Float pdf         = this->D(si, m, active) * cos_theta_m;
+        return pdf;
+    }
+    
+    MI_DECLARE_CLASS(MicrograinBSDF)
+
+
+protected:
+    
+    MicrograinBSDF(const Properties &props) : Base(props) {
+        m_tau_0  = props.get_texture<Texture>("tau_0", 0.2f);
+        m_radius = props.get_unbounded_texture<Texture>("radius", 1.f);
+        m_a      = props.get_unbounded_texture<Texture>("a", 1.f);
+        m_b      = props.get_unbounded_texture<Texture>("b", 0.f);
+        m_c      = props.get_unbounded_texture<Texture>("c", 0.f);
+        m_d      = props.get_unbounded_texture<Texture>("d", 1.f);
+    }
+    ~MicrograinBSDF() {};
+
+protected:
+    ref<Texture> m_tau_0; // filling factor
+    ref<Texture> m_a, m_b, m_c, m_d; // 2D surface stretching matrix
+                                     // M = a, b
+                                     //     c, d
+    ref<Texture> m_radius;           // micrograin radius(size)
+
+    MI_TRAVERSE_CB(Base, m_tau_0, m_a, m_b, m_c, m_d, m_radius)
+};
+
+// -----------------------------------------------------------------------
+// ------------------------helper functions-------------------------------
+// -----------------------------------------------------------------------
+
+template <typename Float>
+std::pair<Vector<Float,2>, Vector<Float,2>> silhouette_points(const Vector<Float, 3> &wi_1,
+                                                              const Vector<Float, 3> &wo_1,
+                                                              Float h_m_1) {
+    using Vector2f = Vector<Float, 2>;
+    using Frame3f  = Frame<Float>;
+
+    Float cos_theta_i_2 = Frame3f::cos_theta_2(wi_1);
+    Float sin_theta_i_2 = Frame3f::sin_theta_2(wi_1);
+    Float h_m_1_2       = h_m_1 * h_m_1;
+    Float tan_theta_i   = Frame3f::tan_theta(wi_1);
+    Float sign          = dr::sign(wi_1.x() * wo_1.y() - wo_1.x() * wi_1.y());
+    
+    h_m_1_2             = dr::clamp(h_m_1_2, 0.f, 1.f);
+    sin_theta_i_2       = dr::clamp(sin_theta_i_2, 0.f, 1.f);
+
+    Float x_qi          = dr::sqrt(1.f - h_m_1_2 / sin_theta_i_2) * sign;
+    Float y_qi          = -h_m_1 / tan_theta_i;
+
+    auto [sin_phi_i, cos_phi_i] = Frame3f::sincos_phi(wi_1);
+    Vector2f pi_p(x_qi * sin_phi_i + y_qi * cos_phi_i,
+                  -x_qi * cos_phi_i + y_qi * sin_phi_i);
+    Vector2f pi_m(-x_qi * sin_phi_i + y_qi * cos_phi_i,
+                  x_qi * cos_phi_i + y_qi * sin_phi_i);
+    return {pi_p, pi_m};
+}
+
+
+template <typename Float>
+std::pair<Vector<Float, 2>, Vector<Float, 2>> silhouette_points_0(const Vector<Float, 3> &wi_1, 
+                                                                  const Vector<Float, 3> &wo_1){
+    using Vector2f = Vector<Float, 2>;
+    using Frame3f  = Frame<Float>;
+    Float x_qi     = dr::sign(wi_1.x() * wo_1.y() - wo_1.x() * wi_1.y());
+    auto [sin_phi_i, cos_phi_i] = Frame3f::sincos_phi(wi_1);
+    Vector2f pi_p(x_qi * sin_phi_i, -x_qi * cos_phi_i);
+    Vector2f pi_m(-x_qi * sin_phi_i, x_qi * cos_phi_i);
+    return { pi_p, pi_m };
+}
+
+
+template <typename Float>
+Vector<Float, 2> shadow_point(  const Vector<Float, 3> &wo_1, Float h_m_1,
+                                const Vector<Float, 3> &t , const Vector<Float, 3> &b) {
+    using Vector2f = Vector<Float, 2>;
+    using Vector3f = Vector<Float, 3>;
+    Float a0       = -t.z() / b.z();
+    Float a1       = h_m_1 / b.z();
+    Float a0_2     = a0 * a0;
+    Float a1_2     = a1 * a1;
+
+    Float sy =
+        1.f / dr::sqrt(1.f - dr::clamp(dr::sqr(dr::dot(b, wo_1)), 0.f, 1.f));
+
+    Float sy_2 = sy * sy;
+
+    Float x = (-a0 * a1 / sy_2 - dr::sqrt((a0_2 - a1_2) / sy_2 + 1.f)) /
+              (a0_2 / sy_2 + 1.f);
+    Float y    = a0 * x + a1;
+    Vector3f p = t * x + b * y;
+    return Vector2f(p.x(), p.y());
+}
+
+template <typename Float>
+Vector<Float, 2> shadow_point_0(const Vector<Float,3> &wo_1, 
+                                const Vector<Float,3> &t, 
+                                const Vector<Float,3> &b){
+    using Vector2f = Vector<Float, 2>;
+    using Vector3f = Vector<Float, 3>;
+
+    Float a0   = -t.z() / b.z();
+    Float a0_2 = a0 * a0;
+
+    Float sy   = 1.f / dr::sqrt(1.f - dr::clamp(dr::sqr(dr::dot(b, wo_1)), 0.f, 1.f));
+    Float sy_2 = sy * sy;
+    Float x    = (-dr::sqrt(a0_2 / sy_2 + 1.f)) / (a0_2 / sy_2 + 1.f);
+    Float y    = a0 * x;
+    Vector3f p = t * x + b * y;
+
+    return Vector2f(p.x(), p.y());
+}
+
+template <typename Float, typename Mask>
+Mask isLeft(const Vector<Float, 2> &a, const Vector<Float, 2> &b, const Vector<Float, 2> &c) {
+    //using Mask = dr::mask_t<Float>;
+    Mask mask = (b.x() - a.x()) * (c.y() - a.y()) - (b.y() - a.y()) * (c.x() - a.x()) > 0.f;
+    return mask;
+}
+
+template <typename Float> 
+Float sigma_s_0(Float cos_theta_i) {
+    return (-dr::Pi<Float> + dr::Pi<Float> / cos_theta_i) * 0.5f;
+}
+
+template <typename Float> 
+Float sigma_s(Float cos_theta_i, Float cos_theta_m) {
+    Float cos_theta_i_2 = cos_theta_i * cos_theta_i;
+    Float cos_theta_m_2 = cos_theta_m * cos_theta_m;
+    Float sin_theta_i_2 = 1.f - cos_theta_i_2;
+    Float sin_theta_m_2 = 1.f - cos_theta_m_2;
+    Float tan_theta_i   = dr::sqrt(sin_theta_i_2 / cos_theta_i_2);
+    Float tan_theta_m   = dr::sqrt(sin_theta_m_2 / cos_theta_m_2);
+
+    Float sig_e = dr::acos(dr::clamp((1.f / tan_theta_i + tan_theta_i) * cos_theta_m * cos_theta_i, -1.f, 1.f)) / cos_theta_i;
+    Float sig_c = dr::acos(dr::clamp(1.f / (tan_theta_i * tan_theta_m), -1.f, 1.f)) * sin_theta_m_2;
+    Float sig_t = dr::sqrt(1.f - cos_theta_m_2 / sin_theta_i_2) * tan_theta_i * cos_theta_m;
+    return sig_e - sig_c - sig_t;
+}
+
+template <typename Float>
+Float sigma_intersection(const Vector<Float, 3> &wi_1, 
+                         const Vector<Float, 3> &wo_1,
+                         Float h_m_1, 
+                         const Vector<Float, 2> &p,
+                         const Vector<Float, 2> &pi,
+                         const Vector<Float, 2> &po) {
+    Float sin_theta = dr::sqrt(dr::maximum(1.f - h_m_1 * h_m_1, 0.f));
+
+    Float At = area_triangle(p, pi, po);
+    Float As = area_sector(pi, po, sin_theta);
+    Float Ai = area_sector_i(p, pi, h_m_1, wi_1);
+    Float Ao = area_sector_i(p, po, h_m_1, wo_1);
+
+    Float A = At - As + Ai + Ao;
+    return A;
+}
+
+template <typename Float>
+Float sigma_intersection_0(const Vector<Float, 3> &wi,
+                           const Vector<Float, 3> &wo,
+                           const Vector<Float, 2> &p,
+                           const Vector<Float, 2> &pi,
+                           const Vector<Float, 2> &po) {
+    using Vector3f = Vector<Float, 3>;
+
+    Float At = area_triangle<Float>(p, pi, po);
+    Float As = area_sector<Float>(pi, po, 1.f);
+    Float Ai = area_sector_i<Float>(p, pi, Vector3f(0.f), wi);
+    Float Ao = area_sector_i<Float>(p, po, Vector3f(0.f), wo);
+
+    Float A = At - As + Ai + Ao;
+    return A;
+}
+
+template<typename Float>
+Float area_triangle(const Vector<Float, 2> &a, 
+                    const Vector<Float, 2> &b,
+                    const Vector<Float, 2> &c) {
+    Float area = a.x() * (b.y() - c.y()) + 
+                 b.x() * (c.y() - a.y()) +
+                 c.x() * (a.y() - b.y());
+    return 0.5f * dr::abs(area);
+}
+
+template <typename Float>
+Float area_sector(const Vector<Float, 2> &p1, const Vector<Float, 2> &p2, Float rad) {
+    Float cos_theta = dr::clamp(dr::dot(p1, p2) / (dr::norm(p1) * dr::norm(p2)), -1.f, 1.f);
+    return (dr::acos(cos_theta) * rad * rad - dr::abs(p1.x() * p2.y() - p2.x() * p1.y())) * 0.5f;
+}
+
+template <typename Float>
+Float area_sector_i(const Vector<Float,2> &p, 
+                    const Vector<Float,2> &pi, 
+                    Float h_m_1, 
+                    const Vector<Float,3> &wi_1){
+    using Vector2f = Vector<Float, 2>;
+    using Matrix2f = dr::Matrix<Float, 2>;
+
+    Vector2f direction = dr::normalize(Vector2f(wi_1.x(), wi_1.y()));
+    Float cos_theta_i  = dr::maximum(wi_1.z(), 0.f);
+    Float tan_theta_i = dr::sqrt(1.f - cos_theta_i * cos_theta_i) / cos_theta_i;
+    Vector2f centered_p  = p - direction * tan_theta_i * h_m_1;
+    Vector2f centered_pi = pi - direction * tan_theta_i * h_m_1;
+
+    Matrix2f E(direction / cos_theta_i,
+               Vector2f(-direction.y(), direction.x()));
+    Matrix2f inv_E = dr::inverse(E);
+
+    centered_p  = inv_E * centered_p; 
+    centered_pi = inv_E * centered_pi;
+
+    return area_sector<Float>(centered_p, centered_pi, 1.f) * dr::det(E);
+}
+
+template <typename Float> 
+Float G2_HD(Float tau_0, 
+              const Vector<Float, 3> &wi_1,
+              const Vector<Float, 3> &wo_1, 
+              Float h_m_1) {
+    using Frame3f  = Frame<Float>;
+    using Mask = dr::mask_t<Float>;
+    using Vector2f = Vector<Float, 2>;
+    using Vector3f = Vector<Float, 3>;
+
+    h_m_1      = dr::clamp(h_m_1, 0.f, 1.f);
+
+    Float cos_theta_i = Frame3f::cos_theta(wi_1);
+    Float cos_theta_o = Frame3f::cos_theta(wo_1);
+
+    Float sin_theta_i = dr::sqrt(1.f - cos_theta_i * cos_theta_i);
+    Float sin_theta_o = dr::sqrt(1.f - cos_theta_o * cos_theta_o);
+
+    cos_theta_i = dr::clamp(cos_theta_i, 0.f, 1.f);
+    cos_theta_o = dr::clamp(cos_theta_o, 0.f, 1.f);
+    sin_theta_i = dr::clamp(sin_theta_i, 0.f, 1.f);
+    sin_theta_o = dr::clamp(sin_theta_o, 0.f, 1.f);
+
+    // Check if there is a shadow for direction i and o
+    Mask has_shadow_i = h_m_1 < sin_theta_i;
+    Mask has_shadow_o = h_m_1 < sin_theta_o;
+
+    // Orthogonal frame
+    Vector3f vb = dr::normalize(wi_1 + wo_1);
+    Vector3f vt = dr::normalize(dr::cross(wi_1, wo_1));
+    vt          = vt * dr::sign(-vt.z());
+    Vector3f vn = dr::normalize(dr::cross(vt, vb));
+
+    // Silhouette points i
+    auto [pi_p, pi_m] = silhouette_points<Float>(wi_1, wo_1, h_m_1);
+    // Silhouette points o
+    auto [po_p, po_m] = silhouette_points<Float>(wo_1, wi_1, h_m_1);
+    Vector2f p        = shadow_point<Float>(wo_1, h_m_1, vt, vb);
+
+    // Split line
+    Vector2f p1(-vn.z() / vn.x() * h_m_1, 0.f);
+    Vector2f p2 = p1 + Vector2f(-vn.y() / vn.x(), 1.f);
+
+    // Get relative position of all 4 silhouette points
+    Mask il_pi_p = isLeft<Float, Mask>(p1, p2, pi_p);
+    Mask il_pi_m = isLeft<Float, Mask>(p1, p2, pi_m);
+    Mask il_po_p = isLeft<Float, Mask>(p1, p2, po_p);
+    Mask il_po_m = isLeft<Float, Mask>(p1, p2, po_m);
+
+    // We should always find : same_side_pi = same_side_po
+    Mask same_side_pi = ~(il_pi_p ^ il_pi_m);
+    Mask same_side_po = ~(il_po_p ^ il_po_m);
+
+    // Find where a shadow is inside the other
+    Mask full = same_side_pi & same_side_po & ~(il_pi_p ^ il_po_m);
+    // Find where the shadows are not overlaped
+    Mask null = same_side_pi & same_side_po & (il_pi_p ^ il_po_m);
+
+    // Shadow area in direction i and o
+    Float sig_si = sigma_s<Float>(cos_theta_i, h_m_1);
+    Float sig_so = sigma_s<Float>(cos_theta_o, h_m_1);
+
+    // Intersection area between the two shadows
+    Float sig_in = sigma_intersection<Float>(wi_1, wo_1, h_m_1, p, pi_p, po_p);
+
+    Mask not_colinear = dr::dot(wi_1, wo_1) < 1.f;
+
+    Float sig = dr::select(has_shadow_i, sig_si, 0.f);
+    sig       = dr::select(has_shadow_o & not_colinear, sig + sig_so, sig);
+    sig       = dr::select(full & has_shadow_i & has_shadow_o & not_colinear,
+                           sig - dr::minimum(sig_si, sig_so), sig);
+    sig       = dr::select((~null) & (~full) & has_shadow_i & has_shadow_o & not_colinear,
+                           sig - sig_in, sig);
+    Float coeff = dr::log(1.f - tau_0) * dr::InvPi<Float>;
+    Float value = dr::exp(coeff * sig);
+    return value;
+}
+
+template <typename Float>
+Float G2_HD_0(Float tau_0, 
+              Float a, Float b, Float c, Float d, 
+              const Vector<Float,3> &wi_1, const Vector<Float,3> &wo_1){
+    using Vector2f = Vector<Float, 2>;
+    using Vector3f = Vector<Float, 3>;
+    using Frame3f  = Frame<Float>;
+    using Mask     = dr::mask_t<Float>;
+
+    Float cos_theta_i = Frame3f::cos_theta(wi_1);
+    Float cos_theta_o = Frame3f::cos_theta(wo_1);
+    // Check if there is a shadow for direction i and o
+    Mask has_shadow_i = cos_theta_i < 1.f;
+    Mask has_shadow_o = cos_theta_o < 1.f;
+    // Orthogonal frame
+    Vector3f vb = dr::normalize(wi_1 + wo_1);
+    Vector3f vt = dr::normalize(dr::cross(wi_1, wo_1));
+    vt          = vt * dr::sign(-vt.z());
+    Vector3f vn = dr::normalize(dr::cross(vt, vb));
+    // Silhouette points i
+    auto [pi_p, pi_m] = silhouette_points_0<Float>(wi_1, wo_1);
+    // Silhouette points o
+    auto [po_p, po_m] = silhouette_points_0<Float>(wo_1, wi_1);
+    // Shadow point
+    Vector2f p = shadow_point_0<Float>(wo_1, vt, vb);
+    // Shadow area in direction i and o
+    Float sig_si = sigma_s_0(dr::maximum(cos_theta_i, 0.f));
+    Float sig_so = sigma_s_0(dr::maximum(cos_theta_o, 0.f));
+    // Intersection area between the two shadows
+    Float sig_in = sigma_intersection_0<Float>(wi_1, wo_1, p, pi_p, po_p);
+
+    // Intersection area between the two shadows
+    Mask colinear_same_side = dr::dot(wi_1, wo_1) > 1.f;
+    Mask colinear_diff_side = dr::dot(wi_1, wo_1) < -1.f;
+
+    Float sig = dr::select(has_shadow_i, sig_si, 0.f);
+    sig       = dr::select(has_shadow_o, sig + sig_so, sig);
+    sig       = dr::select(has_shadow_i & has_shadow_o, sig - sig_in, sig);
+    sig       = dr::select(colinear_diff_side & has_shadow_i & has_shadow_o,
+                           sig + sig_so, sig);
+    sig       = dr::select(colinear_same_side & has_shadow_i & has_shadow_o,
+                           dr::maximum(sig_si, sig_so), sig);
+    Float coeff = dr::log(1.f - tau_0) * dr::InvPi<Float>;
+    return dr::exp(coeff * sig);
+}
+
+template <typename Float>
+Float G1_HD(Float tau_0, 
+            const Vector<Float,3>& wi_1,
+            Float h_m_1) {
+
+    using Mask = dr::mask_t<Float>;
+    using Frame3f = Frame<Float>;
+    
+    h_m_1 = dr::clamp(h_m_1, 0.f, 1.f);
+    
+    Float cos_theta_i = Frame3f::cos_theta(wi_1);
+    Float sin_theta_i = Frame3f::sin_theta(wi_1);
+    // check if there is a shadow for direction i 
+    Mask has_shadow_i = h_m_1 < sin_theta_i;
+    Float sig_s = dr::select(has_shadow_i, sigma_s<Float>(cos_theta_i, h_m_1), 0.f);
+    Float coeff = dr::log(1.f - tau_0) * dr::InvPi<Float>;
+    Float value = dr::exp(coeff * sig_s);
+
+    return value;
+}
+
+template <typename Float>
+Float G1_HD_0(  Float tau_0,  
+                const Vector<Float,3>& wi_1) {
+
+    using Frame3f = Frame<Float>;
+
+    Float cos_theta_i = Frame3f::cos_theta(wi_1);
+    Float sig         = sigma_s_0(cos_theta_i);
+    Float coeff       = dr::log(1.f - tau_0) * dr::InvPi<Float>;
+    Float value       = dr::exp(coeff);
+
+    return value;
+}
+
+template <typename Float>
+Float NDF_1(Float tau_0, const Vector<Float,3> &m_1){
+    using Frame3f = Frame<Float>;
+    Float sin2_theta_m = Frame3f::sin_theta_2(m_1);
+    Float value = -dr::log(1.f - tau_0) * dr::pow(1.f - tau_0, sin2_theta_m) *
+                  dr::InvPi<Float> / tau_0;
+    return value;
+}
+
+
+template <typename Float>
+Vector<Float, 3> square_to_sphere_micrograin(Float tau_0, const Point<Float,2> &sample2){
+    using Vector3f = Vector<Float, 3>;
+
+    Float s1 = sample2.x(); // random number in [0,1] to sample phi_m
+    Float s2 = sample2.y(); // random number in [0,1] to sample theta_m
+
+    Float phi_m = dr::TwoPi<Float> * s1;
+    Float theta_m = dr::asin(dr::sqrt(dr::log(1.f - tau_0 * s1) / dr::log(1.f - tau_0)));
+
+    Float cp = dr::cos(phi_m);
+    Float sp = dr::sin(phi_m);
+    Float ct = dr::cos(theta_m);
+    Float st = dr::sin(theta_m);
+
+    return Vector3f(cp * st, sp * st, ct);
+}
+
+template <typename Float>
+Vector<Float, 3> square_to_sphere_micrograin_pdf(Float tau_0, const Vector<Float,3> &m_1){
+    using Frame3f = Frame<Float>;
+    Float cos_theta_m = Frame3f::cos_theta(m_1);
+    Float pdf         = NDF_1<Float>(tau_0, m_1) * cos_theta_m;
+    return pdf;
+}
+
+
+NAMESPACE_END(mitsuba)

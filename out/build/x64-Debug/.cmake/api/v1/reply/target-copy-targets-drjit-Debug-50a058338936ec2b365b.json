@@ -1,0 +1,100 @@
+{
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_custom_target",
+			"add_custom_command"
+		],
+		"files" : 
+		[
+			"ext/drjit/src/python/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 163,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 169,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 169,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 169,
+				"parent" : 0
+			}
+		]
+	},
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 2,
+			"id" : "drjit-core::@5b9a3dded2238b5e144f"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "nanothread::@06ff9ba2dfdc4e7a81bf"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "drjit-extra::@eb75b61d00d58a806b71"
+		}
+	],
+	"id" : "copy-targets-drjit::@dc659ee84343f8c2e0d6",
+	"name" : "copy-targets-drjit",
+	"paths" : 
+	{
+		"build" : "ext/drjit/src/python",
+		"source" : "ext/drjit/src/python"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "",
+			"sourceIndexes" : 
+			[
+				0
+			]
+		},
+		{
+			"name" : "CMake Rules",
+			"sourceIndexes" : 
+			[
+				1
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/ext/drjit/src/python/CMakeFiles/copy-targets-drjit",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 0,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/ext/drjit/src/python/CMakeFiles/copy-targets-drjit.rule",
+			"sourceGroupIndex" : 1
+		}
+	],
+	"type" : "UTILITY"
+}

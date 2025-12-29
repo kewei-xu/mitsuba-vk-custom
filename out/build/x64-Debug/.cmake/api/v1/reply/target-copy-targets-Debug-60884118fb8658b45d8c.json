@@ -1,0 +1,1270 @@
+{
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_custom_target",
+			"add_custom_command"
+		],
+		"files" : 
+		[
+			"CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 514,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 523,
+				"parent" : 0
+			}
+		]
+	},
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 2,
+			"id" : "drjit-core::@5b9a3dded2238b5e144f"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "pugixml::@a9f99adfd9f636cea434"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "nanothread::@06ff9ba2dfdc4e7a81bf"
+		},
+		{
+			"backtrace" : 5,
+			"id" : "drjit-extra::@eb75b61d00d58a806b71"
+		},
+		{
+			"backtrace" : 6,
+			"id" : "embree::@2cb1f9781e56fdf70b7c"
+		},
+		{
+			"backtrace" : 7,
+			"id" : "zlib::@ba14d366ba4ca6e90c54"
+		},
+		{
+			"backtrace" : 8,
+			"id" : "Half::@4a7ae0dea943a56d8a66"
+		},
+		{
+			"backtrace" : 9,
+			"id" : "Iex::@6fd788319ac26029346c"
+		},
+		{
+			"backtrace" : 10,
+			"id" : "Imath::@0291210b44218159d33e"
+		},
+		{
+			"backtrace" : 11,
+			"id" : "IexMath::@fc750b9da3a58bd2fac8"
+		},
+		{
+			"backtrace" : 12,
+			"id" : "IlmThread::@278aebe4a71d44f9a80e"
+		},
+		{
+			"backtrace" : 13,
+			"id" : "IlmImf::@f32ba8242b8a9b800c71"
+		},
+		{
+			"backtrace" : 14,
+			"id" : "jpeg::@f79ce0f69b2b60d010e4"
+		},
+		{
+			"backtrace" : 15,
+			"id" : "png::@2fba0b78d25f2193a53c"
+		},
+		{
+			"backtrace" : 16,
+			"id" : "asmjit::@e695f9df9e4caa51c123"
+		},
+		{
+			"backtrace" : 17,
+			"id" : "mitsuba::@145eef247bfb46b6828c"
+		},
+		{
+			"backtrace" : 18,
+			"id" : "diffuse::@2650a5b78772af2c3c8a"
+		},
+		{
+			"backtrace" : 19,
+			"id" : "plastic::@2650a5b78772af2c3c8a"
+		},
+		{
+			"backtrace" : 20,
+			"id" : "roughdielectric::@2650a5b78772af2c3c8a"
+		},
+		{
+			"backtrace" : 21,
+			"id" : "polarizer::@2650a5b78772af2c3c8a"
+		},
+		{
+			"backtrace" : 22,
+			"id" : "bumpmap::@2650a5b78772af2c3c8a"
+		},
+		{
+			"backtrace" : 23,
+			"id" : "blendbsdf::@2650a5b78772af2c3c8a"
+		},
+		{
+			"backtrace" : 24,
+			"id" : "conductor::@2650a5b78772af2c3c8a"
+		},
+		{
+			"backtrace" : 25,
+			"id" : "mask::@2650a5b78772af2c3c8a"
+		},
+		{
+			"backtrace" : 26,
+			"id" : "roughplastic::@2650a5b78772af2c3c8a"
+		},
+		{
+			"backtrace" : 27,
+			"id" : "null::@2650a5b78772af2c3c8a"
+		},
+		{
+			"backtrace" : 28,
+			"id" : "thindielectric::@2650a5b78772af2c3c8a"
+		},
+		{
+			"backtrace" : 29,
+			"id" : "dielectric::@2650a5b78772af2c3c8a"
+		},
+		{
+			"backtrace" : 30,
+			"id" : "hair::@2650a5b78772af2c3c8a"
+		},
+		{
+			"backtrace" : 31,
+			"id" : "measured::@2650a5b78772af2c3c8a"
+		},
+		{
+			"backtrace" : 32,
+			"id" : "normalmap::@2650a5b78772af2c3c8a"
+		},
+		{
+			"backtrace" : 33,
+			"id" : "roughconductor::@2650a5b78772af2c3c8a"
+		},
+		{
+			"backtrace" : 34,
+			"id" : "twosided::@2650a5b78772af2c3c8a"
+		},
+		{
+			"backtrace" : 35,
+			"id" : "measured_polarized::@2650a5b78772af2c3c8a"
+		},
+		{
+			"backtrace" : 36,
+			"id" : "micrograin_plastic::@bfa41aa3791cb790347b"
+		},
+		{
+			"backtrace" : 37,
+			"id" : "area::@40d60837f3021c48fe74"
+		},
+		{
+			"backtrace" : 38,
+			"id" : "circular::@2650a5b78772af2c3c8a"
+		},
+		{
+			"backtrace" : 39,
+			"id" : "envmap::@40d60837f3021c48fe74"
+		},
+		{
+			"backtrace" : 40,
+			"id" : "retarder::@2650a5b78772af2c3c8a"
+		},
+		{
+			"backtrace" : 41,
+			"id" : "principled::@2650a5b78772af2c3c8a"
+		},
+		{
+			"backtrace" : 42,
+			"id" : "principledthin::@2650a5b78772af2c3c8a"
+		},
+		{
+			"backtrace" : 43,
+			"id" : "micrograin_conductor::@bfa41aa3791cb790347b"
+		},
+		{
+			"backtrace" : 44,
+			"id" : "micrograin_diffuse::@bfa41aa3791cb790347b"
+		},
+		{
+			"backtrace" : 45,
+			"id" : "pplastic::@2650a5b78772af2c3c8a"
+		},
+		{
+			"backtrace" : 46,
+			"id" : "point::@40d60837f3021c48fe74"
+		},
+		{
+			"backtrace" : 47,
+			"id" : "constant::@40d60837f3021c48fe74"
+		},
+		{
+			"backtrace" : 48,
+			"id" : "sunsky::@40d60837f3021c48fe74"
+		},
+		{
+			"backtrace" : 49,
+			"id" : "directionalarea::@40d60837f3021c48fe74"
+		},
+		{
+			"backtrace" : 50,
+			"id" : "spot::@40d60837f3021c48fe74"
+		},
+		{
+			"backtrace" : 51,
+			"id" : "hdrfilm::@5525cc5e1c90c340a204"
+		},
+		{
+			"backtrace" : 52,
+			"id" : "timed_sunsky::@40d60837f3021c48fe74"
+		},
+		{
+			"backtrace" : 53,
+			"id" : "projector::@40d60837f3021c48fe74"
+		},
+		{
+			"backtrace" : 54,
+			"id" : "directional::@40d60837f3021c48fe74"
+		},
+		{
+			"backtrace" : 55,
+			"id" : "path::@cc645d70eca185fd34e2"
+		},
+		{
+			"backtrace" : 56,
+			"id" : "volpathmis::@cc645d70eca185fd34e2"
+		},
+		{
+			"backtrace" : 57,
+			"id" : "specfilm::@5525cc5e1c90c340a204"
+		},
+		{
+			"backtrace" : 58,
+			"id" : "pathv2::@cc645d70eca185fd34e2"
+		},
+		{
+			"backtrace" : 59,
+			"id" : "aov::@cc645d70eca185fd34e2"
+		},
+		{
+			"backtrace" : 60,
+			"id" : "ptracer::@cc645d70eca185fd34e2"
+		},
+		{
+			"backtrace" : 61,
+			"id" : "stokes::@cc645d70eca185fd34e2"
+		},
+		{
+			"backtrace" : 62,
+			"id" : "direct::@cc645d70eca185fd34e2"
+		},
+		{
+			"backtrace" : 63,
+			"id" : "depth::@cc645d70eca185fd34e2"
+		},
+		{
+			"backtrace" : 64,
+			"id" : "volpath::@cc645d70eca185fd34e2"
+		},
+		{
+			"backtrace" : 65,
+			"id" : "moment::@cc645d70eca185fd34e2"
+		},
+		{
+			"backtrace" : 66,
+			"id" : "isotropic::@a2fe7a51f5b50fd4e68c"
+		},
+		{
+			"backtrace" : 67,
+			"id" : "homogeneous::@75b8b8d758a74e7d2cbc"
+		},
+		{
+			"backtrace" : 68,
+			"id" : "hg::@a2fe7a51f5b50fd4e68c"
+		},
+		{
+			"backtrace" : 69,
+			"id" : "heterogeneous::@75b8b8d758a74e7d2cbc"
+		},
+		{
+			"backtrace" : 70,
+			"id" : "blendphase::@a2fe7a51f5b50fd4e68c"
+		},
+		{
+			"backtrace" : 71,
+			"id" : "rayleigh::@a2fe7a51f5b50fd4e68c"
+		},
+		{
+			"backtrace" : 72,
+			"id" : "sggx::@a2fe7a51f5b50fd4e68c"
+		},
+		{
+			"backtrace" : 73,
+			"id" : "tabphase::@a2fe7a51f5b50fd4e68c"
+		},
+		{
+			"backtrace" : 74,
+			"id" : "lanczos::@793fed7db39d20f30471"
+		},
+		{
+			"backtrace" : 75,
+			"id" : "tent::@793fed7db39d20f30471"
+		},
+		{
+			"backtrace" : 76,
+			"id" : "box::@793fed7db39d20f30471"
+		},
+		{
+			"backtrace" : 77,
+			"id" : "stratified::@84adf4185b845884ce74"
+		},
+		{
+			"backtrace" : 78,
+			"id" : "gaussian::@793fed7db39d20f30471"
+		},
+		{
+			"backtrace" : 79,
+			"id" : "mitchell::@793fed7db39d20f30471"
+		},
+		{
+			"backtrace" : 80,
+			"id" : "multijitter::@84adf4185b845884ce74"
+		},
+		{
+			"backtrace" : 81,
+			"id" : "catmullrom::@793fed7db39d20f30471"
+		},
+		{
+			"backtrace" : 82,
+			"id" : "independent::@84adf4185b845884ce74"
+		},
+		{
+			"backtrace" : 83,
+			"id" : "ldsampler::@84adf4185b845884ce74"
+		},
+		{
+			"backtrace" : 84,
+			"id" : "orthogonal::@84adf4185b845884ce74"
+		},
+		{
+			"backtrace" : 85,
+			"id" : "radiancemeter::@8d2b3ec0edc5ac3fa2bf"
+		},
+		{
+			"backtrace" : 86,
+			"id" : "irradiancemeter::@8d2b3ec0edc5ac3fa2bf"
+		},
+		{
+			"backtrace" : 87,
+			"id" : "distant::@8d2b3ec0edc5ac3fa2bf"
+		},
+		{
+			"backtrace" : 88,
+			"id" : "batch::@8d2b3ec0edc5ac3fa2bf"
+		},
+		{
+			"backtrace" : 89,
+			"id" : "thinlens::@8d2b3ec0edc5ac3fa2bf"
+		},
+		{
+			"backtrace" : 90,
+			"id" : "perspective::@8d2b3ec0edc5ac3fa2bf"
+		},
+		{
+			"backtrace" : 91,
+			"id" : "orthographic::@8d2b3ec0edc5ac3fa2bf"
+		},
+		{
+			"backtrace" : 92,
+			"id" : "ply::@945e9b55088988197252"
+		},
+		{
+			"backtrace" : 93,
+			"id" : "cylinder::@945e9b55088988197252"
+		},
+		{
+			"backtrace" : 94,
+			"id" : "sdfgrid::@945e9b55088988197252"
+		},
+		{
+			"backtrace" : 95,
+			"id" : "bsplinecurve::@945e9b55088988197252"
+		},
+		{
+			"backtrace" : 96,
+			"id" : "linearcurve::@945e9b55088988197252"
+		},
+		{
+			"backtrace" : 97,
+			"id" : "blender::@945e9b55088988197252"
+		},
+		{
+			"backtrace" : 98,
+			"id" : "rectangle::@945e9b55088988197252"
+		},
+		{
+			"backtrace" : 99,
+			"id" : "sphere::@945e9b55088988197252"
+		},
+		{
+			"backtrace" : 100,
+			"id" : "cube::@945e9b55088988197252"
+		},
+		{
+			"backtrace" : 101,
+			"id" : "obj::@945e9b55088988197252"
+		},
+		{
+			"backtrace" : 102,
+			"id" : "instance::@945e9b55088988197252"
+		},
+		{
+			"backtrace" : 103,
+			"id" : "merge::@945e9b55088988197252"
+		},
+		{
+			"backtrace" : 104,
+			"id" : "disk::@945e9b55088988197252"
+		},
+		{
+			"backtrace" : 105,
+			"id" : "ellipsoids::@945e9b55088988197252"
+		},
+		{
+			"backtrace" : 106,
+			"id" : "ellipsoidsmesh::@945e9b55088988197252"
+		},
+		{
+			"backtrace" : 107,
+			"id" : "shapegroup::@945e9b55088988197252"
+		},
+		{
+			"backtrace" : 108,
+			"id" : "serialized::@945e9b55088988197252"
+		},
+		{
+			"backtrace" : 109,
+			"id" : "checkerboard::@4c1ac81e882699d91b9d"
+		},
+		{
+			"backtrace" : 110,
+			"id" : "volume::@4c1ac81e882699d91b9d"
+		},
+		{
+			"backtrace" : 111,
+			"id" : "bitmap::@4c1ac81e882699d91b9d"
+		},
+		{
+			"backtrace" : 112,
+			"id" : "mesh_attribute::@4c1ac81e882699d91b9d"
+		},
+		{
+			"backtrace" : 113,
+			"id" : "constvolume::@c0ff56b8353fd64394b1"
+		},
+		{
+			"backtrace" : 114,
+			"id" : "gridvolume::@c0ff56b8353fd64394b1"
+		},
+		{
+			"backtrace" : 115,
+			"id" : "rawconstant::@eb7f6c181f6ad42c7a57"
+		},
+		{
+			"backtrace" : 116,
+			"id" : "irregular::@eb7f6c181f6ad42c7a57"
+		},
+		{
+			"backtrace" : 117,
+			"id" : "srgb::@eb7f6c181f6ad42c7a57"
+		},
+		{
+			"backtrace" : 118,
+			"id" : "regular::@eb7f6c181f6ad42c7a57"
+		},
+		{
+			"backtrace" : 119,
+			"id" : "d65::@eb7f6c181f6ad42c7a57"
+		},
+		{
+			"backtrace" : 120,
+			"id" : "uniform::@eb7f6c181f6ad42c7a57"
+		},
+		{
+			"backtrace" : 121,
+			"id" : "blackbody::@eb7f6c181f6ad42c7a57"
+		}
+	],
+	"id" : "copy-targets::@6890427a1f51a3e7e1df",
+	"name" : "copy-targets",
+	"paths" : 
+	{
+		"build" : ".",
+		"source" : "."
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "",
+			"sourceIndexes" : 
+			[
+				0
+			]
+		},
+		{
+			"name" : "CMake Rules",
+			"sourceIndexes" : 
+			[
+				1
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/CMakeFiles/copy-targets",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 0,
+			"isGenerated" : true,
+			"path" : "out/build/x64-Debug/CMakeFiles/copy-targets.rule",
+			"sourceGroupIndex" : 1
+		}
+	],
+	"type" : "UTILITY"
+}
