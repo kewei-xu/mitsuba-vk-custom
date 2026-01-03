@@ -10,17 +10,20 @@ NAMESPACE_BEGIN(mitsuba)
 /**
  * \brief 2x2 surface stretching matrix for anisotropic micrograin scattering
  */
-//template <typename Float>
-//struct StretchMatrix2D {
-//    Float a, b, c, d;
-//    
-//    /// Default constructor - identity matrix
-//    StretchMatrix2D() : a(Float(1.f)), b(Float(0.f)), c(Float(0.f)), d(Float(1.f)) {}
-//    /// Parameterized constructor
-//    StretchMaatrix2D(Float a_, Float b_, Float c_, Float d_)
-//        : a(a_), b(b_), c(c_), d(d_) {}
+// template <typename Float>
+// struct StretchMatrix2D {
+//     Float a, b, c, d;
 //
-//};
+//     /// Default constructor - identity matrix
+//     StretchMatrix2D() : a(Float(1.f)), b(Float(0.f)), c(Float(0.f)),
+//     d(Float(1.f)) {}
+//     /// Parameterized constructor
+//     StretchMatrix2D(Float a_, Float b_, Float c_, Float d_)
+//         : a(a_), b(b_), c(c_), d(d_) {}
+//
+// };
+
+
 
 
 
@@ -30,7 +33,8 @@ public:
     MI_IMPORT_BASE(BSDF)
     MI_IMPORT_TYPES()
 
-protected:
+public:
+    virtual ~MicrograinBSDF() {};
 
     MI_INLINE Float eval_tau_0(const SurfaceInteraction3f &si, 
                                Mask active=true) const {
@@ -74,9 +78,37 @@ protected:
         Float b = eval_b(si, active);
         Float c = eval_c(si, active);
         Float d = eval_d(si, active);
-        return Matrix3f(a, b, 0, 
-                        c, d, 0, 
-                        0, 0, 1);
+        return Matrix3f(a,   b,   0.f, 
+                        c,   d,   0.f, 
+                        0.f, 0.f, 1.f);
+    }
+
+    MI_INLINE std::pair<Matrix3f, Float> eval_stretching_matrix3f_and_abs_det(const SurfaceInteraction3f &si, 
+                                                                              Mask active= true) const {
+        Float a = eval_a(si, active);
+        Float b = eval_b(si, active);
+        Float c = eval_c(si, active);
+        Float d = eval_d(si, active);
+        return { Matrix3f(a,   b,   0.f, 
+                          c,   d,   0.f, 
+                          0.f, 0.f, 1.f), dr::abs(a*d - b*c) };
+    }
+
+    virtual Spectrum eval_fresnel(const SurfaceInteraction3f &si,
+                                  const Vector3f &m,
+                                  Mask active = true) const {
+        return 0.f;
+    }
+
+    virtual Spectrum eval_weighted_albedo(const SurfaceInteraction3f &si,
+                                          const Vector3f &wo, 
+                                          const Vector3f &m,
+                                          Mask active = true) const {
+        return 0.f;
+    }
+
+    virtual Float specular_component_sampling_probability(const Float cos_theta_i) const {
+        return 0.f;
     }
 
     Float D(const SurfaceInteraction3f &si, 
@@ -126,6 +158,8 @@ protected:
         Float pdf         = this->D(si, m, active) * cos_theta_m;
         return pdf;
     }
+
+    
     
     MI_DECLARE_CLASS(MicrograinBSDF)
 
@@ -140,7 +174,7 @@ protected:
         m_c      = props.get_unbounded_texture<Texture>("c", 0.f);
         m_d      = props.get_unbounded_texture<Texture>("d", 1.f);
     }
-    ~MicrograinBSDF() {};
+
 
 protected:
     ref<Texture> m_tau_0; // filling factor
@@ -152,8 +186,112 @@ protected:
     MI_TRAVERSE_CB(Base, m_tau_0, m_a, m_b, m_c, m_d, m_radius)
 };
 
+
+
+template <typename Float, typename Spectrum>
+class PolyMicrograin : public BSDF<Float, Spectrum> {
+public:
+    MI_IMPORT_BASE(BSDF)
+    MI_IMPORT_TYPES()
+
+public:
+    virtual ~PolyMicrograin() {};
+
+    MI_INLINE Float eval_global_tau_0(const SurfaceInteraction3f &si,
+                                      Mask active = true) const {
+        Float value = 1.f;
+        for (size_t i = 0; i < NbGrainMax; ++i) {
+            active &= i < m_bsdf_count;
+            Float tau_0 = m_micrograin_bsdfs[i]->eval_tau_0(si, active);
+            value *= dr::select(active, (1.f - tau_0), 1.f);
+        }
+        return dr::clamp(1.f - value, 0.f, 0.9999f);
+    }
+
+    MI_INLINE Float eval_visibility1_bulk(const SurfaceInteraction3f &si,
+                                          Mask active = true) const {
+        Float value = 1.f;
+        for (size_t i = 0; i < NbGrainMax; ++i) {
+            active &= i < m_bsdf_count;
+            Float tau_0 = m_micrograin_bsdfs[i]->eval_tau_0(si, active);
+            Matrix3f M = m_micrograin_bsdfs[i]->eval_stretching_matrix3f(si, active);
+            Matrix3f M_inv = dr::inverse(M);
+            Vector3f wi_1 = dr::normalize(M_inv * si.wi);
+            Float G1_dist_h0 = G1_HD_0<Float>(tau_0, wi_1);
+            value *= dr::select(active, G1_dist_h0, 1.f);
+        }
+        return dr::clamp(value, 0.f, 1.f);
+    }
+
+    MI_INLINE Float eval_visibility2_bulk(const SurfaceInteraction3f &si,
+                                          const Vector3f &wo,   
+                                          Mask active = true) const {
+        Float value = 1.f;
+        for (size_t i = 0; i < NbGrainMax; ++i) {
+            active &= i < m_bsdf_count;
+            Float tau_0 = m_micrograin_bsdfs[i]->eval_tau_0(si, active);
+            Matrix3f M = m_micrograin_bsdfs[i]->eval_stretching_matrix3f(si, active);
+            Matrix3f M_inv   = dr::inverse(M);
+            Vector3f wi_1    = dr::normalize(M_inv * si.wi);
+            Vector3f wo_1    = dr::normalize(M_inv * wo);
+            Float G2_dist_h0 = G2_HD_0<Float>(tau_0, wi_1, wo_1);
+            value *= dr::select(active, G2_dist_h0, 1.f);
+        }
+        return dr::clamp(value, 0.f, 1.f);
+    }
+
+    MI_DECLARE_CLASS(PolyMicrograin)
+
+protected:
+    PolyMicrograin(const Properties &props) : Base(props) {
+        // get all sub mono micrgrain bsdfs
+        m_bsdf_count = 0;
+        for (auto &prop : props.objects()) {
+            if (MicrograinBSDF<Float, Spectrum> *bsdf =
+                    prop.try_get<MicrograinBSDF<Float, Spectrum>>()) {
+                if (m_bsdf_count == NbGrainMax) {
+                    Throw("Too many micrograin bsdfs: {} exceeds maximum {}",
+                          m_bsdf_count + 1, NbGrainMax);
+                    m_micrograin_bsdfs[m_bsdf_count] = bsdf;
+                    m_bsdf_count++;
+                }
+            }
+        }
+        if (m_bsdf_count == 0) {
+            Throw("PolyMicrograin: At least one MicrograinBSDF must be "
+                  "specified.");
+        }
+        m_components.clear();
+        for (size_t i = 0; i < m_bsdf_count; ++i) {
+            m_flags |= m_micrograin_bsdfs[i]->flags();
+            for (size_t j = 0; j < m_micrograin_bsdfs[i]->component_count(); ++j) {
+                m_components.push_back(
+                    m_micrograin_bsdfs[i]->flags(j));
+            }
+        }
+    }
+
+protected:
+    static constexpr size_t NbGrainMax = 16;
+    ref<MicrograinBSDF<Float, Spectrum>> m_micrograin_bsdfs[NbGrainMax];
+    size_t m_bsdf_count;
+
+    MI_TRAVERSE_CB(Base, m_bsdf_count, m_micrograin_bsdfs[0],
+                   m_micrograin_bsdfs[1], m_micrograin_bsdfs[2],
+                   m_micrograin_bsdfs[3], m_micrograin_bsdfs[4],
+                   m_micrograin_bsdfs[5], m_micrograin_bsdfs[6],
+                   m_micrograin_bsdfs[7], m_micrograin_bsdfs[8],
+                   m_micrograin_bsdfs[9], m_micrograin_bsdfs[10],
+                   m_micrograin_bsdfs[11], m_micrograin_bsdfs[12],
+                   m_micrograin_bsdfs[13], m_micrograin_bsdfs[14],
+                   m_micrograin_bsdfs[15])
+};
+
+
+
+
 // -----------------------------------------------------------------------
-// ------------------------helper functions-------------------------------
+// ------------------------helper functions (mono)------------------------
 // -----------------------------------------------------------------------
 
 template <typename Float>
@@ -293,8 +431,8 @@ Float sigma_intersection_0(const Vector<Float, 3> &wi,
 
     Float At = area_triangle<Float>(p, pi, po);
     Float As = area_sector<Float>(pi, po, 1.f);
-    Float Ai = area_sector_i<Float>(p, pi, Vector3f(0.f), wi);
-    Float Ao = area_sector_i<Float>(p, po, Vector3f(0.f), wo);
+    Float Ai = area_sector_i<Float>(p, pi, 0.f, wi);
+    Float Ao = area_sector_i<Float>(p, po, 0.f, wo);
 
     Float A = At - As + Ai + Ao;
     return A;
@@ -340,11 +478,12 @@ Float area_sector_i(const Vector<Float,2> &p,
     return area_sector<Float>(centered_p, centered_pi, 1.f) * dr::det(E);
 }
 
+
 template <typename Float> 
 Float G2_HD(Float tau_0, 
-              const Vector<Float, 3> &wi_1,
-              const Vector<Float, 3> &wo_1, 
-              Float h_m_1) {
+            const Vector<Float, 3> &wi_1,
+            const Vector<Float, 3> &wo_1, 
+            Float h_m_1) {
     using Frame3f  = Frame<Float>;
     using Mask = dr::mask_t<Float>;
     using Vector2f = Vector<Float, 2>;
@@ -358,14 +497,12 @@ Float G2_HD(Float tau_0,
     Float sin_theta_i = dr::sqrt(1.f - cos_theta_i * cos_theta_i);
     Float sin_theta_o = dr::sqrt(1.f - cos_theta_o * cos_theta_o);
 
-    cos_theta_i = dr::clamp(cos_theta_i, 0.f, 1.f);
-    cos_theta_o = dr::clamp(cos_theta_o, 0.f, 1.f);
-    sin_theta_i = dr::clamp(sin_theta_i, 0.f, 1.f);
-    sin_theta_o = dr::clamp(sin_theta_o, 0.f, 1.f);
-
     // Check if there is a shadow for direction i and o
     Mask has_shadow_i = h_m_1 < sin_theta_i;
     Mask has_shadow_o = h_m_1 < sin_theta_o;
+
+    cos_theta_i = dr::clamp(cos_theta_i, 0.f, 1.f);
+    cos_theta_o = dr::clamp(cos_theta_o, 0.f, 1.f);
 
     // Orthogonal frame
     Vector3f vb = dr::normalize(wi_1 + wo_1);
@@ -420,8 +557,8 @@ Float G2_HD(Float tau_0,
 
 template <typename Float>
 Float G2_HD_0(Float tau_0, 
-              Float a, Float b, Float c, Float d, 
-              const Vector<Float,3> &wi_1, const Vector<Float,3> &wo_1){
+              const Vector<Float,3> &wi_1, 
+              const Vector<Float,3> &wo_1){
     using Vector2f = Vector<Float, 2>;
     using Vector3f = Vector<Float, 3>;
     using Frame3f  = Frame<Float>;

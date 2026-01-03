@@ -77,16 +77,15 @@ public:
         Float cos_theta_i = Frame3f::cos_theta(si.wi);
         Float cos_theta_o = Frame3f::cos_theta(wo);
 
-        Float tau_0 = this->eval_tau_0(si, active);
-        Matrix3f M  = this->eval_stretching_matrix3f(si, active);
+        Float tau_0         = this->eval_tau_0(si, active);
+        auto [M, abs_det_M] = this->eval_stretching_matrix3f_and_abs_det(si, active);
         Matrix3f M_inv   = dr::inverse(M);
         Matrix3f M_inv_T = dr::transpose(M_inv);
         Matrix3f M_T     = dr::transpose(M);
-        Float abs_det_M  = dr::abs(dr::det(M));
 
         // sample micronormal
         Vector3f m_1 = square_to_sphere_micrograin<Float>(tau_0, sample2_extra);
-        Normal3f m   = dr::normalize(M_inv_T * m_1);
+        Vector3f m   = dr::normalize(M_inv_T * m_1);
         // compute NDF and sample pdf
         Float norm_sqr = dr::squared_norm(M_T * m);
         Float coeff    = abs_det_M / (norm_sqr * norm_sqr);
@@ -103,11 +102,10 @@ public:
         Float cos_theta_im = dr::clamp(dr::dot(si.wi, m), 0.f, 1.f);
         Float cos_theta_om = dr::clamp(dr::dot(wo, m), 0.f, 1.f);
 
-
-        Float brdf      = cos_theta_im * cos_theta_om * D_ * G_ / pdf_m;
-        Spectrum value = m_reflectance->eval(si, active) * dr::InvPi<Float> *
-                         brdf / cos_theta_i /*/ cos_theta_o*/;
-
+        Spectrum value = cos_theta_im * cos_theta_om *
+                         m_reflectance->eval(si, active) * dr::InvPi<Float> * 
+                         D_ * G_ / pdf_m / cos_theta_i /*/ cos_theta_o*/;
+        
         Mask valid = dr::neq(pdf_m, 0.f) & (cos_theta_o > 0.f) & (cos_theta_i > 0.f);
 
         return dr::select(active & valid, value, 0.f);
@@ -149,6 +147,22 @@ public:
         return { bs, value };
     }
 
+    Spectrum eval_weighted_albedo(const SurfaceInteraction3f &si,
+                                  const Vector3f &wo, 
+                                  const Vector3f &m,
+                                  Mask active = true) const override {
+        Float cos_theta_im = dr::clamp(dr::dot(si.wi, m), 0.f, 1.f);
+        Float cos_theta_om = dr::clamp(dr::dot(wo, m), 0.f, 1.f);
+
+        Spectrum value = m_reflectance->eval(si, active) * dr::InvPi<Float> *
+                         cos_theta_im * cos_theta_om;
+        return value;
+    }
+
+    Float specular_component_sampling_probability(
+    const Float /* cos_theta_i */ ) const override{
+        return 0.f;
+    }
 
     MI_DECLARE_CLASS(MicrograinDiffuse)
 

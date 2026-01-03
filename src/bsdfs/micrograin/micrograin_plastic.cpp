@@ -105,11 +105,10 @@ public:
         Float cos_theta_o = Frame3f::cos_theta(wo);
 
         Float tau_0 = this->eval_tau_0(si, active);
-        Matrix3f M  = this->eval_stretching_matrix3f(si, active);
+        auto [M, abs_det_M]  = this->eval_stretching_matrix3f_and_abs_det(si, active);
         Matrix3f M_inv   = dr::inverse(M);
         Matrix3f M_inv_T = dr::transpose(M_inv);
         Matrix3f M_T     = dr::transpose(M);
-        Float abs_det_M  = dr::abs(dr::det(M));
 
         //-------- compute specular part ----------//
         Vector3f m = dr::normalize(si.wi + wo);
@@ -149,6 +148,7 @@ public:
         G2_local = (dr::dot(si.wi, m) > 0.f) & (dr::dot(wo, m) > 0.f);
         G2_dist  = G2_HD<Float>(tau_0, wi_1, wo_1, h_m_1);
         G_            = dr::select(G2_local, G2_dist, 0.f);
+        // compute diffuse coefficient
         Float cos_theta_im = dr::clamp(dr::dot(si.wi, m), 0.f, 1.f);
         Float cos_theta_om = dr::clamp(dr::dot(wo, m), 0.f, 1.f);
         
@@ -157,10 +157,10 @@ public:
 
         Float T = (1.f - f_o) * (1.f - f_i);
 
-        Float brdf_diff = cos_theta_im * cos_theta_om * D_ * G_ / pdf_m;
-        Spectrum value_diff = Kd * T * dr::InvPi<Float> * brdf_diff / (cos_theta_i /*cos_theta_o*/);
+        Spectrum value_diff = cos_theta_im * cos_theta_om * Kd * T * dr::InvPi<Float> * 
+                              D_ * G_ / pdf_m / (cos_theta_i /*cos_theta_o*/);
         
-        Mask valid = (cos_theta_i > 0.f) & (cos_theta_o > 0.f) & valid_spec;
+        Mask valid = (cos_theta_i > 0.f) & (cos_theta_o > 0.f) & valid_spec & dr::neq(pdf_m, 0.f);
         return dr::select(active & valid, value_spec + value_diff, 0.f);
     }
 
@@ -169,7 +169,7 @@ public:
               const Vector3f &wo, 
               Mask active) const override {
         Float tau_0 = this->eval_tau_0(si, active);
-        Matrix3f M  = this->eval_stretching_matrix3f(si, active);
+        auto [M, abs_det_M]  = this->eval_stretching_matrix3f_and_abs_det(si, active);
         Matrix3f M_T = dr::transpose(M);
 
         Float cos_theta_i = Frame3f::cos_theta(si.wi);
@@ -183,7 +183,7 @@ public:
         Vector3f hm    = dr::normalize(si.wi + wo);
         Vector3f hm_1  = dr::normalize(M_T * hm);
         Float norm_sqr = dr::squared_norm(M_T * hm);
-        Float coeff    = dr::abs(dr::det(M)) / (norm_sqr * norm_sqr);
+        Float coeff    = abs_det_M / (norm_sqr * norm_sqr);
         Float D_       = coeff * NDF_1<Float>(tau_0, hm_1);
         Float cos_theta_m = Frame3f::cos_theta(hm);
         Float pdf_spec    = D_ * cos_theta_m;
@@ -243,6 +243,44 @@ public:
                                     eval(ctx, si, bs.wo, sample2_extra, active) / bs.pdf, 0.f);
 
         return { bs, value };
+    }
+
+    Spectrum eval_fresnel(const SurfaceInteraction3f &si,
+                          const Vector3f &m,
+                          Mask active = true) const override {
+        Spectrum F             = std::get<0>(fresnel(dr::dot(si.wi, m), m_eta));
+        if (m_specular_reflectance) {
+            F *= m_specular_reflectance->eval(si, active);
+        }
+        return F;
+    }
+
+    Spectrum eval_weighted_albedo(const SurfaceInteraction3f &si,
+                                  const Vector3f &wo, 
+                                  const Vector3f &m,
+                                  Mask active = true) const override {
+        Spectrum Kd        = m_diffuse_reflectance->eval(si, active);
+
+        Float cos_theta_im = dr::clamp(dr::dot(si.wi, m), 0.f, 1.f);
+        Float cos_theta_om = dr::clamp(dr::dot(wo, m), 0.f, 1.f);
+
+        Float f_i = std::get<0>(fresnel(cos_theta_im, m_eta));
+        Float f_o = std::get<0>(fresnel(cos_theta_om, m_eta));
+
+        Float T = (1.f - f_o) * (1.f - f_i);
+
+        Spectrum value = Kd * T * dr::InvPi<Float> * cos_theta_im * cos_theta_om;
+
+        return value;
+    }
+
+    Float specular_component_sampling_probability(
+        const Float cos_theta_i) const override {
+        Float f_i            = std::get<0>(fresnel(cos_theta_i, m_eta));
+        Float proba_specular = f_i * m_specular_sampling_weight;
+        Float proba_diffuse  = (1.f - f_i) * (1.f - m_specular_sampling_weight);
+        proba_specular = proba_specular / (proba_specular + proba_diffuse);
+        return dr::clamp(proba_specular, 0.f, 1.f);
     }
 
     MI_DECLARE_CLASS(MicrograinPlastic)
