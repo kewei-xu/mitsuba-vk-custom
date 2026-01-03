@@ -96,11 +96,11 @@ public:
         return { dr::zeros<BSDFSample3f>(), 0.f };
     }
 
-    Spectrum eval(const BSDFContext &ctx, 
-                  const SurfaceInteraction3f &si,
-                  const Vector3f &wo, 
-                  const Point2f &sample2_extra,
-                  Mask active) const override {
+    Spectrum eval_ex(const BSDFContext &ctx, 
+                     const SurfaceInteraction3f &si,
+                     const Vector3f &wo, 
+                     const Point2f &sample2_extra,
+                     Mask active) const override {
         Float cos_theta_i = Frame3f::cos_theta(si.wi);
         Float cos_theta_o = Frame3f::cos_theta(wo);
 
@@ -198,12 +198,12 @@ public:
     }
 
     std::pair<BSDFSample3f, Spectrum>
-    sample(const BSDFContext &ctx, 
-           const SurfaceInteraction3f &si,
-           Float sample1, 
-           const Point2f &sample2,
-           const Point2f &sample2_extra, 
-           Mask active) const override {
+    sample_ex(const BSDFContext &ctx, 
+              const SurfaceInteraction3f &si,
+              Float sample1, 
+              const Point2f &sample2,
+              const Point2f &sample2_extra, 
+              Mask active) const override {
         Float tau_0 = this->eval_tau_0(si, active);
         Matrix3f M  = this->eval_stretching_matrix3f(si, active);
         Matrix3f M_inv_T = dr::transpose(dr::inverse(M));
@@ -240,12 +240,13 @@ public:
         Mask valid = dr::neq(bs.pdf, 0.f) & cos_theta_i > 0.f & Frame3f::cos_theta(bs.wo) > 0.f;
 
         Spectrum value = dr::select(valid & active, 
-                                    eval(ctx, si, bs.wo, sample2_extra, active) / bs.pdf, 0.f);
+                                    eval_ex(ctx, si, bs.wo, sample2_extra, active) / bs.pdf, 0.f);
 
         return { bs, value };
     }
 
-    Spectrum eval_fresnel(const SurfaceInteraction3f &si,
+    Spectrum eval_fresnel(const BSDFContext & /* ctx*/,
+                          const SurfaceInteraction3f &si,
                           const Vector3f &m,
                           Mask active = true) const override {
         Spectrum F             = std::get<0>(fresnel(dr::dot(si.wi, m), m_eta));

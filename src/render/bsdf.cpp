@@ -19,12 +19,12 @@ BSDF<Float, Spectrum>::eval_pdf(const BSDFContext &ctx,
 }
 
 MI_VARIANT std::pair<Spectrum, Float>
-BSDF<Float, Spectrum>::eval_pdf(const BSDFContext &ctx,
-                                const SurfaceInteraction3f &si,
-                                const Vector3f &wo, 
-                                const Point2f &sample2_extra,
-                                Mask active) const {
-    return { eval(ctx, si, wo, sample2_extra, active), pdf(ctx, si, wo, active) };
+BSDF<Float, Spectrum>::eval_pdf_ex(const BSDFContext &ctx,
+                                   const SurfaceInteraction3f &si,
+                                   const Vector3f &wo, 
+                                   const Point2f &sample2_extra,
+                                   Mask active) const {
+    return { eval_ex(ctx, si, wo, sample2_extra, active), pdf(ctx, si, wo, active) };
 }
 
 MI_VARIANT std::tuple<Spectrum, Float, typename BSDF<Float, Spectrum>::BSDFSample3f, Spectrum>
@@ -40,15 +40,15 @@ BSDF<Float, Spectrum>::eval_pdf_sample(const BSDFContext &ctx,
 }
 
 MI_VARIANT std::tuple<Spectrum, Float, typename BSDF<Float, Spectrum>::BSDFSample3f, Spectrum>
-BSDF<Float, Spectrum>::eval_pdf_sample(const BSDFContext &ctx,
-                                       const SurfaceInteraction3f &si,
-                                       const Vector3f &wo, 
-                                       Float sample1,
-                                       const Point2f &sample2,
-                                       const Point2f &sample2_extra,    
-                                       Mask active) const {
-    auto [e_val, pdf_val]  = eval_pdf(ctx, si, wo, sample2_extra, active);
-    auto [bs, bsdf_weight] = sample(ctx, si, sample1, sample2, sample2_extra, active);
+BSDF<Float, Spectrum>::eval_pdf_sample_ex(const BSDFContext &ctx,
+                                          const SurfaceInteraction3f &si,
+                                          const Vector3f &wo, 
+                                          Float sample1,
+                                          const Point2f &sample2,
+                                          const Point2f &sample2_extra,    
+                                          Mask active) const {
+    auto [e_val, pdf_val]  = eval_pdf_ex(ctx, si, wo, sample2_extra, active);
+    auto [bs, bsdf_weight] = sample_ex(ctx, si, sample1, sample2, sample2_extra, active);
     return { e_val, pdf_val, bs, bsdf_weight };
 }
 
@@ -311,6 +311,9 @@ std::ostream &operator<<(std::ostream &os, const TransportMode &mode) {
     }
     return os;
 }
+
+
+
 
 MI_INSTANTIATE_CLASS(BSDF)
 NAMESPACE_END(mitsuba)

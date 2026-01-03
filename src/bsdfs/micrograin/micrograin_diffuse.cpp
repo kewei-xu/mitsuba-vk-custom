@@ -69,11 +69,11 @@ public:
     }
 
 
-    Spectrum eval(const BSDFContext &ctx, 
-                  const SurfaceInteraction3f &si,
-                  const Vector3f &wo, 
-                  const Point2f &sample2_extra, 
-                  Mask active) const override {
+    Spectrum eval_ex(const BSDFContext &ctx, 
+                     const SurfaceInteraction3f &si,
+                     const Vector3f &wo, 
+                     const Point2f &sample2_extra, 
+                     Mask active) const override {
         Float cos_theta_i = Frame3f::cos_theta(si.wi);
         Float cos_theta_o = Frame3f::cos_theta(wo);
 
@@ -126,12 +126,12 @@ public:
 
 
     std::pair<BSDFSample3f, Spectrum>
-    sample(const BSDFContext &ctx, 
-           const SurfaceInteraction3f &si,
-           Float /* sample1*/, 
-           const Point2f &sample2,
-           const Point2f &sample2_extra, 
-           Mask active) const override {
+    sample_ex(const BSDFContext &ctx, 
+              const SurfaceInteraction3f &si,
+              Float /* sample1*/, 
+              const Point2f &sample2,
+              const Point2f &sample2_extra, 
+              Mask active) const override {
         Float cos_theta_i = Frame3f::cos_theta(si.wi);
 
         Vector3f wo = warp::square_to_cosine_hemisphere(sample2);
@@ -142,7 +142,7 @@ public:
                      (Frame3f::cos_theta(bs.wo) > 0.f) & (cos_theta_i > 0.f);
 
         Spectrum value = dr::select(active & valid, 
-                                    eval(ctx, si, bs.wo, sample2_extra, active) / bs.pdf, 0.f);
+                                    eval_ex(ctx, si, bs.wo, sample2_extra, active) / bs.pdf, 0.f);
 
         return { bs, value };
     }

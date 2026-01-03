@@ -88,19 +88,29 @@ public:
     }
 
     std::pair<BSDFSample3f, Spectrum>
-    sample(const BSDFContext &ctx, 
-           const SurfaceInteraction3f &si,
-           Float sample1, 
-           const Point2f &sample2, 
-           const Point2f &sample2_extra,
-           Mask active) const override {
+    sample_ex(const BSDFContext &ctx, 
+              const SurfaceInteraction3f &si,
+              Float sample1, 
+              const Point2f &sample2, 
+              const Point2f &sample2_extra,
+              Mask active) const override {
 
         Float cos_theta_i = Frame3f::cos_theta(si.wi);
         active &= cos_theta_i > 0.f;
         //----------ascending sorting----------//
         Float a[NbGrainMax], b[NbGrainMax], c[NbGrainMax], d[NbGrainMax],
             r[NbGrainMax], tau_0[NbGrainMax], spec_sampling_proba[NbGrainMax];
-        for (size_t i = 0; i < m_bsdf_count; ++i) {
+        //for (size_t k = 0; k < NbGrainMax; ++k) {
+        //    a[k]     = 0.f;
+        //    b[k]     = 0.f;
+        //    c[k]     = 0.f;
+        //    d[k]     = 0.f;
+        //    r[k]     = 0.f; // 或者用 +inf 做哨兵也行
+        //    tau_0[k] = 0.f;
+        //    spec_sampling_proba[k] = 0.f;
+        //}
+        for (size_t i = 0; i < NbGrainMax; ++i) {
+            active &= i < m_bsdf_count;
             a[i]     = m_micrograin_bsdfs[i]->eval_a(si, active);
             b[i]     = m_micrograin_bsdfs[i]->eval_b(si, active);
             c[i]     = m_micrograin_bsdfs[i]->eval_c(si, active);
@@ -190,7 +200,7 @@ public:
                 dr::masked(bs, level_selected && type_selected) = bs_tmp;
                 dr::masked(result, level_selected && type_selected) = dr::select(
                     active & pdf_valid,
-                    this->eval(ctx, si, wo, sample2_extra, active) / pdf_, 
+                    this->eval_ex(ctx, si, wo, sample2_extra, active) / pdf_, 
                     0.f
                 );
             }
@@ -223,7 +233,8 @@ public:
               r[NbGrainMax], 
               tau_0[NbGrainMax],
               spec_sampling_proba[NbGrainMax];
-        for (size_t i = 0; i < m_bsdf_count; ++i) {
+        for (size_t i = 0; i < NbGrainMax; ++i) {
+            active &= i < m_bsdf_count;
             a[i]     = m_micrograin_bsdfs[i]->eval_a(si, active);
             b[i]     = m_micrograin_bsdfs[i]->eval_b(si, active);
             c[i]     = m_micrograin_bsdfs[i]->eval_c(si, active);
@@ -301,16 +312,16 @@ public:
     }
 
 
-    Spectrum eval(const BSDFContext &ctx, 
-                  const SurfaceInteraction3f &si,
-                  const Vector3f &wo, 
-                  const Point2f &sample2_extra,
-                  Mask active) const override {
+    Spectrum eval_ex(const BSDFContext &ctx, 
+                     const SurfaceInteraction3f &si,
+                     const Vector3f &wo, 
+                     const Point2f &sample2_extra,
+                     Mask active) const override {
         Float cos_theta_i  = Frame3f::cos_theta(si.wi);
         Float cos_theta_o  = Frame3f::cos_theta(wo);
         Float global_tau_0 = this->eval_global_tau_0(si, active);
 
-        Mask valid_general = cos_theta_i > 0.f & cos_theta_o > 0.f;
+        Mask valid_general = (cos_theta_i > 0.f) & (cos_theta_o > 0.f);
         active &= valid_general;
         //----------specular variables----------//
         // half vector
@@ -351,7 +362,7 @@ public:
             Float height = Frame3f::cos_theta(h_1);
             Float G_dist = this->shared_g_dist(si, wo, height, active & G_local_h);
             // fresnel(h)
-            Spectrum F = m_micrograin_bsdfs[i]->eval_fresnel(si, h, active & G_local_h);
+            Spectrum F = m_micrograin_bsdfs[i]->eval_fresnel(ctx, si, h, active & G_local_h);
             // final brdf
             Spectrum brdf_spec = D_type_normal_joint * F * G_dist /
                                 (4.f * cos_theta_i /*cos_theta_o*/);

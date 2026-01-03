@@ -30,18 +30,20 @@ public:
             if (bsdf_count == 0) {
                 auto *poly = dynamic_cast<PolyMicrograin<Float, Spectrum> *>(bsdf);
                 if (!poly) {
-                    Throw("BlendPolySurfBulkBSDF: The first(surf) BSDF"
+                    Throw("BlendPolySurfBulkBSDF: The first(surf) BSDF "
                           "must be PolyMicrograinBSDF.");
                 }
                 surf_bsdf = poly;
+                bsdf_count++;
             } else if (bsdf_count == 1) {
                 // if is PolyMicrograin
                 if (dynamic_cast<PolyMicrograin<Float, Spectrum> *>(bsdf) ||
                     dynamic_cast<MicrograinBSDF<Float, Spectrum> *>(bsdf)) {
-                    Throw("BlendPolySurfBulkBSDF: The second(bulk) BSDF"
+                    Throw("BlendPolySurfBulkBSDF: The second(bulk) BSDF "
                           "cannot be PolyMicrograinBSDF or MicrograinBSDF.");
                 }
                 bulk_bsdf = bsdf;
+                bsdf_count++;
             } else { // more than 2 bsdfs
                 Throw("BlendPolySurfBulkBSDF: Cannot specify more than "
                       "two child BSDFs: "
@@ -89,19 +91,19 @@ public:
         return { dr::zeros<BSDFSample3f>(), 0.f };
     }
 
-    Spectrum eval(const BSDFContext &ctx, 
-                  const SurfaceInteraction3f &si,
-                  const Vector3f &wo, 
-                  const Point2f &sample2_extra,
-                  Mask active) const override {
+    Spectrum eval_ex(const BSDFContext &ctx, 
+                     const SurfaceInteraction3f &si,
+                     const Vector3f &wo, 
+                     const Point2f &sample2_extra,
+                     Mask active) const override {
         Float weight_surf = surf_bsdf->eval_global_tau_0(si, active);
         Float v1_bulk     = surf_bsdf->eval_visibility1_bulk(si, active);
         Float v2_bulk     = surf_bsdf->eval_visibility2_bulk(si, wo, active);
 
         Float weight_bulk  = eval_bulk_weight(si, wo, weight_surf, v1_bulk, v2_bulk, active);
 
-        Spectrum surf_bsdf_value = surf_bsdf->eval(ctx, si, wo, sample2_extra, active);
-        Spectrum bulk_bsdf_value = bulk_bsdf->eval(ctx, si, wo, sample2_extra, active);
+        Spectrum surf_bsdf_value = surf_bsdf->eval_ex(ctx, si, wo, sample2_extra, active);
+        Spectrum bulk_bsdf_value = bulk_bsdf->eval_ex(ctx, si, wo, sample2_extra, active);
 
         Spectrum result = surf_bsdf_value * weight_surf + bulk_bsdf_value * weight_bulk;
         return dr::select(active, result, 0.f);
@@ -123,12 +125,12 @@ public:
     }
 
     std::pair<BSDFSample3f, Spectrum>
-    sample(const BSDFContext &ctx, 
-           const SurfaceInteraction3f &si,
-           Float sample1, 
-           const Point2f &sample2,
-           const Point2f &sample2_extra, 
-           Mask active) const override {
+    sample_ex(const BSDFContext &ctx, 
+              const SurfaceInteraction3f &si,
+              Float sample1, 
+              const Point2f &sample2,
+              const Point2f &sample2_extra, 
+              Mask active) const override {
         Float weight_surf          = surf_bsdf->eval_global_tau_0(si, active);
         Float v1_bulk              = surf_bsdf->eval_visibility1_bulk(si, active);
 
@@ -142,13 +144,13 @@ public:
 
         std::tie(bs, result) = dr::select(
             surf_selected,
-            surf_bsdf->sample(ctx, si,
-                              sample1 / sampling_weight_surf,
-                              sample2, sample2_extra, active),
-            bulk_bsdf->sample(ctx, si,
-                              (sample1 - sampling_weight_surf) /
-                              sampling_weight_bulk,
-                              sample2, sample2_extra, active));
+            surf_bsdf->sample_ex(ctx, si,
+                                 sample1 / sampling_weight_surf,
+                                 sample2, sample2_extra, active),
+            bulk_bsdf->sample_ex(ctx, si,
+                                (sample1 - sampling_weight_surf) /
+                                 sampling_weight_bulk,
+                                 sample2, sample2_extra, active));
         bs.pdf = pdf(ctx, si, bs.wo, active);
 
         active &= dr::neq(bs.pdf, 0.f);

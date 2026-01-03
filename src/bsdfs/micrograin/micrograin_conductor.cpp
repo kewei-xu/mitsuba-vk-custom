@@ -185,7 +185,8 @@ public:
         return dr::select(active & valid, value /* * cos_theta_o*/, 0.f);
     }
 
-    Spectrum eval_fresnel(const SurfaceInteraction3f &si, 
+    Spectrum eval_fresnel(const BSDFContext &ctx,
+                          const SurfaceInteraction3f &si, 
                           const Vector3f &m, 
                           Mask active = true) const override {
         dr::Complex<UnpolarizedSpectrum> eta_c(m_eta->eval(si, active),

@@ -321,12 +321,12 @@ public:
     // An additional sample function for 2D sampled random numbers, 
     // used to generate surface normal directions when the micro-surface is diffuse.
     virtual std::pair<BSDFSample3f, Spectrum> 
-    sample(const BSDFContext &ctx, 
-           const SurfaceInteraction3f &si, 
-           Float sample1, 
-           const Point2f &sample2, 
-           const Point2f &sample2_extra, 
-           Mask active=true) const {
+    sample_ex(const BSDFContext &ctx, 
+              const SurfaceInteraction3f &si, 
+              Float sample1, 
+              const Point2f &sample2, 
+              const Point2f &sample2_extra, 
+              Mask active=true) const {
         return sample(ctx, si, sample1, sample2, active);
     }
 
@@ -362,11 +362,11 @@ public:
 
     // An additional eval function for 2D sampled random numbers,
     // used to generate surface normal directions when the micro-surface is diffuse.
-    virtual Spectrum eval(const BSDFContext &ctx,
-                          const SurfaceInteraction3f &si, 
-                          const Vector3f &wo,
-                          const Point2f &sample2_extra,
-                          Mask active = true) const {
+    virtual Spectrum eval_ex(const BSDFContext &ctx,
+                             const SurfaceInteraction3f &si, 
+                             const Vector3f &wo,
+                             const Point2f &sample2_extra,
+                             Mask active = true) const {
         return eval(ctx, si, wo, active);
     }
 
@@ -440,11 +440,11 @@ public:
                                                 Mask active = true) const;
     // An additional eval_pdf function for 2D sampled random numbers,
     // used to generate surface normal directions when the micro-surface is diffuse.
-    virtual std::pair<Spectrum, Float> eval_pdf(const BSDFContext &ctx,
-                                                const SurfaceInteraction3f &si,
-                                                const Vector3f &wo,
-                                                const Point2f &sample2_extra,
-                                                Mask active = true) const;
+    virtual std::pair<Spectrum, Float> eval_pdf_ex(const BSDFContext &ctx,
+                                                   const SurfaceInteraction3f &si,
+                                                   const Vector3f &wo,
+                                                   const Point2f &sample2_extra,
+                                                   Mask active = true) const;
 
     /**
      * \brief Jointly evaluate the BSDF f(wi, wo), the probability per unit
@@ -487,13 +487,13 @@ public:
     // An additional eval_pdf_sample function for 2D sampled random numbers,
     // used to generate surface normal directions when the micro-surface is diffuse.
     virtual std::tuple<Spectrum, Float, BSDFSample3f, Spectrum>
-    eval_pdf_sample(const BSDFContext &ctx, 
-                    const SurfaceInteraction3f &si,
-                    const Vector3f &wo, 
-                    Float sample1, 
-                    const Point2f &sample2,
-                    const Point2f &sample2_extra,
-                    Mask active = true) const;
+    eval_pdf_sample_ex(const BSDFContext &ctx, 
+                       const SurfaceInteraction3f &si,
+                       const Vector3f &wo, 
+                       Float sample1, 
+                       const Point2f &sample2,
+                       const Point2f &sample2_extra,
+                       Mask active = true) const;
 
     /**
      * \brief Evaluate un-scattered transmission component of the BSDF
@@ -687,6 +687,14 @@ typename SurfaceInteraction<Float, Spectrum>::BSDFPtr SurfaceInteraction<Float, 
     return bsdf;
 }
 
+
+
+
+
+
+
+
+
 //! @}
 // -----------------------------------------------------------------------
 
@@ -699,11 +707,15 @@ NAMESPACE_END(mitsuba)
 
 DRJIT_CALL_TEMPLATE_BEGIN(mitsuba::BSDF)
     DRJIT_CALL_METHOD(sample)
+    DRJIT_CALL_METHOD(sample_ex)
     DRJIT_CALL_METHOD(eval)
+    DRJIT_CALL_METHOD(eval_ex)
     DRJIT_CALL_METHOD(eval_null_transmission)
     DRJIT_CALL_METHOD(pdf)
     DRJIT_CALL_METHOD(eval_pdf)
+    DRJIT_CALL_METHOD(eval_pdf_ex)
     DRJIT_CALL_METHOD(eval_pdf_sample)
+    DRJIT_CALL_METHOD(eval_pdf_sample_ex)
     DRJIT_CALL_METHOD(eval_diffuse_reflectance)
     DRJIT_CALL_METHOD(has_attribute)
     DRJIT_CALL_METHOD(eval_attribute)
