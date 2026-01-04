@@ -147,6 +147,45 @@ public:
         return result;
     }
 
+    std::pair<BSDFSample3f, Spectrum>
+    sample_ex(const BSDFContext &ctx_, const SurfaceInteraction3f &si_,
+              Float sample1, const Point2f &sample2,
+              const Point2f &sample2_extra,
+              Mask active) const override {
+        MI_MASKED_FUNCTION(ProfilerPhase::BSDFSample, active);
+
+        using Result = std::pair<BSDFSample3f, Spectrum>;
+
+        SurfaceInteraction3f si(si_);
+        BSDFContext ctx(ctx_);
+        Result result = dr::zeros<Result>();
+
+        if (m_brdf[0] == m_brdf[1]) {
+            si.wi.z() = dr::abs(si.wi.z());
+            result    = m_brdf[0]->sample_ex(ctx, si, sample1, sample2, sample2_extra, active);
+            result.first.wo.z() = dr::mulsign(result.first.wo.z(), si_.wi.z());
+        } else {
+            Mask front_side = Frame3f::cos_theta(si.wi) > 0.f && active,
+                 back_side  = Frame3f::cos_theta(si.wi) < 0.f && active;
+
+            if (dr::any_or<true>(front_side))
+                dr::masked(result, front_side) = m_brdf[0]->sample_ex(
+                    ctx, si, sample1, sample2, sample2_extra, front_side);
+
+            if (dr::any_or<true>(back_side)) {
+                if (ctx.component != (uint32_t) -1)
+                    ctx.component -= (uint32_t) m_brdf[0]->component_count();
+
+                si.wi.z() *= -1.f;
+                dr::masked(result, back_side) =
+                    m_brdf[1]->sample_ex(ctx, si, sample1, sample2, sample2_extra, back_side);
+                dr::masked(result.first.wo.z(), back_side) *= -1.f;
+            }
+        }
+
+        return result;
+    }
+
     Spectrum eval(const BSDFContext &ctx_, const SurfaceInteraction3f &si_,
                   const Vector3f &wo_, Mask active) const override {
         MI_MASKED_FUNCTION(ProfilerPhase::BSDFEvaluate, active);
@@ -176,6 +215,43 @@ public:
 
                 dr::masked(result, back_side) =
                     m_brdf[1]->eval(ctx, si, wo, back_side);
+            }
+        }
+
+        return result;
+    }
+
+    Spectrum eval_ex(const BSDFContext &ctx_, const SurfaceInteraction3f &si_,
+                     const Vector3f &wo_, const Point2f &sample2_extra,
+                     Mask active) const override {
+        MI_MASKED_FUNCTION(ProfilerPhase::BSDFEvaluate, active);
+
+        SurfaceInteraction3f si(si_);
+        BSDFContext ctx(ctx_);
+        Vector3f wo(wo_);
+        Spectrum result = 0.f;
+
+        if (m_brdf[0] == m_brdf[1]) {
+            wo.z()    = dr::mulsign(wo.z(), si.wi.z());
+            si.wi.z() = dr::abs(si.wi.z());
+            result    = m_brdf[0]->eval_ex(ctx, si, wo, sample2_extra, active);
+        } else {
+            Mask front_side = Frame3f::cos_theta(si.wi) > 0.f && active,
+                 back_side  = Frame3f::cos_theta(si.wi) < 0.f && active;
+
+            if (dr::any_or<true>(front_side))
+                result =
+                    m_brdf[0]->eval_ex(ctx, si, wo, sample2_extra, front_side);
+
+            if (dr::any_or<true>(back_side)) {
+                if (ctx.component != (uint32_t) -1)
+                    ctx.component -= (uint32_t) m_brdf[0]->component_count();
+
+                si.wi.z() *= -1.f;
+                wo.z() *= -1.f;
+
+                dr::masked(result, back_side) =
+                    m_brdf[1]->eval_ex(ctx, si, wo, sample2_extra, back_side);
             }
         }
 

@@ -530,7 +530,7 @@ public:
 
 protected:
     MicrograinBSDF(const Properties &props) : Base(props) {
-        this->m_tau_0  = props.get_texture<Texture>("filling_factor", 0.2f);
+        this->m_tau_0  = props.get_unbounded_texture<Texture>("filling_factor", 0.2f);
         this->m_radius = props.get_unbounded_texture<Texture>("radius", 1.f);
         this->m_a      = props.get_unbounded_texture<Texture>("a", 1.f);
         this->m_b      = props.get_unbounded_texture<Texture>("b", 0.f);
@@ -603,6 +603,8 @@ public:
 
 protected:
     PolyMicrograin(const Properties &props) : Base(props) {
+        for (size_t i = 0; i < NbGrainMax; ++i)
+            m_micrograin_bsdfs[i] = nullptr;
         // get all sub mono micrgrain bsdfs
         m_bsdf_count = 0;
         for (auto &prop : props.objects()) {
