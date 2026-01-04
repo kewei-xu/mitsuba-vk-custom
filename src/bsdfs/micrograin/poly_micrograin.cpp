@@ -100,17 +100,16 @@ public:
         //----------ascending sorting----------//
         Float a[NbGrainMax], b[NbGrainMax], c[NbGrainMax], d[NbGrainMax],
             r[NbGrainMax], tau_0[NbGrainMax], spec_sampling_proba[NbGrainMax];
-        //for (size_t k = 0; k < NbGrainMax; ++k) {
-        //    a[k]     = 0.f;
-        //    b[k]     = 0.f;
-        //    c[k]     = 0.f;
-        //    d[k]     = 0.f;
-        //    r[k]     = 0.f; // 或者用 +inf 做哨兵也行
-        //    tau_0[k] = 0.f;
-        //    spec_sampling_proba[k] = 0.f;
-        //}
         for (size_t i = 0; i < NbGrainMax; ++i) {
-            active &= i < m_bsdf_count;
+            a[i]     = 0.f;
+            b[i]     = 0.f;
+            c[i]     = 0.f;
+            d[i]     = 0.f;
+            r[i]     = 0.f; 
+            tau_0[i] = 0.f;
+            spec_sampling_proba[i] = 0.f;
+        }
+        for (size_t i = 0; i < m_bsdf_count; ++i) {
             a[i]     = m_micrograin_bsdfs[i]->eval_a(si, active);
             b[i]     = m_micrograin_bsdfs[i]->eval_b(si, active);
             c[i]     = m_micrograin_bsdfs[i]->eval_c(si, active);
@@ -139,32 +138,25 @@ public:
         Float p_level_cum = 0.f;
 
         // start sampling
-        for (size_t i = 0; i < NbGrainMax; ++i) { // for layers (heightfield)
-            Mask valid_i_index = i < m_bsdf_count;
-            active &= valid_i_index;
-            if (!dr::any_or<true>(valid_i_index)) { continue; }
-
+        for (size_t i = 0; i < m_bsdf_count; ++i) { // for layers (heightfield)
             h_upper = r[i];
             Float p_level = this->proba_level(global_tau_0, term_kappa,
                                               term_lambda, h_upper, h_lower);
             Float p_level_cum_pre = p_level_cum;
             p_level_cum += p_level;
 
-            Mask level_selected = valid_i_index & (sample1 >= p_level_cum_pre) & (sample1 < p_level_cum);
+            Mask level_selected = (sample1 >= p_level_cum_pre) & (sample1 < p_level_cum);
 
             Float sample1_1 = (sample1 - p_level_cum_pre) / p_level;
 
             Float p_type_cum = 0.f;
 
-            for (size_t j = i; j < NbGrainMax; ++j) { // for micrograin types in layer i
-                Mask valid_j_index = j < m_bsdf_count;
-                if (!dr::any_or<true>(valid_j_index)) { continue; }
-
+            for (size_t j = i; j < m_bsdf_count; ++j) { // for micrograin types in layer i
                 Float p_type = this->proba_level_type(tau_0[j], r[j], term_lambda);
                 Float p_type_cum_pre = p_type_cum;
                 p_type_cum += p_type;
 
-                Mask type_selected = level_selected & valid_j_index &
+                Mask type_selected = level_selected &
                                      (sample1_1 >= p_type_cum_pre) &
                                      (sample1_1 < p_type_cum);
 
@@ -212,7 +204,8 @@ public:
             term_kappa /= cur_term_kappa;
             term_lambda /= cur_term_lambda;
         }
-        return { bs, result };
+        Mask accident_NaN = dr::any(dr::isnan(result));
+        return { bs, result & ~accident_NaN };
     }
 
 
@@ -234,7 +227,15 @@ public:
               tau_0[NbGrainMax],
               spec_sampling_proba[NbGrainMax];
         for (size_t i = 0; i < NbGrainMax; ++i) {
-            active &= i < m_bsdf_count;
+            a[i]                   = 0.f;
+            b[i]                   = 0.f;
+            c[i]                   = 0.f;
+            d[i]                   = 0.f;
+            r[i]                   = 0.f;
+            tau_0[i]               = 0.f;
+            spec_sampling_proba[i] = 0.f;
+        }
+        for (size_t i = 0; i < m_bsdf_count; ++i) {
             a[i]     = m_micrograin_bsdfs[i]->eval_a(si, active);
             b[i]     = m_micrograin_bsdfs[i]->eval_b(si, active);
             c[i]     = m_micrograin_bsdfs[i]->eval_c(si, active);
@@ -262,18 +263,13 @@ public:
 
         //---- compute pdf ----//
         Float pdf_ = 0.f;
-        for (size_t i = 0; i < NbGrainMax; ++i) { // for layers (heightfield)
-            Mask valid_i_index = i < m_bsdf_count;
-            active &= valid_i_index;
-            if (!dr::any_or<true>(valid_i_index)) { continue; }
+        for (size_t i = 0; i < m_bsdf_count; ++i) { // for layers (heightfield)
 
             h_upper = r[i];
             Float p_level = this->proba_level(global_tau_0, term_kappa, term_lambda, h_upper, h_lower);
             Mask valid_level = dr::neq(h_upper - h_lower, 0.f);
 
-            for (size_t j = i; j < NbGrainMax; ++j) { // for micrograin types in layer i
-                Mask valid_j_index = j < m_bsdf_count;
-                if (!dr::any_or<true>(valid_j_index)) { continue; }
+            for (size_t j = i; j < m_bsdf_count; ++j) { // for micrograin types in layer i
 
                 Float p_type = this->proba_level_type(tau_0[j], r[j], term_lambda);
 
@@ -293,11 +289,12 @@ public:
                     h_upper, h_lower,
                     abs_det_M, norm_sqr, wh
                 ) / (4.f * dr::dot(wo, wh));
-                pdf_ += dr::select(active & valid_j_index & valid_level & inRange & valid_spec,
+                pdf_ += dr::select(active & valid_level & inRange & valid_spec,
                                    p_level * p_type * spec_sampling_proba[j] * pdf_spec, 0.f);
                 //------ diff pdf -------//
                 Float pdf_diff = warp::square_to_cosine_hemisphere_pdf(wo);
-                pdf_ += dr::select(active & valid_j_index & valid_level,
+                
+                pdf_ += dr::select(active & valid_level,
                                    p_level * p_type * (1.f - spec_sampling_proba[j]) * pdf_diff, 0.f);
             }
             h_lower = h_upper;
@@ -307,8 +304,8 @@ public:
             term_kappa /= cur_term_kappa;
             term_lambda /= cur_term_lambda;
         }
-
-        return pdf_;
+        Mask accident_NaN = dr::isnan(pdf_);
+        return dr::select(accident_NaN, 0.f, pdf_);
     }
 
 
@@ -331,13 +328,8 @@ public:
         Mask G_local_h = (dr::dot(si.wi, h) > 0.f) & (dr::dot(wo, h) > 0.f);
 
         Spectrum value(0.f);
-        for (size_t i = 0; i < NbGrainMax; ++i) {
+        for (size_t i = 0; i < m_bsdf_count; ++i) {
 
-            Mask valid_index = i < m_bsdf_count;
-            active &= valid_index;
-            //if (!dr::any_or<true>(active)) {
-            //    continue;
-            //}
             Float tau_0 = m_micrograin_bsdfs[i]->eval_tau_0(si, active);
             Float r     = m_micrograin_bsdfs[i]->eval_radius(si, active);
             auto [M, abs_det_M] =
@@ -355,7 +347,7 @@ public:
             Float shared_prod =
                 this->shared_product(si, expo_numer, active & G_local_h);
             Float D_type_normal_joint = coeff * dr::log(1.f - tau_0) *
-                                        shared_prod * dr::InvPi<Float> /
+                                        shared_prod * -dr::InvPi<Float> /
                                         global_tau_0;
             // type dist GAF(h)
             Vector3f h_1 = dr::normalize(M_T * h);
@@ -386,8 +378,8 @@ public:
             expo_numer = r * r * cos_theta_m * cos_theta_m / norm_sqr;
             shared_prod = this->shared_product(si, expo_numer, active & G_local_m);
             D_type_normal_joint = coeff * dr::log(1.f - tau_0) *
-                                        shared_prod * dr::InvPi<Float> /
-                                        global_tau_0;
+                                  shared_prod * -dr::InvPi<Float> /
+                                  global_tau_0;
             // type dist GAF(m)
             height = Frame3f::cos_theta(m_1);
             G_dist = this->shared_g_dist(si, wo, height, active & G_local_m);
@@ -402,7 +394,8 @@ public:
                                 brdf_diffuse, 0.f);
             
         }
-        return value;
+        Mask accident_NaN = dr::any(dr::isnan(value));
+        return dr::select(accident_NaN, 0.f, value);
     }
 
 
@@ -418,8 +411,7 @@ public:
                                    const Float expo_numer, 
                                    Mask active = true) const {
         Float value = 1.f;
-        for (size_t i = 0; i < NbGrainMax; ++i){
-            active &= i < m_bsdf_count;
+        for (size_t i = 0; i < m_bsdf_count; ++i){
             Float tau_0      = m_micrograin_bsdfs[i]->eval_tau_0(si, active);
             Float r          = m_micrograin_bsdfs[i]->eval_radius(si, active);
             Float expo_coeff = expo_numer / (r*r);
@@ -434,8 +426,7 @@ public:
                                   const Float height, 
                                   Mask active = true) const {
         Float value = 1.f;
-        for (size_t i = 0; i < NbGrainMax; ++i){
-            active &= i < m_bsdf_count;
+        for (size_t i = 0; i < m_bsdf_count; ++i){
             Matrix3f M       = m_micrograin_bsdfs[i]->eval_stretching_matrix3f(si, active);
             Matrix3f M_inv   = dr::inverse(M);
             Vector3f wi_1    = dr::normalize(M_inv * si.wi);
@@ -452,8 +443,7 @@ public:
     MI_INLINE Float term_lambda_base(const SurfaceInteraction3f &si, 
                                      Mask active = true) const {
         Float value = 1.f;
-        for (size_t i = 0; i < NbGrainMax; ++i) {
-            active &= i < m_bsdf_count;
+        for (size_t i = 0; i < m_bsdf_count; ++i) {
             Float tau_0 = m_micrograin_bsdfs[i]->eval_tau_0(si, active);
             Float r     = m_micrograin_bsdfs[i]->eval_radius(si, active);
             Float value_tmp = dr::pow(1.f - tau_0, -1.f / (r * r));

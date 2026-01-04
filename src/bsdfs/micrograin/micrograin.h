@@ -560,8 +560,7 @@ public:
     MI_INLINE Float eval_global_tau_0(const SurfaceInteraction3f &si,
                                       Mask active = true) const {
         Float value = 1.f;
-        for (size_t i = 0; i < NbGrainMax; ++i) {
-            active &= i < m_bsdf_count;
+        for (size_t i = 0; i < m_bsdf_count; ++i) {
             Float tau_0 = m_micrograin_bsdfs[i]->eval_tau_0(si, active);
             value *= dr::select(active, (1.f - tau_0), 1.f);
         }
@@ -571,8 +570,7 @@ public:
     MI_INLINE Float eval_visibility1_bulk(const SurfaceInteraction3f &si,
                                           Mask active = true) const {
         Float value = 1.f;
-        for (size_t i = 0; i < NbGrainMax; ++i) {
-            active &= i < m_bsdf_count;
+        for (size_t i = 0; i < m_bsdf_count; ++i) {
             Float tau_0 = m_micrograin_bsdfs[i]->eval_tau_0(si, active);
             Matrix3f M =
                 m_micrograin_bsdfs[i]->eval_stretching_matrix3f(si, active);
@@ -588,8 +586,7 @@ public:
                                           const Vector3f &wo,
                                           Mask active = true) const {
         Float value = 1.f;
-        for (size_t i = 0; i < NbGrainMax; ++i) {
-            active &= i < m_bsdf_count;
+        for (size_t i = 0; i < m_bsdf_count; ++i) {
             Float tau_0 = m_micrograin_bsdfs[i]->eval_tau_0(si, active);
             Matrix3f M =
                 m_micrograin_bsdfs[i]->eval_stretching_matrix3f(si, active);
