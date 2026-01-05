@@ -282,7 +282,7 @@ public:
                 Vector3f wh_1_tmp = M_T * wh;
                 Vector3f wh_1     = dr::normalize(wh_1_tmp);
                 Float norm_sqr    = dr::squared_norm(wh_1_tmp);
-                Float hv_height = Frame3f::cos_theta(wh_1);
+                Float hv_height = Frame3f::cos_theta(wh_1) * r[j];
                 Mask inRange    = (hv_height > h_lower) & (hv_height <= h_upper);
                 Float pdf_spec = this->square_to_micrograin_conditional_level_and_type_pdf(
                     term_lambda, r[j],
@@ -351,7 +351,7 @@ public:
                                         global_tau_0;
             // type dist GAF(h)
             Vector3f h_1 = dr::normalize(M_T * h);
-            Float height = Frame3f::cos_theta(h_1);
+            Float height = Frame3f::cos_theta(h_1) * r;
             Float G_dist = this->shared_g_dist(si, wo, height, active & G_local_h);
             // fresnel(h)
             Spectrum F = m_micrograin_bsdfs[i]->eval_fresnel(ctx, si, h, active & G_local_h);
@@ -365,23 +365,23 @@ public:
             Vector3f m_1 =
                 square_to_sphere_micrograin<Float>(tau_0, sample2_extra);
             Vector3f m = dr::normalize(M_inv_T * m_1);
+            Float cos_theta_m = Frame3f::cos_theta(m);
             // G local(m)
             Mask G_local_m = (dr::dot(si.wi, m) > 0.f) & (dr::dot(wo, m) > 0.f);
             // sample pdf(m)
             norm_sqr = dr::squared_norm(M_T * m);
             coeff    = abs_det_M / (norm_sqr * norm_sqr);
             Float D_       = coeff * NDF_1<Float>(tau_0, m_1);
-            Float pdf_m    = D_ * Frame3f::cos_theta(m);
+            Float pdf_m    = D_ * cos_theta_m;
             Mask valid_normal_sample = dr::neq(pdf_m, 0.f);
             // joint NDF(m)
-            Float cos_theta_m = Frame3f::cos_theta(m);
             expo_numer = r * r * cos_theta_m * cos_theta_m / norm_sqr;
             shared_prod = this->shared_product(si, expo_numer, active & G_local_m);
             D_type_normal_joint = coeff * dr::log(1.f - tau_0) *
                                   shared_prod * -dr::InvPi<Float> /
                                   global_tau_0;
             // type dist GAF(m)
-            height = Frame3f::cos_theta(m_1);
+            height = Frame3f::cos_theta(m_1) * r;
             G_dist = this->shared_g_dist(si, wo, height, active & G_local_m);
             // reflectance
             Spectrum reflect = m_micrograin_bsdfs[i]->eval_weighted_albedo(
