@@ -162,8 +162,8 @@ Float area_sector_i(const Vector<Float, 2> &p, const Vector<Float, 2> &pi,
     Vector2f centered_p  = p - direction * tan_theta_i * h_m_1;
     Vector2f centered_pi = pi - direction * tan_theta_i * h_m_1;
 
-    Matrix2f E(wi_1.x() / cos_theta_i, -wi_1.y(), 
-               wi_1.y() / cos_theta_i,  wi_1.x());
+    Matrix2f E(direction.x() / cos_theta_i, -direction.y(), 
+               direction.y() / cos_theta_i,  direction.x());
 
     Matrix2f inv_E = dr::inverse(E);
 

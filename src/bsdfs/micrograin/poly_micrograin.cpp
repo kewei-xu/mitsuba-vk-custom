@@ -204,8 +204,9 @@ public:
             term_kappa /= cur_term_kappa;
             term_lambda /= cur_term_lambda;
         }
-        Mask accident_NaN = dr::any(dr::isnan(result));
-        return { bs, result & ~accident_NaN };
+        /*Mask accident_NaN = dr::any(dr::isnan(result));
+        return { bs, result & ~accident_NaN };*/
+        return { bs, result };
     }
 
 
@@ -304,8 +305,9 @@ public:
             term_kappa /= cur_term_kappa;
             term_lambda /= cur_term_lambda;
         }
-        Mask accident_NaN = dr::isnan(pdf_);
-        return dr::select(accident_NaN, 0.f, pdf_);
+        /*Mask accident_NaN = dr::isnan(pdf_);
+        return dr::select(accident_NaN, 0.f, pdf_);*/
+        return pdf_;
     }
 
 
@@ -339,19 +341,20 @@ public:
             Matrix3f M_inv   = dr::inverse(M);
             Matrix3f M_inv_T = dr::transpose(M_inv);
             //-------- eval specular ---------//
-            
+            Vector3f h_tmp      = M_T * h;
+            Vector3f h_1 = dr::normalize(h_tmp);
+            Float norm_sqr   = dr::squared_norm(h_tmp);
+            Float cos_theta_h_1 = Frame3f::cos_theta(h_1);
             // joint NDF(h)
-            Float norm_sqr   = dr::squared_norm(M_T * h);
             Float coeff      = abs_det_M / (norm_sqr * norm_sqr);
-            Float expo_numer = r * r * cos_theta_h * cos_theta_h / norm_sqr;
+            Float expo_numer = r * r * cos_theta_h_1 * cos_theta_h_1;
             Float shared_prod =
                 this->shared_product(si, expo_numer, active & G_local_h);
             Float D_type_normal_joint = coeff * dr::log(1.f - tau_0) *
                                         shared_prod * -dr::InvPi<Float> /
                                         global_tau_0;
             // type dist GAF(h)
-            Vector3f h_1 = dr::normalize(M_T * h);
-            Float height = Frame3f::cos_theta(h_1) * r;
+            Float height = cos_theta_h_1 * r;
             Float G_dist = this->shared_g_dist(si, wo, height, active & G_local_h);
             // fresnel(h)
             Spectrum F = m_micrograin_bsdfs[i]->eval_fresnel(ctx, si, h, active & G_local_h);
@@ -365,17 +368,17 @@ public:
             Vector3f m_1 =
                 square_to_sphere_micrograin<Float>(tau_0, sample2_extra);
             Vector3f m = dr::normalize(M_inv_T * m_1);
-            Float cos_theta_m = Frame3f::cos_theta(m);
+            Float cos_theta_m_1 = Frame3f::cos_theta(m_1);
             // G local(m)
             Mask G_local_m = (dr::dot(si.wi, m) > 0.f) & (dr::dot(wo, m) > 0.f);
             // sample pdf(m)
             norm_sqr = dr::squared_norm(M_T * m);
             coeff    = abs_det_M / (norm_sqr * norm_sqr);
             Float D_       = coeff * NDF_1<Float>(tau_0, m_1);
-            Float pdf_m    = D_ * cos_theta_m;
+            Float pdf_m    = D_ * Frame3f::cos_theta(m);
             Mask valid_normal_sample = dr::neq(pdf_m, 0.f);
             // joint NDF(m)
-            expo_numer = r * r * cos_theta_m * cos_theta_m / norm_sqr;
+            expo_numer = r * r * cos_theta_m_1 * cos_theta_m_1;
             shared_prod = this->shared_product(si, expo_numer, active & G_local_m);
             D_type_normal_joint = coeff * dr::log(1.f - tau_0) *
                                   shared_prod * -dr::InvPi<Float> /
@@ -394,8 +397,9 @@ public:
                                 brdf_diffuse, 0.f);
             
         }
-        Mask accident_NaN = dr::any(dr::isnan(value));
-        return dr::select(accident_NaN, 0.f, value);
+        /*Mask accident_NaN = dr::any(dr::isnan(value));
+        return dr::select(accident_NaN, 0.f, value);*/
+        return value;
     }
 
 
