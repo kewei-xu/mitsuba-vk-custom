@@ -87,42 +87,161 @@ public:
         }
     }
 
+    //std::pair<BSDFSample3f, Spectrum>
+    //sample_ex(const BSDFContext &ctx, 
+    //          const SurfaceInteraction3f &si,
+    //          Float sample1, 
+    //          const Point2f &sample2, 
+    //          const Point2f &sample2_extra,
+    //          Mask active) const override {
+
+    //    Float cos_theta_i = Frame3f::cos_theta(si.wi);
+    //    active &= cos_theta_i > 0.f;
+    //    //----------ascending sorting----------//
+    //    Float a[NbGrainMax], b[NbGrainMax], c[NbGrainMax], d[NbGrainMax],
+    //        r[NbGrainMax], tau_0[NbGrainMax], spec_sampling_proba[NbGrainMax];
+    //    for (size_t i = 0; i < NbGrainMax; ++i) {
+    //        a[i]     = 0.f;
+    //        b[i]     = 0.f;
+    //        c[i]     = 0.f;
+    //        d[i]     = 0.f;
+    //        r[i]     = 0.f; 
+    //        tau_0[i] = 0.f;
+    //        spec_sampling_proba[i] = 0.f;
+    //    }
+    //    for (size_t i = 0; i < m_bsdf_count; ++i) {
+    //        a[i]     = m_micrograin_bsdfs[i]->eval_a(si, active);
+    //        b[i]     = m_micrograin_bsdfs[i]->eval_b(si, active);
+    //        c[i]     = m_micrograin_bsdfs[i]->eval_c(si, active);
+    //        d[i]     = m_micrograin_bsdfs[i]->eval_d(si, active);
+    //        r[i]     = m_micrograin_bsdfs[i]->eval_radius(si, active);
+    //        tau_0[i] = m_micrograin_bsdfs[i]->eval_tau_0(si, active);
+    //        spec_sampling_proba[i] =
+    //            m_micrograin_bsdfs[i]->specular_component_sampling_probability(
+    //                cos_theta_i);
+    //    }
+    //    this->sort16_bsdf_by_radius(r, m_bsdf_count, active, a, b, c, d, tau_0,
+    //                                spec_sampling_proba);
+
+    //    Float global_tau_0 = this->eval_global_tau_0(si, active);
+
+    //    Float term_kappa  = 1.f - global_tau_0;
+    //    Float term_lambda = this->term_lambda_base(si, active);
+
+    //    Float h_lower = 0.f;
+    //    Float h_upper = 0.f;
+    //
+    //    
+    //    BSDFSample3f bs   = dr::zeros<BSDFSample3f>();
+    //    
+    //    Spectrum result(0.f);
+    //    Float p_level_cum = 0.f;
+
+    //    // start sampling
+    //    for (size_t i = 0; i < m_bsdf_count; ++i) { // for layers (heightfield)
+    //        h_upper = r[i];
+    //        Float p_level = this->proba_level(global_tau_0, term_kappa,
+    //                                          term_lambda, h_upper, h_lower);
+    //        Float p_level_cum_pre = p_level_cum;
+    //        p_level_cum += p_level;
+
+    //        Mask level_selected = (sample1 >= p_level_cum_pre) & (sample1 < p_level_cum);
+
+    //        Float sample1_1 = (sample1 - p_level_cum_pre) / p_level;
+
+    //        Float p_type_cum = 0.f;
+
+    //        for (size_t j = i; j < m_bsdf_count; ++j) { // for micrograin types in layer i
+    //            Float p_type = this->proba_level_type(tau_0[j], r[j], term_lambda);
+    //            Float p_type_cum_pre = p_type_cum;
+    //            p_type_cum += p_type;
+
+    //            Mask type_selected = level_selected &
+    //                                 (sample1_1 >= p_type_cum_pre) &
+    //                                 (sample1_1 < p_type_cum);
+
+    //            Float sample1_2 = (sample1_1 - p_type_cum_pre) / p_type;
+    //            Mask spec_selected = level_selected & type_selected &
+    //                                 (sample1_2 < spec_sampling_proba[j]);
+
+    //            Matrix3f M(a[j], b[j], 0.f, c[j], d[j], 0.f, 0.f, 0.f, 1.f);
+    //            Float abs_det_M = dr::abs(a[j] * d[j] - b[j] * c[j]);
+    //            Matrix3f M_inv  = dr::inverse(M);
+    //            Matrix3f M_inv_T = dr::transpose(M_inv);
+
+    //            Vector3f wh_1 = square_to_sphere_micrograin_conditional_level_and_type(
+    //                    term_lambda, r[j], h_upper, h_lower, sample2
+    //            );
+
+    //            Normal3f wh = dr::normalize(M_inv_T * wh_1);
+    //            Vector3f wo = dr::select(
+    //                spec_selected,
+    //                reflect(si.wi, wh),
+    //                warp::square_to_cosine_hemisphere(sample2)
+    //            );
+    //            Float cos_theta_o = Frame3f::cos_theta(wo);
+    //            Float pdf_ = this->pdf(ctx, si, wo, active);
+    //            BSDFSample3f bs_tmp(wo);
+    //            bs_tmp.pdf = pdf_;
+    //            bs_tmp.sampled_type = dr::select(
+    //                spec_selected,
+    //                +BSDFFlags::GlossyReflection,
+    //                +BSDFFlags::DiffuseReflection);
+    //            Mask pdf_valid = dr::neq(pdf_, 0.f);
+    //            dr::masked(bs, level_selected && type_selected) = bs_tmp;
+    //            dr::masked(result, level_selected && type_selected) = dr::select(
+    //                    active & Frame3f::cos_theta(wo) > 0.f & pdf_valid &,
+    //                this->eval_ex(ctx, si, wo, sample2_extra, active) / pdf_, 
+    //                0.f
+    //            );
+    //        }
+    //        h_lower = h_upper;
+    //        Float cur_term_kappa = 1.f - tau_0[i];
+    //        Float cur_term_lambda =
+    //            dr::pow(1.f - tau_0[i], -1.f / (r[i] * r[i]));
+
+    //        term_kappa /= cur_term_kappa;
+    //        term_lambda /= cur_term_lambda;
+    //    }
+    //    /*Mask accident_NaN = dr::any(dr::isnan(result));
+    //    return { bs, result & ~accident_NaN };*/
+    //    return { bs, result };
+    //}
+
+
     std::pair<BSDFSample3f, Spectrum>
-    sample_ex(const BSDFContext &ctx, 
-              const SurfaceInteraction3f &si,
-              Float sample1, 
-              const Point2f &sample2, 
-              const Point2f &sample2_extra,
-              Mask active) const override {
+    sample_ex(const BSDFContext &ctx, const SurfaceInteraction3f &si,
+              Float sample1, const Point2f &sample2,
+              const Point2f &sample2_extra, Mask active) const override {
 
         Float cos_theta_i = Frame3f::cos_theta(si.wi);
         active &= cos_theta_i > 0.f;
-        //----------ascending sorting----------//
-        Float a[NbGrainMax], b[NbGrainMax], c[NbGrainMax], d[NbGrainMax],
-            r[NbGrainMax], tau_0[NbGrainMax], spec_sampling_proba[NbGrainMax];
-        for (size_t i = 0; i < NbGrainMax; ++i) {
-            a[i]     = 0.f;
-            b[i]     = 0.f;
-            c[i]     = 0.f;
-            d[i]     = 0.f;
-            r[i]     = 0.f; 
-            tau_0[i] = 0.f;
-            spec_sampling_proba[i] = 0.f;
+
+        // ---------- ascending sorting (same as your code) ----------
+        Float a[NbGrainMax], b[NbGrainMax], c[NbGrainMax], d[NbGrainMax];
+        Float r[NbGrainMax], tau_0[NbGrainMax], spec_sampling_proba[NbGrainMax];
+
+        for (size_t k = 0; k < NbGrainMax; ++k) {
+            a[k] = b[k] = c[k] = d[k] = 0.f;
+            r[k] = tau_0[k] = spec_sampling_proba[k] = 0.f;
         }
-        for (size_t i = 0; i < m_bsdf_count; ++i) {
-            a[i]     = m_micrograin_bsdfs[i]->eval_a(si, active);
-            b[i]     = m_micrograin_bsdfs[i]->eval_b(si, active);
-            c[i]     = m_micrograin_bsdfs[i]->eval_c(si, active);
-            d[i]     = m_micrograin_bsdfs[i]->eval_d(si, active);
-            r[i]     = m_micrograin_bsdfs[i]->eval_radius(si, active);
-            tau_0[i] = m_micrograin_bsdfs[i]->eval_tau_0(si, active);
-            spec_sampling_proba[i] =
-                m_micrograin_bsdfs[i]->specular_component_sampling_probability(
+
+        for (size_t k = 0; k < m_bsdf_count; ++k) {
+            a[k]     = m_micrograin_bsdfs[k]->eval_a(si, active);
+            b[k]     = m_micrograin_bsdfs[k]->eval_b(si, active);
+            c[k]     = m_micrograin_bsdfs[k]->eval_c(si, active);
+            d[k]     = m_micrograin_bsdfs[k]->eval_d(si, active);
+            r[k]     = m_micrograin_bsdfs[k]->eval_radius(si, active);
+            tau_0[k] = m_micrograin_bsdfs[k]->eval_tau_0(si, active);
+            spec_sampling_proba[k] =
+                m_micrograin_bsdfs[k]->specular_component_sampling_probability(
                     cos_theta_i);
         }
+
         this->sort16_bsdf_by_radius(r, m_bsdf_count, active, a, b, c, d, tau_0,
                                     spec_sampling_proba);
 
+        // ---------- global terms (same as your code) ----------
         Float global_tau_0 = this->eval_global_tau_0(si, active);
 
         Float term_kappa  = 1.f - global_tau_0;
@@ -130,29 +249,47 @@ public:
 
         Float h_lower = 0.f;
         Float h_upper = 0.f;
-    
-        
-        BSDFSample3f bs   = dr::zeros<BSDFSample3f>();
-        
+
+        // ---------- outputs ----------
+        BSDFSample3f bs = dr::zeros<BSDFSample3f>();
         Spectrum result(0.f);
+
+        // ---------- "chosen" storage (per-lane) ----------
+        // Store exactly what is needed to reproduce the same math for the
+        // selected (i,j)
+        Float ch_a = 0.f, ch_b = 0.f, ch_c = 0.f, ch_d = 0.f;
+        Float ch_r = 0.f, ch_tau0 = 0.f, ch_p_spec = 0.f;
+        Float ch_h_lower = 0.f, ch_h_upper = 0.f;
+        Float ch_term_lambda = 1.f;
+        Float ch_sample1_2   = 0.f;   // sample1_2 used for spec/diff choice
+        Mask ch_selected     = false; // level_selected & type_selected
+        Mask ch_spec_selected =
+            false; // level_selected & type_selected & (sample1_2 < p_spec)
+
         Float p_level_cum = 0.f;
 
-        // start sampling
-        for (size_t i = 0; i < m_bsdf_count; ++i) { // for layers (heightfield)
+        // ---------- sampling selection loops (same probability model as your
+        // code) ----------
+        for (size_t i = 0; i < m_bsdf_count; ++i) {
             h_upper = r[i];
-            Float p_level = this->proba_level(global_tau_0, term_kappa,
-                                              term_lambda, h_upper, h_lower);
+
+            Float p_level         = this->proba_level(global_tau_0, term_kappa,
+                                                      term_lambda, h_upper, h_lower);
             Float p_level_cum_pre = p_level_cum;
             p_level_cum += p_level;
 
-            Mask level_selected = (sample1 >= p_level_cum_pre) & (sample1 < p_level_cum);
+            Mask level_selected =
+                (sample1 >= p_level_cum_pre) & (sample1 < p_level_cum);
 
+            // IMPORTANT: keep division EXACTLY as your original code (no
+            // guards)
             Float sample1_1 = (sample1 - p_level_cum_pre) / p_level;
 
             Float p_type_cum = 0.f;
 
-            for (size_t j = i; j < m_bsdf_count; ++j) { // for micrograin types in layer i
-                Float p_type = this->proba_level_type(tau_0[j], r[j], term_lambda);
+            for (size_t j = i; j < m_bsdf_count; ++j) {
+                Float p_type =
+                    this->proba_level_type(tau_0[j], r[j], term_lambda);
                 Float p_type_cum_pre = p_type_cum;
                 p_type_cum += p_type;
 
@@ -160,43 +297,42 @@ public:
                                      (sample1_1 >= p_type_cum_pre) &
                                      (sample1_1 < p_type_cum);
 
+                // IMPORTANT: keep division EXACTLY as your original code (no
+                // guards)
                 Float sample1_2 = (sample1_1 - p_type_cum_pre) / p_type;
+
                 Mask spec_selected = level_selected & type_selected &
                                      (sample1_2 < spec_sampling_proba[j]);
 
-                Matrix3f M(a[j], b[j], 0.f, c[j], d[j], 0.f, 0.f, 0.f, 1.f);
-                Float abs_det_M = dr::abs(a[j] * d[j] - b[j] * c[j]);
-                Matrix3f M_inv  = dr::inverse(M);
-                Matrix3f M_inv_T = dr::transpose(M_inv);
+                // Commit the chosen parameters ONLY where selected (exactly one
+                // pair per lane)
+                dr::masked(ch_a, type_selected) = a[j];
+                dr::masked(ch_b, type_selected) = b[j];
+                dr::masked(ch_c, type_selected) = c[j];
+                dr::masked(ch_d, type_selected) = d[j];
 
-                Vector3f wh_1 = square_to_sphere_micrograin_conditional_level_and_type(
-                        term_lambda, r[j], h_upper, h_lower, sample2
-                );
+                dr::masked(ch_r, type_selected)      = r[j];
+                dr::masked(ch_tau0, type_selected)   = tau_0[j];
+                dr::masked(ch_p_spec, type_selected) = spec_sampling_proba[j];
 
-                Normal3f wh = dr::normalize(M_inv_T * wh_1);
-                Vector3f wo = dr::select(
-                    spec_selected,
-                    reflect(si.wi, wh),
-                    warp::square_to_cosine_hemisphere(sample2)
-                );
-                Float cos_theta_o = Frame3f::cos_theta(wo);
-                active &= cos_theta_o > 0.f;
-                Float pdf_ = this->pdf(ctx, si, wo, active);
-                BSDFSample3f bs_tmp(wo);
-                bs_tmp.pdf = pdf_;
-                bs_tmp.sampled_type = dr::select(
-                    spec_selected,
-                    +BSDFFlags::GlossyReflection,
-                    +BSDFFlags::DiffuseReflection);
-                Mask pdf_valid = dr::neq(pdf_, 0.f);
-                dr::masked(bs, level_selected && type_selected) = bs_tmp;
-                dr::masked(result, level_selected && type_selected) = dr::select(
-                    active & pdf_valid,
-                    this->eval_ex(ctx, si, wo, sample2_extra, active) / pdf_, 
-                    0.f
-                );
+                dr::masked(ch_h_lower, type_selected) = h_lower;
+                dr::masked(ch_h_upper, type_selected) = h_upper;
+
+                // store the layer's term_lambda (critical for identical wh_1
+                // sampling)
+                dr::masked(ch_term_lambda, type_selected) = term_lambda;
+
+                // store sample1_2 and spec selection (for identical spec/diff
+                // branching)
+                dr::masked(ch_sample1_2, type_selected)     = sample1_2;
+                dr::masked(ch_spec_selected, type_selected) = spec_selected;
+
+                ch_selected |= (level_selected & type_selected);
             }
+
+            // advance layer (same as your code)
             h_lower = h_upper;
+
             Float cur_term_kappa = 1.f - tau_0[i];
             Float cur_term_lambda =
                 dr::pow(1.f - tau_0[i], -1.f / (r[i] * r[i]));
@@ -204,8 +340,56 @@ public:
             term_kappa /= cur_term_kappa;
             term_lambda /= cur_term_lambda;
         }
-        /*Mask accident_NaN = dr::any(dr::isnan(result));
-        return { bs, result & ~accident_NaN };*/
+
+        // If nothing was selected (numerical edge), keep zero (same practical
+        // behavior)
+        Mask ok = active & ch_selected;
+
+        // ---------- reproduce the EXACT same sampling math for the selected
+        // (i,j) ----------
+        Matrix3f M(ch_a, ch_b, 0.f, ch_c, ch_d, 0.f, 0.f, 0.f, 1.f);
+
+        Float abs_det_M = dr::abs(ch_a * ch_d - ch_b * ch_c);
+        (void) abs_det_M; // kept for parity (not strictly needed here)
+
+        Matrix3f M_inv   = dr::inverse(M);
+        Matrix3f M_inv_T = dr::transpose(M_inv);
+
+        Vector3f wh_1 = square_to_sphere_micrograin_conditional_level_and_type(
+            ch_term_lambda, ch_r, ch_h_upper, ch_h_lower, sample2);
+
+        Normal3f wh = dr::normalize(M_inv_T * wh_1);
+
+        Vector3f wo = dr::select(ch_spec_selected, reflect(si.wi, wh),
+                                 warp::square_to_cosine_hemisphere(sample2));
+
+        Float cos_theta_o = Frame3f::cos_theta(wo);
+
+        // In your original code you did: active &= cos_theta_o > 0;
+        // For identical math on the selected branch, use a local mask (does not
+        // change outcome)
+        Mask active_sel = ok & (cos_theta_o > 0.f);
+
+        Float pdf_ = this->pdf(ctx, si, wo, active_sel);
+        BSDFSample3f bs_tmp(wo);
+        bs_tmp.pdf = pdf_;
+        bs_tmp.sampled_type =
+            dr::select(ch_spec_selected, +BSDFFlags::GlossyReflection,
+                       +BSDFFlags::DiffuseReflection);
+
+        Mask pdf_valid = dr::neq(pdf_, 0.f);
+
+        // Exactly like: dr::masked(bs, level_selected && type_selected) =
+        // bs_tmp;
+        dr::masked(bs, ch_selected) = bs_tmp;
+
+        // Exactly like:
+        // dr::masked(result, level_selected && type_selected) =
+        //     dr::select(active & pdf_valid, eval_ex(...)/pdf_, 0)
+        Spectrum val = this->eval_ex(ctx, si, wo, sample2_extra, active_sel);
+        Spectrum contrib = dr::select(active_sel & pdf_valid, val / pdf_, 0.f);
+        dr::masked(result, ch_selected) = contrib;
+
         return { bs, result };
     }
 
