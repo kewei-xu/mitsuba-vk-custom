@@ -163,7 +163,7 @@ public:
                             result * weight_surf / sampling_weight_surf,
                             result * weight_bulk / sampling_weight_bulk);
 
-        return { bs, result };
+        return { bs, result & active};
     }
 
     //**********************************************************//

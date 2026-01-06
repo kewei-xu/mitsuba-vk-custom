@@ -162,12 +162,14 @@ Float area_sector_i(const Vector<Float, 2> &p, const Vector<Float, 2> &pi,
     Vector2f centered_p  = p - direction * tan_theta_i * h_m_1;
     Vector2f centered_pi = pi - direction * tan_theta_i * h_m_1;
 
-    Matrix2f E(direction / cos_theta_i,
-               Vector2f(-direction.y(), direction.x()));
+    Matrix2f E(wi_1.x() / cos_theta_i, -wi_1.y(), 
+               wi_1.y() / cos_theta_i,  wi_1.x());
+
     Matrix2f inv_E = dr::inverse(E);
 
     centered_p  = inv_E * centered_p;
     centered_pi = inv_E * centered_pi;
+
 
     return area_sector<Float>(centered_p, centered_pi, 1.f) * dr::det(E);
 }
@@ -353,7 +355,7 @@ Float G1_HD_0(Float tau_0, const Vector<Float, 3> &wi_1) {
     Float cos_theta_i = Frame3f::cos_theta(wi_1);
     Float sig         = sigma_s_0(cos_theta_i);
     Float coeff       = dr::log(1.f - tau_0) * dr::InvPi<Float>;
-    Float value       = dr::exp(coeff);
+    Float value       = dr::exp(coeff * sig);
 
     return value;
 }
@@ -377,7 +379,7 @@ Vector<Float, 3> square_to_sphere_micrograin(Float tau_0,
 
     Float phi_m = dr::TwoPi<Float> * s1;
     Float theta_m =
-        dr::asin(dr::sqrt(dr::log(1.f - tau_0 * s1) / dr::log(1.f - tau_0)));
+        dr::asin(dr::sqrt(dr::log(1.f - tau_0 * s2) / dr::log(1.f - tau_0)));
 
     Float cp = dr::cos(phi_m);
     Float sp = dr::sin(phi_m);
