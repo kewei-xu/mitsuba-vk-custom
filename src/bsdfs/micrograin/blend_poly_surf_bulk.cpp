@@ -91,7 +91,7 @@ public:
         return { dr::zeros<BSDFSample3f>(), 0.f };
     }
 
-    Spectrum eval_ex(const BSDFContext &ctx, 
+    /*Spectrum eval_ex(const BSDFContext &ctx, 
                      const SurfaceInteraction3f &si,
                      const Vector3f &wo, 
                      const Point2f &sample2_extra,
@@ -107,9 +107,44 @@ public:
 
         Spectrum result = surf_bsdf_value * weight_surf + bulk_bsdf_value * weight_bulk;
         return dr::select(active, result, 0.f);
+    }*/
+
+
+    Spectrum eval_ex(const BSDFContext &ctx, const SurfaceInteraction3f &si,
+                     const Vector3f &wo, const Point2f &sample2_extra,
+                     Mask active) const override {
+
+        // Compute common weights once
+        Float weight_surf = surf_bsdf->eval_global_tau_0(si, active);
+        Float v1_bulk     = surf_bsdf->eval_visibility1_bulk(si, active);
+        Float v2_bulk     = surf_bsdf->eval_visibility2_bulk(si, wo, active);
+
+        Float weight_bulk =
+            eval_bulk_weight(si, wo, weight_surf, v1_bulk, v2_bulk, active);
+
+        // Optional: skip heavy BSDF evals when weight is zero (or effectively
+        // zero) This DOES NOT change the formula, only avoids useless work.
+        Mask need_surf = active & (weight_surf > 0.f);
+        Mask need_bulk = active & (weight_bulk > 0.f);
+
+        Spectrum surf_val(0.f);
+        Spectrum bulk_val(0.f);
+
+        if (dr::any_or<true>(need_surf)) {
+            surf_val =
+                surf_bsdf->eval_ex(ctx, si, wo, sample2_extra, need_surf);
+        }
+        if (dr::any_or<true>(need_bulk)) {
+            bulk_val =
+                bulk_bsdf->eval_ex(ctx, si, wo, sample2_extra, need_bulk);
+        }
+
+        Spectrum result = surf_val * weight_surf + bulk_val * weight_bulk;
+        return dr::select(active, result, 0.f);
     }
 
-    Float pdf(const BSDFContext &ctx, 
+
+    /*Float pdf(const BSDFContext &ctx, 
               const SurfaceInteraction3f &si,
               const Vector3f &wo, 
               Mask active) const override { 
@@ -122,9 +157,47 @@ public:
         Float pdf_ = sampling_weight_surf * surf_bsdf->pdf(ctx, si, wo, active) +
                      sampling_weight_bulk * bulk_bsdf->pdf(ctx, si, wo, active);
         return pdf_;
+    }*/
+
+
+    //Float pdf(const BSDFContext &ctx, const SurfaceInteraction3f &si,
+    //          const Vector3f &wo, Mask active) const override {
+
+    //    // Compute once
+    //    Float weight_surf = surf_bsdf->eval_global_tau_0(si, active);
+    //    Float v1_bulk     = surf_bsdf->eval_visibility1_bulk(si, active);
+
+    //    Float w_surf =
+    //        eval_surf_sampling_weight(si, weight_surf, v1_bulk, active);
+    //    Float w_bulk = 1.f - w_surf;
+
+    //    // Mixture pdf (same math as before)
+    //    Float pdf_s = surf_bsdf->pdf(ctx, si, wo, active);
+    //    Float pdf_b = bulk_bsdf->pdf(ctx, si, wo, active);
+
+    //    return w_surf * pdf_s + w_bulk * pdf_b;
+    //}
+
+    Float pdf(const BSDFContext &ctx, const SurfaceInteraction3f &si,
+              const Vector3f &wo, Mask active) const override {
+
+        // Compute once
+        Float weight_surf = surf_bsdf->eval_global_tau_0(si, active);
+        Float v1_bulk     = surf_bsdf->eval_visibility1_bulk(si, active);
+
+        Float w_surf =
+            eval_surf_sampling_weight(si, weight_surf, v1_bulk, active);
+        Float w_bulk = 1.f - w_surf;
+
+        // Mixture pdf (same math as before)
+        Float pdf_s = surf_bsdf->pdf(ctx, si, wo, active);
+        Float pdf_b = bulk_bsdf->pdf(ctx, si, wo, active);
+
+        return w_surf * pdf_s + w_bulk * pdf_b;
     }
 
-    std::pair<BSDFSample3f, Spectrum>
+
+    /*std::pair<BSDFSample3f, Spectrum>
     sample_ex(const BSDFContext &ctx, 
               const SurfaceInteraction3f &si,
               Float sample1, 
@@ -164,7 +237,75 @@ public:
                             result * weight_bulk / sampling_weight_bulk);
 
         return { bs, result & active};
+    }*/
+
+
+    std::pair<BSDFSample3f, Spectrum>
+    sample_ex(const BSDFContext &ctx, const SurfaceInteraction3f &si,
+              Float sample1, const Point2f &sample2,
+              const Point2f &sample2_extra, Mask active) const override {
+
+        // ---- compute once ----
+        Float weight_surf = surf_bsdf->eval_global_tau_0(si, active);
+        Float v1_bulk     = surf_bsdf->eval_visibility1_bulk(si, active);
+
+        Float sampling_weight_surf =
+            eval_surf_sampling_weight(si, weight_surf, v1_bulk, active);
+        Float sampling_weight_bulk = 1.f - sampling_weight_surf;
+
+        // pick branch (statistically correct mixture sampling)
+        Mask surf_selected = active & (sample1 < sampling_weight_surf);
+        Mask bulk_selected = active & ~surf_selected;
+
+        BSDFSample3f bs = dr::zeros<BSDFSample3f>();
+        Spectrum result = 0.f;
+
+        // ---- sample SURF only where selected ----
+        if (dr::any_or<true>(surf_selected)) {
+            Float u1_surf = sample1 / sampling_weight_surf;
+
+            auto [bs_s, res_s] = surf_bsdf->sample_ex(
+                ctx, si, u1_surf, sample2, sample2_extra, surf_selected);
+            dr::masked(bs, surf_selected)     = bs_s;
+            dr::masked(result, surf_selected) = res_s;
+        }
+
+        // ---- sample BULK only where selected ----
+        if (dr::any_or<true>(bulk_selected)) {
+            Float u1_bulk =
+                (sample1 - sampling_weight_surf) / sampling_weight_bulk;
+
+            auto [bs_b, res_b] = bulk_bsdf->sample_ex(
+                ctx, si, u1_bulk, sample2, sample2_extra, bulk_selected);
+            dr::masked(bs, bulk_selected)     = bs_b;
+            dr::masked(result, bulk_selected) = res_b;
+        }
+
+        // ---- compute mixture pdf inline (avoid calling pdf(), no duplicate
+        // global_tau_0/v1_bulk) ---- Let child pdfs handle their own validity
+        // checks.
+        Float pdf_surf = surf_bsdf->pdf(ctx, si, bs.wo, active);
+        Float pdf_bulk = bulk_bsdf->pdf(ctx, si, bs.wo, active);
+        bs.pdf =
+            sampling_weight_surf * pdf_surf + sampling_weight_bulk * pdf_bulk;
+
+        active &= dr::neq(bs.pdf, 0.f);
+
+        // ---- bulk weight needs v2 at the actually-sampled wo ----
+        Float v2_bulk = surf_bsdf->eval_visibility2_bulk(si, bs.wo, active);
+        Float weight_bulk =
+            eval_bulk_weight(si, bs.wo, weight_surf, v1_bulk, v2_bulk, active);
+
+        // ---- same correction logic as your original code ----
+        result = dr::select(surf_selected,
+                            result * weight_surf / sampling_weight_surf,
+                            result * weight_bulk / sampling_weight_bulk);
+
+        return { bs, result & active };
     }
+
+
+
 
     //**********************************************************//
     //*-------------- helper functions (poly) -----------------*//
