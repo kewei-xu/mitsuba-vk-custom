@@ -106,7 +106,7 @@ public:
                                                        log_term_lambda);
     }
 
-    // ---- sorting (保持你原版，支持 variadic swap) ----
+    // ---- sorting helpers (index-only) ----
     template <typename T, typename MaskT>
     MI_INLINE void swap_if(T &x, T &y, const MaskT &mask) const {
         T x0 = x, y0 = y;
@@ -114,20 +114,23 @@ public:
         y = dr::select(mask, x0, y0);
     }
 
-    template <typename T, typename... Ts>
-    MI_INLINE void sort16_bsdf_by_radius(T (&rr)[NbGrainMax], size_t count,
-                                         Mask active,
-                                         Ts (&...arrays)[NbGrainMax]) const {
+    // Sort network: only swaps r_key[] and idx[] (NOT swapping all packed
+    // arrays)
+    MI_INLINE void sort16_index_by_radius(Float (&r_key)[NbGrainMax],
+                                          UInt32 (&idx)[NbGrainMax],
+                                          size_t count, Mask active) const {
         auto pair_valid = [&](size_t i, size_t j) -> Mask {
             return active & (i < count) & (j < count);
         };
+
         auto CS = [&](size_t i, size_t j) {
             Mask valid = pair_valid(i, j);
-            Mask m     = (rr[i] > rr[j]) & valid;
-            swap_if(rr[i], rr[j], m);
-            (swap_if(arrays[i], arrays[j], m), ...);
+            Mask m     = (r_key[i] > r_key[j]) & valid;
+            swap_if(r_key[i], r_key[j], m);
+            swap_if(idx[i], idx[j], m);
         };
 
+        // same 16-input sorting network as your original
         CS(0, 1);
         CS(2, 3);
         CS(4, 5);
@@ -203,6 +206,100 @@ public:
         CS(13, 14);
     }
 
+    // ---- gather helpers (idx -> value) ----
+    template <typename T>
+    MI_INLINE T gather16_by_idx(const T (&arr)[NbGrainMax], const UInt32 &id,
+                                Mask active) const {
+        T out = dr::zeros<T>();
+        for (size_t k = 0; k < NbGrainMax; ++k) {
+            Mask m = active & (id == (UInt32) k);
+            out    = dr::select(m, arr[k], out);
+        }
+        return out;
+    }
+
+    // Materialize sorted PackedCache + sorted p_spec from (pc_local,
+    // p_spec_local, idx[])
+    MI_INLINE void materialize_sorted_from_index(
+        const PackedCache &pc_local, const Float (&p_spec_local)[NbGrainMax],
+        const UInt32 (&idx)[NbGrainMax], PackedCache &pc_sorted,
+        Float (&p_spec_sorted)[NbGrainMax], size_t count, Mask active) const {
+        for (size_t k = 0; k < NbGrainMax; ++k) {
+            // Only lanes with idx[k] < count are meaningful; others become
+            // zeros.
+            Mask valid_k = active & (idx[k] < (UInt32) count);
+
+            pc_sorted.a[k] = gather16_by_idx(pc_local.a, idx[k], valid_k);
+            pc_sorted.b[k] = gather16_by_idx(pc_local.b, idx[k], valid_k);
+            pc_sorted.c[k] = gather16_by_idx(pc_local.c, idx[k], valid_k);
+            pc_sorted.d[k] = gather16_by_idx(pc_local.d, idx[k], valid_k);
+
+            pc_sorted.r[k]  = gather16_by_idx(pc_local.r, idx[k], valid_k);
+            pc_sorted.r2[k] = gather16_by_idx(pc_local.r2, idx[k], valid_k);
+            pc_sorted.inv_r[k] =
+                gather16_by_idx(pc_local.inv_r, idx[k], valid_k);
+            pc_sorted.inv_r2[k] =
+                gather16_by_idx(pc_local.inv_r2, idx[k], valid_k);
+
+            pc_sorted.tau0[k] = gather16_by_idx(pc_local.tau0, idx[k], valid_k);
+            pc_sorted.log_base[k] =
+                gather16_by_idx(pc_local.log_base, idx[k], valid_k);
+
+            pc_sorted.abs_det[k] =
+                gather16_by_idx(pc_local.abs_det, idx[k], valid_k);
+            pc_sorted.inv_det[k] =
+                gather16_by_idx(pc_local.inv_det, idx[k], valid_k);
+
+            pc_sorted.wi1[k] = gather16_by_idx(pc_local.wi1, idx[k], valid_k);
+
+            p_spec_sorted[k] = gather16_by_idx(p_spec_local, idx[k], valid_k);
+        }
+    }
+
+
+
+    //MI_INLINE void flush_packed_cache(const PackedCache &pc,
+    //                                  const Float (&p_spec)[NbGrainMax],
+    //                                  size_t count, Mask active) const {
+    //    // 把 packed 数组“物化”成一次/少数几次 kernel 的输出，切断后续大图的融合
+    //    for (size_t k = 0; k < NbGrainMax; ++k) {
+    //        Mask valid = active & (k < count);
+    //        dr::schedule(dr::select(valid, pc.a[k], 0.f));
+    //        dr::schedule(dr::select(valid, pc.b[k], 0.f));
+    //        dr::schedule(dr::select(valid, pc.c[k], 0.f));
+    //        dr::schedule(dr::select(valid, pc.d[k], 0.f));
+
+    //        dr::schedule(dr::select(valid, pc.r[k], 0.f));
+    //        dr::schedule(dr::select(valid, pc.r2[k], 0.f));
+    //        dr::schedule(dr::select(valid, pc.inv_r[k], 0.f));
+    //        dr::schedule(dr::select(valid, pc.inv_r2[k], 0.f));
+
+    //        dr::schedule(dr::select(valid, pc.tau0[k], 0.f));
+    //        dr::schedule(dr::select(valid, pc.log_base[k], 0.f));
+
+    //        dr::schedule(dr::select(valid, pc.abs_det[k], 0.f));
+    //        dr::schedule(dr::select(valid, pc.inv_det[k], 0.f));
+
+    //        // Vector3f 也 schedule（normalize/点乘链太容易被融合膨胀）
+    //        dr::schedule(dr::select(valid, pc.wi1[k], Vector3f(0.f)));
+
+    //        dr::schedule(dr::select(valid, p_spec[k], 0.f));
+    //    }
+
+    //    // 触发一次 JIT 编译与执行（切断图）
+    //    dr::eval();
+    //}
+
+    //MI_INLINE void flush_scalars(const Float &x, const Float &y,
+    //                             Mask active) const {
+    //    // 小工具：再切一次（避免把 global_tau0、log_term_lambda 又 fuse 回去）
+    //    dr::schedule(dr::select(active, x, 0.f));
+    //    dr::schedule(dr::select(active, y, 0.f));
+    //    dr::eval();
+    //}
+
+
+
     // ====================== sample_ex (Packed + manual 2x2)
     // ======================
     std::pair<BSDFSample3f, Spectrum>
@@ -215,9 +312,9 @@ public:
         if (!dr::any_or<true>(active))
             return { dr::zeros<BSDFSample3f>(), 0.f };
 
-        // ---- build local packed arrays (then sort once) ----
+        // ---- build local packed arrays (UNSORTED) ----
         PackedCache pc_local;
-        Float p_spec[NbGrainMax];
+        Float p_spec_local[NbGrainMax];
 
         for (size_t k = 0; k < NbGrainMax; ++k) {
             pc_local.a[k] = pc_local.b[k] = pc_local.c[k] = pc_local.d[k] = 0.f;
@@ -226,7 +323,7 @@ public:
             pc_local.tau0[k] = pc_local.log_base[k] = 0.f;
             pc_local.abs_det[k] = pc_local.inv_det[k] = 0.f;
             pc_local.wi1[k]                           = Vector3f(0.f);
-            p_spec[k]                                 = 0.f;
+            p_spec_local[k]                           = 0.f;
         }
 
         for (size_t k = 0; k < m_bsdf_count; ++k) {
@@ -259,32 +356,41 @@ public:
             pc_local.wi1[k] =
                 dr::normalize(this->mul_Minv(a, b, c, d, inv_det, si.wi));
 
-            p_spec[k] =
+            p_spec_local[k] =
                 m_micrograin_bsdfs[k]->specular_component_sampling_probability(
                     cos_theta_i);
         }
 
-        // sort by radius, swap everything derived too
-        this->sort16_bsdf_by_radius(
-            pc_local.r, m_bsdf_count, active, pc_local.a, pc_local.b,
-            pc_local.c, pc_local.d, pc_local.r2, pc_local.inv_r,
-            pc_local.inv_r2, pc_local.tau0, pc_local.log_base, pc_local.abs_det,
-            pc_local.inv_det, pc_local.wi1, p_spec);
+        // ---- index-only sort by radius ----
+        UInt32 idx[NbGrainMax];
+        Float r_key[NbGrainMax];
+        for (size_t k = 0; k < NbGrainMax; ++k) {
+            idx[k]   = (UInt32) k;
+            r_key[k] = pc_local.r[k];
+        }
 
-        // global_tau0 (log-domain)
-        Float global_tau_0 = this->packed_global_tau0(pc_local, active);
+        this->sort16_index_by_radius(r_key, idx, m_bsdf_count, active);
+
+        // ---- materialize sorted cache once ----
+        PackedCache pc;
+        Float p_spec[NbGrainMax];
+        materialize_sorted_from_index(pc_local, p_spec_local, idx, pc, p_spec,
+                                      m_bsdf_count, active);
+
+        // global_tau0 (log-domain) from SORTED pc (only order changes; products
+        // are commutative)
+        Float global_tau_0 = this->packed_global_tau0(pc, active);
 
         // --- init per-level term_lambda (log-domain) ---
-        Float log_term_lambda_cur =
-            this->packed_log_term_lambda(pc_local, active);
-        Float term_lambda_cur = dr::exp(log_term_lambda_cur);
+        Float log_term_lambda_cur = this->packed_log_term_lambda(pc, active);
+
+        Float term_lambda_cur     = dr::exp(log_term_lambda_cur);
 
         Float term_kappa = 1.f - global_tau_0;
 
         Float h_lower = 0.f;
         Float h_upper = 0.f;
 
-        // outputs
         BSDFSample3f bs = dr::zeros<BSDFSample3f>();
         Spectrum result(0.f);
 
@@ -301,10 +407,8 @@ public:
         Float p_level_cum = 0.f;
 
         for (size_t i = 0; i < m_bsdf_count; ++i) {
-            h_upper = pc_local.r[i];
+            h_upper = pc.r[i];
 
-            // IMPORTANT: p_level uses CURRENT term_lambda (same as original
-            // logic)
             Float p_level = this->proba_level(
                 global_tau_0, term_kappa, term_lambda_cur, h_upper, h_lower);
             Float p_level_cum_pre = p_level_cum;
@@ -318,10 +422,8 @@ public:
             Float p_type_cum = 0.f;
 
             for (size_t j = i; j < m_bsdf_count; ++j) {
-                // IMPORTANT: p_type must use CURRENT log_term_lambda (per
-                // level)
-                Float p_type = this->proba_level_type_packed(
-                    pc_local, j, log_term_lambda_cur);
+                Float p_type =
+                    this->proba_level_type_packed(pc, j, log_term_lambda_cur);
 
                 Float p_type_cum_pre = p_type_cum;
                 p_type_cum += p_type;
@@ -334,22 +436,20 @@ public:
 
                 Mask spec_selected = type_selected & (sample1_2 < p_spec[j]);
 
-                dr::masked(ch_a, type_selected) = pc_local.a[j];
-                dr::masked(ch_b, type_selected) = pc_local.b[j];
-                dr::masked(ch_c, type_selected) = pc_local.c[j];
-                dr::masked(ch_d, type_selected) = pc_local.d[j];
+                dr::masked(ch_a, type_selected) = pc.a[j];
+                dr::masked(ch_b, type_selected) = pc.b[j];
+                dr::masked(ch_c, type_selected) = pc.c[j];
+                dr::masked(ch_d, type_selected) = pc.d[j];
 
-                dr::masked(ch_r, type_selected)       = pc_local.r[j];
-                dr::masked(ch_tau0, type_selected)    = pc_local.tau0[j];
-                dr::masked(ch_abs_det, type_selected) = pc_local.abs_det[j];
-                dr::masked(ch_inv_det, type_selected) = pc_local.inv_det[j];
+                dr::masked(ch_r, type_selected)       = pc.r[j];
+                dr::masked(ch_tau0, type_selected)    = pc.tau0[j];
+                dr::masked(ch_abs_det, type_selected) = pc.abs_det[j];
+                dr::masked(ch_inv_det, type_selected) = pc.inv_det[j];
                 dr::masked(ch_p_spec, type_selected)  = p_spec[j];
 
                 dr::masked(ch_h_lower, type_selected) = h_lower;
                 dr::masked(ch_h_upper, type_selected) = h_upper;
 
-                // IMPORTANT: store CURRENT level's term_lambda for conditional
-                // sampling
                 dr::masked(ch_term_lambda, type_selected)   = term_lambda_cur;
                 dr::masked(ch_sample1_2, type_selected)     = sample1_2;
                 dr::masked(ch_spec_selected, type_selected) = spec_selected;
@@ -359,13 +459,11 @@ public:
 
             h_lower = h_upper;
 
-            // --- update for next level (log recursion) ---
-            Float cur_term_kappa = 1.f - pc_local.tau0[i];
+            // recursion update (log-domain)
+            Float cur_term_kappa = 1.f - pc.tau0[i];
             term_kappa /= cur_term_kappa;
 
-            // log_term_lambda_cur -= log_lambda_i  (instead of term_lambda /=
-            // exp(log_lambda_i))
-            Float log_lambda_i = this->packed_log_lambda_i(pc_local, i);
+            Float log_lambda_i = this->packed_log_lambda_i(pc, i);
             log_term_lambda_cur -= log_lambda_i;
             term_lambda_cur = dr::exp(log_term_lambda_cur);
         }
@@ -374,11 +472,9 @@ public:
         if (!dr::any_or<true>(ok))
             return { bs, 0.f };
 
-        // sample wh_1
         Vector3f wh_1 = square_to_sphere_micrograin_conditional_level_and_type(
             ch_term_lambda, ch_r, ch_h_upper, ch_h_lower, sample2);
 
-        // wh = normalize((M^{-1})^T * wh_1)  --- manual 2x2
         Normal3f wh = dr::normalize(
             this->mul_MinvT(ch_a, ch_b, ch_c, ch_d, ch_inv_det, wh_1));
 
@@ -418,9 +514,9 @@ public:
         if (!dr::any_or<true>(active))
             return 0.f;
 
-        // local packed + p_spec then sort
+        // ---- build local packed arrays (UNSORTED) ----
         PackedCache pc_local;
-        Float p_spec[NbGrainMax];
+        Float p_spec_local[NbGrainMax];
 
         for (size_t k = 0; k < NbGrainMax; ++k) {
             pc_local.a[k] = pc_local.b[k] = pc_local.c[k] = pc_local.d[k] = 0.f;
@@ -429,7 +525,7 @@ public:
             pc_local.tau0[k] = pc_local.log_base[k] = 0.f;
             pc_local.abs_det[k] = pc_local.inv_det[k] = 0.f;
             pc_local.wi1[k]                           = Vector3f(0.f);
-            p_spec[k]                                 = 0.f;
+            p_spec_local[k]                           = 0.f;
         }
 
         for (size_t k = 0; k < m_bsdf_count; ++k) {
@@ -462,40 +558,49 @@ public:
             pc_local.wi1[k] =
                 dr::normalize(this->mul_Minv(a, b, c, d, inv_det, si.wi));
 
-            p_spec[k] =
+            p_spec_local[k] =
                 m_micrograin_bsdfs[k]->specular_component_sampling_probability(
                     cos_theta_i);
         }
 
-        this->sort16_bsdf_by_radius(
-            pc_local.r, m_bsdf_count, active, pc_local.a, pc_local.b,
-            pc_local.c, pc_local.d, pc_local.r2, pc_local.inv_r,
-            pc_local.inv_r2, pc_local.tau0, pc_local.log_base, pc_local.abs_det,
-            pc_local.inv_det, pc_local.wi1, p_spec);
+        // ---- index-only sort by radius ----
+        UInt32 idx[NbGrainMax];
+        Float r_key[NbGrainMax];
+        for (size_t k = 0; k < NbGrainMax; ++k) {
+            idx[k]   = (UInt32) k;
+            r_key[k] = pc_local.r[k];
+        }
 
-        Float global_tau_0 = this->packed_global_tau0(pc_local, active);
+        this->sort16_index_by_radius(r_key, idx, m_bsdf_count, active);
+
+        // ---- materialize sorted cache once ----
+        PackedCache pc;
+        Float p_spec[NbGrainMax];
+        materialize_sorted_from_index(pc_local, p_spec_local, idx, pc, p_spec,
+                                      m_bsdf_count, active);
+
+        Float global_tau_0 = this->packed_global_tau0(pc, active);
 
         // --- init per-level term_lambda (log-domain) ---
-        Float log_term_lambda_cur =
-            this->packed_log_term_lambda(pc_local, active);
-        Float term_lambda_cur = dr::exp(log_term_lambda_cur);
+        Float log_term_lambda_cur = this->packed_log_term_lambda(pc, active);
+
+        Float term_lambda_cur     = dr::exp(log_term_lambda_cur);
 
         Float term_kappa = 1.f - global_tau_0;
 
         Vector3f wh     = dr::normalize(si.wi + wo);
         Mask valid_spec = (dr::dot(si.wi, wh) > 0.f) & (dr::dot(wo, wh) > 0.f);
 
-        // per-j precompute using manual 2x2: tmp = M^T * wh
+        // per-j precompute: tmp = M^T * wh
         Vector3f tmp[NbGrainMax];
         Float norm_sqr[NbGrainMax];
         Float hv_height[NbGrainMax];
 
         for (size_t j = 0; j < m_bsdf_count; ++j) {
-            tmp[j] = this->mul_Mt(pc_local.a[j], pc_local.b[j], pc_local.c[j],
-                                  pc_local.d[j], wh);
-            norm_sqr[j]   = dr::squared_norm(tmp[j]);
+            tmp[j]      = this->mul_Mt(pc.a[j], pc.b[j], pc.c[j], pc.d[j], wh);
+            norm_sqr[j] = dr::squared_norm(tmp[j]);
             Vector3f wh_1 = dr::normalize(tmp[j]);
-            hv_height[j]  = Frame3f::cos_theta(wh_1) * pc_local.r[j];
+            hv_height[j]  = Frame3f::cos_theta(wh_1) * pc.r[j];
         }
 
         Float pdf_ = 0.f;
@@ -504,25 +609,23 @@ public:
         Float h_upper = 0.f;
 
         for (size_t i = 0; i < m_bsdf_count; ++i) {
-            h_upper = pc_local.r[i];
+            h_upper = pc.r[i];
 
-            // IMPORTANT: p_level uses CURRENT term_lambda
             Float p_level = this->proba_level(
                 global_tau_0, term_kappa, term_lambda_cur, h_upper, h_lower);
             Mask valid_level = dr::neq(h_upper - h_lower, 0.f);
 
             for (size_t j = i; j < m_bsdf_count; ++j) {
-                // IMPORTANT: p_type uses CURRENT log_term_lambda
-                Float p_type = this->proba_level_type_packed(
-                    pc_local, j, log_term_lambda_cur);
+                Float p_type =
+                    this->proba_level_type_packed(pc, j, log_term_lambda_cur);
 
                 Mask inRange =
                     (hv_height[j] > h_lower) & (hv_height[j] <= h_upper);
 
                 Float pdf_spec =
                     this->square_to_micrograin_conditional_level_and_type_pdf(
-                        term_lambda_cur, pc_local.r[j], h_upper, h_lower,
-                        pc_local.abs_det[j], norm_sqr[j], wh) /
+                        term_lambda_cur, pc.r[j], h_upper, h_lower,
+                        pc.abs_det[j], norm_sqr[j], wh) /
                     (4.f * dr::dot(wo, wh));
 
                 pdf_ +=
@@ -537,11 +640,11 @@ public:
 
             h_lower = h_upper;
 
-            // --- update recursion ---
-            Float cur_term_kappa = 1.f - pc_local.tau0[i];
+            // recursion update (log-domain)
+            Float cur_term_kappa = 1.f - pc.tau0[i];
             term_kappa /= cur_term_kappa;
 
-            Float log_lambda_i = this->packed_log_lambda_i(pc_local, i);
+            Float log_lambda_i = this->packed_log_lambda_i(pc, i);
             log_term_lambda_cur -= log_lambda_i;
             term_lambda_cur = dr::exp(log_term_lambda_cur);
         }
