@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <mitsuba/core/profiler.h>
 #include <mitsuba/render/interaction.h>
@@ -466,6 +466,52 @@ public:
                  dr::abs(a * d - b * c) };
     }
 
+    MI_INLINE std::tuple<Float, Float, Float, Float, Float, Float>
+    eval_abcd_det_and_abs_det(const SurfaceInteraction3f &si,
+                              Mask active = true) const {
+        Float a       = eval_a(si, active);
+        Float b       = eval_b(si, active);
+        Float c       = eval_c(si, active);
+        Float d       = eval_d(si, active);
+        Float det     = a * d - b * c;
+        Float abs_det = dr::abs(det);
+        return { a, b, c, d, det, abs_det };
+    }
+
+    // Lightweight: one-shot fetch tau0 + (a,b,c,d) + det + abs_det
+    MI_INLINE std::tuple<Float, Float, Float, Float, Float, Float, Float>
+    eval_tau0_abcd_det_absdet(const SurfaceInteraction3f &si,
+                              Mask active = true) const {
+        Float tau0    = eval_tau_0(si, active);
+        Float a       = eval_a(si, active);
+        Float b       = eval_b(si, active);
+        Float c       = eval_c(si, active);
+        Float d       = eval_d(si, active);
+        Float det     = a * d - b * c;
+        Float abs_det = dr::abs(det);
+        return { tau0, a, b, c, d, det, abs_det };
+    }
+
+    MI_INLINE void eval_params_abcd_r_tau0_det(const SurfaceInteraction3f &si,
+                                               Float &a, Float &b, Float &c,
+                                               Float &d, Float &r, Float &tau0,
+                                               Float &abs_det, Float &inv_det,
+                                               Mask active = true) const {
+        a    = eval_a(si, active);
+        b    = eval_b(si, active);
+        c    = eval_c(si, active);
+        d    = eval_d(si, active);
+        r    = eval_radius(si, active);
+        tau0 = eval_tau_0(si, active);
+
+        Float det = a * d - b * c;
+        abs_det   = dr::abs(det);
+
+        // 注意：inv_det 在 det≈0 时会爆；但你原本 inverse(M) 也会炸。
+        // 为了保持“数学上完全一致”，这里不要加 clamp/epsilon。
+        inv_det = dr::rcp(det);
+    }
+
     virtual Spectrum eval_fresnel(const BSDFContext &ctx,
                                   const SurfaceInteraction3f &si,
                                   const Vector3f &m, Mask active = true) const {
@@ -532,7 +578,7 @@ public:
 
 protected:
     MicrograinBSDF(const Properties &props) : Base(props) {
-        this->m_tau_0  = props.get_unbounded_texture<Texture>("filling_factor", 0.2f);
+        this->m_tau_0  = props.get_texture<Texture>("filling_factor", 0.2f);
         this->m_radius = props.get_unbounded_texture<Texture>("radius", 1.f);
         this->m_a      = props.get_unbounded_texture<Texture>("a", 1.f);
         this->m_b      = props.get_unbounded_texture<Texture>("b", 0.f);
@@ -550,6 +596,385 @@ protected:
     MI_TRAVERSE_CB(Base, m_tau_0, m_a, m_b, m_c, m_d, m_radius)
 };
 
+
+
+
+
+
+//template <typename Float, typename Spectrum>
+//class PolyMicrograin : public BSDF<Float, Spectrum> {
+//public:
+//    MI_IMPORT_BASE(BSDF, m_flags, m_components)
+//    MI_IMPORT_TYPES(Texture)
+//
+//protected:
+//    static constexpr size_t NbGrainMax = 16;
+//
+//
+//
+//    MI_INLINE void cache_tau0(const SurfaceInteraction3f &si,
+//                              Float tau0[NbGrainMax],
+//                              Mask active = true) const {
+//        for (size_t i = 0; i < NbGrainMax; ++i)
+//            tau0[i] = 0.f;
+//        for (size_t i = 0; i < m_bsdf_count; ++i)
+//            tau0[i] = m_micrograin_bsdfs[i]->eval_tau_0(si, active);
+//    }
+//
+//    MI_INLINE void cache_inv_and_wi1(const SurfaceInteraction3f &si,
+//                                     Float tau0[NbGrainMax],
+//                                     Matrix3f M_inv[NbGrainMax],
+//                                     Vector3f wi1[NbGrainMax],
+//                                     Mask active = true) const {
+//        for (size_t i = 0; i < NbGrainMax; ++i) {
+//            tau0[i]  = 0.f;
+//            M_inv[i] = Matrix3f(0.f);
+//            wi1[i]   = Vector3f(0.f);
+//        }
+//
+//        for (size_t i = 0; i < m_bsdf_count; ++i) {
+//            tau0[i] = m_micrograin_bsdfs[i]->eval_tau_0(si, active);
+//
+//            // Use the matrix+det interface (you told me it's consistent).
+//            // Even if det isn't used here, this often avoids duplicate internal
+//            // work.
+//            auto [M, det] =
+//                m_micrograin_bsdfs[i]->eval_stretching_matrix3f_and_abs_det(
+//                    si, active);
+//            (void) det;
+//
+//            M_inv[i] = dr::inverse(M);
+//            wi1[i]   = dr::normalize(M_inv[i] * si.wi);
+//        }
+//    }
+//
+//    //MI_INLINE Float cache_inv_wi1_tauprod(const SurfaceInteraction3f &si,
+//    //                                      Float tau0[NbGrainMax],
+//    //                                      Matrix3f M_inv[NbGrainMax],
+//    //                                      Vector3f wi1[NbGrainMax],
+//    //                                      Mask active = true) const {
+//    //    for (size_t i = 0; i < NbGrainMax; ++i) {
+//    //        tau0[i]  = 0.f;
+//    //        M_inv[i] = Matrix3f(0.f);
+//    //        wi1[i]   = Vector3f(0.f);
+//    //    }
+//
+//    //    Float tau_prod = 1.f;
+//
+//    //    for (size_t i = 0; i < m_bsdf_count; ++i) {
+//    //        tau0[i] = m_micrograin_bsdfs[i]->eval_tau_0(si, active);
+//
+//    //        auto [M, det] =
+//    //            m_micrograin_bsdfs[i]->eval_stretching_matrix3f_and_abs_det(
+//    //                si, active);
+//    //        (void) det;
+//
+//    //        M_inv[i] = dr::inverse(M);
+//    //        wi1[i]   = dr::normalize(M_inv[i] * si.wi);
+//
+//    //        tau_prod *= dr::select(active, (1.f - tau0[i]), 1.f);
+//    //    }
+//
+//    //    return tau_prod; // Π (1 - tau0)
+//    //}
+//
+//
+//    MI_INLINE void cache_inv_wi1_tau0(const SurfaceInteraction3f &si,
+//                                      Float tau0[NbGrainMax],
+//                                      Matrix3f M_inv[NbGrainMax],
+//                                      Vector3f wi1[NbGrainMax],
+//                                      Mask active = true) const {
+//        for (size_t i = 0; i < NbGrainMax; ++i) {
+//            tau0[i]  = 0.f;
+//            M_inv[i] = Matrix3f(0.f);
+//            wi1[i]   = Vector3f(0.f);
+//        }
+//
+//        for (size_t i = 0; i < m_bsdf_count; ++i) {
+//            tau0[i] = m_micrograin_bsdfs[i]->eval_tau_0(si, active);
+//
+//            auto [M, det] =
+//                m_micrograin_bsdfs[i]->eval_stretching_matrix3f_and_abs_det(
+//                    si, active);
+//            (void) det;
+//
+//            M_inv[i] = dr::inverse(M);
+//            wi1[i]   = dr::normalize(M_inv[i] * si.wi);
+//        }
+//    }
+//
+//    MI_INLINE Float cache_inv_wi1_tauprod(const SurfaceInteraction3f &si,
+//                                          Float tau0[NbGrainMax],
+//                                          Matrix3f M_inv[NbGrainMax],
+//                                          Vector3f wi1[NbGrainMax],
+//                                          Mask active = true) const {
+//        cache_inv_wi1_tau0(si, tau0, M_inv, wi1, active);
+//
+//        Float tau_prod = 1.f;
+//        for (size_t i = 0; i < m_bsdf_count; ++i) {
+//            tau_prod *= dr::select(active, (1.f - tau0[i]), 1.f);
+//        }
+//        return tau_prod;
+//    }
+//
+//
+//public:
+//    ~PolyMicrograin() {};
+//
+//    /*MI_INLINE Float eval_global_tau_0(const SurfaceInteraction3f &si,
+//                                      Mask active = true) const {
+//        Float value = 1.f;
+//        for (size_t i = 0; i < m_bsdf_count; ++i) {
+//            Float tau_0 = m_micrograin_bsdfs[i]->eval_tau_0(si, active);
+//            value *= dr::select(active, (1.f - tau_0), 1.f);
+//        }
+//        return dr::clamp(1.f - value, 0.f, 0.9999f);
+//    }*/
+//
+//    MI_INLINE Float eval_global_tau_0(const SurfaceInteraction3f &si,
+//                                      Mask active = true) const {
+//        Float tau0[NbGrainMax];
+//        cache_tau0(si, tau0, active);
+//
+//        Float value = 1.f;
+//        for (size_t i = 0; i < m_bsdf_count; ++i) {
+//            value *= dr::select(active, (1.f - tau0[i]), 1.f);
+//        }
+//        return dr::clamp(1.f - value, 0.f, 0.9999f);
+//    }
+//
+//    /*MI_INLINE Float eval_visibility1_bulk(const SurfaceInteraction3f &si,
+//                                          Mask active = true) const {
+//        Float value = 1.f;
+//        for (size_t i = 0; i < m_bsdf_count; ++i) {
+//            Float tau_0 = m_micrograin_bsdfs[i]->eval_tau_0(si, active);
+//            Matrix3f M =
+//                m_micrograin_bsdfs[i]->eval_stretching_matrix3f(si, active);
+//            Matrix3f M_inv   = dr::inverse(M);
+//            Vector3f wi_1    = dr::normalize(M_inv * si.wi);
+//            Float G1_dist_h0 = G1_HD_0<Float>(tau_0, wi_1);
+//            value *= dr::select(active, G1_dist_h0, 1.f);
+//        }
+//        return dr::clamp(value, 0.f, 1.f);
+//    }*/
+//
+//    MI_INLINE Float eval_visibility1_bulk(const SurfaceInteraction3f &si,
+//                                          Mask active = true) const {
+//        Float tau0[NbGrainMax];
+//        Matrix3f M_inv[NbGrainMax];
+//        Vector3f wi1[NbGrainMax];
+//
+//        cache_inv_and_wi1(si, tau0, M_inv, wi1, active);
+//
+//        Float value = 1.f;
+//        for (size_t i = 0; i < m_bsdf_count; ++i) {
+//            Float G1_dist_h0 = G1_HD_0<Float>(tau0[i], wi1[i]);
+//            value *= dr::select(active, G1_dist_h0, 1.f);
+//        }
+//        return dr::clamp(value, 0.f, 1.f);
+//    }
+//
+//    /*MI_INLINE Float eval_visibility2_bulk(const SurfaceInteraction3f &si,
+//                                          const Vector3f &wo,
+//                                          Mask active = true) const {
+//        Float value = 1.f;
+//        for (size_t i = 0; i < m_bsdf_count; ++i) {
+//            Float tau_0 = m_micrograin_bsdfs[i]->eval_tau_0(si, active);
+//            Matrix3f M =
+//                m_micrograin_bsdfs[i]->eval_stretching_matrix3f(si, active);
+//            Matrix3f M_inv   = dr::inverse(M);
+//            Vector3f wi_1    = dr::normalize(M_inv * si.wi);
+//            Vector3f wo_1    = dr::normalize(M_inv * wo);
+//            Float G2_dist_h0 = G2_HD_0<Float>(tau_0, wi_1, wo_1);
+//            value *= dr::select(active, G2_dist_h0, 1.f);
+//        }
+//        return dr::clamp(value, 0.f, 1.f);
+//    }*/
+//
+//    MI_INLINE Float eval_visibility2_bulk(const SurfaceInteraction3f &si,
+//                                          const Vector3f &wo,
+//                                          Mask active = true) const {
+//        Float tau0[NbGrainMax];
+//        Matrix3f M_inv[NbGrainMax];
+//        Vector3f wi1[NbGrainMax];
+//
+//        cache_inv_and_wi1(si, tau0, M_inv, wi1, active);
+//
+//        Float value = 1.f;
+//        for (size_t i = 0; i < m_bsdf_count; ++i) {
+//            Vector3f wo1     = dr::normalize(M_inv[i] * wo);
+//            Float G2_dist_h0 = G2_HD_0<Float>(tau0[i], wi1[i], wo1);
+//            value *= dr::select(active, G2_dist_h0, 1.f);
+//        }
+//        return dr::clamp(value, 0.f, 1.f);
+//    }
+//
+//
+//    MI_INLINE std::pair<Float, Float>
+//    eval_visibility12_bulk(const SurfaceInteraction3f &si, const Vector3f &wo,
+//                           Mask active = true) const {
+//        Float tau0[NbGrainMax];
+//        Matrix3f M_inv[NbGrainMax];
+//        Vector3f wi1[NbGrainMax];
+//
+//        cache_inv_and_wi1(si, tau0, M_inv, wi1, active);
+//
+//        Float v1 = 1.f;
+//        Float v2 = 1.f;
+//
+//        for (size_t i = 0; i < m_bsdf_count; ++i) {
+//            Float G1 = G1_HD_0<Float>(tau0[i], wi1[i]);
+//            v1 *= dr::select(active, G1, 1.f);
+//
+//            Vector3f wo1 = dr::normalize(M_inv[i] * wo);
+//            Float G2     = G2_HD_0<Float>(tau0[i], wi1[i], wo1);
+//            v2 *= dr::select(active, G2, 1.f);
+//        }
+//
+//        return { dr::clamp(v1, 0.f, 1.f), dr::clamp(v2, 0.f, 1.f) };
+//    }
+//
+//
+//    // 只算 global_tau0 + v1（给 pdf/sample_ex 用，最省）
+//    MI_INLINE std::pair<Float, Float>
+//        eval_global_tau0_and_visibility1_bulk(const SurfaceInteraction3f &si,
+//                                              Mask active = true) const {
+//        Float tau0[NbGrainMax];
+//        Matrix3f M_inv[NbGrainMax];
+//        Vector3f wi1[NbGrainMax];
+//
+//        Float tau_prod    = cache_inv_wi1_tauprod(si, tau0, M_inv, wi1, active);
+//        Float global_tau0 = dr::clamp(1.f - tau_prod, 0.f, 0.9999f);
+//
+//        Float v1 = 1.f;
+//        for (size_t i = 0; i < m_bsdf_count; ++i) {
+//            Float G1 = G1_HD_0<Float>(tau0[i], wi1[i]);
+//            v1 *= dr::select(active, G1, 1.f);
+//        }
+//
+//        return { global_tau0, dr::clamp(v1, 0.f, 1.f) };
+//    }
+//
+//    // get global_tau0 + v1 + v2 (give to eval_ex)
+//    MI_INLINE std::tuple<Float, Float, Float>
+//    eval_global_tau0_and_visibility12_bulk(const SurfaceInteraction3f &si,
+//                                           const Vector3f &wo,
+//                                           Mask active = true) const {
+//        Float tau0[NbGrainMax];
+//        Matrix3f M_inv[NbGrainMax];
+//        Vector3f wi1[NbGrainMax];
+//
+//        Float tau_prod    = cache_inv_wi1_tauprod(si, tau0, M_inv, wi1, active);
+//        Float global_tau0 = dr::clamp(1.f - tau_prod, 0.f, 0.9999f);
+//
+//        Float v1 = 1.f;
+//        Float v2 = 1.f;
+//
+//        for (size_t i = 0; i < m_bsdf_count; ++i) {
+//            Float G1 = G1_HD_0<Float>(tau0[i], wi1[i]);
+//            v1 *= dr::select(active, G1, 1.f);
+//
+//            Vector3f wo1 = dr::normalize(M_inv[i] * wo);
+//            Float G2     = G2_HD_0<Float>(tau0[i], wi1[i], wo1);
+//            v2 *= dr::select(active, G2, 1.f);
+//        }
+//
+//        return { global_tau0, dr::clamp(v1, 0.f, 1.f),
+//                 dr::clamp(v2, 0.f, 1.f) };
+//    }
+//
+//    // get v2 (give to sample_ex when get bs.wo)
+//    //MI_INLINE Float eval_visibility2_bulk_fast(const SurfaceInteraction3f &si,
+//    //                                           const Vector3f &wo,
+//    //                                           Mask active = true) const {
+//    //    Float tau0[NbGrainMax];
+//    //    Matrix3f M_inv[NbGrainMax];
+//    //    Vector3f wi1[NbGrainMax];
+//
+//    //    // get tau_prod，but no need global_tau0；
+//    //    // here is to reuse helper
+//    //    (void) cache_inv_wi1_tauprod(si, tau0, M_inv, wi1, active);
+//
+//    //    Float v2 = 1.f;
+//    //    for (size_t i = 0; i < m_bsdf_count; ++i) {
+//    //        Vector3f wo1 = dr::normalize(M_inv[i] * wo);
+//    //        Float G2     = G2_HD_0<Float>(tau0[i], wi1[i], wo1);
+//    //        v2 *= dr::select(active, G2, 1.f);
+//    //    }
+//    //    return dr::clamp(v2, 0.f, 1.f);
+//    //}
+//
+//
+//    MI_INLINE Float eval_visibility2_bulk_fast(const SurfaceInteraction3f &si,
+//                                               const Vector3f &wo,
+//                                               Mask active = true) const {
+//        Float tau0[NbGrainMax];
+//        Matrix3f M_inv[NbGrainMax];
+//        Vector3f wi1[NbGrainMax];
+//
+//        cache_inv_wi1_tau0(si, tau0, M_inv, wi1, active);
+//
+//        Float v2 = 1.f;
+//        for (size_t i = 0; i < m_bsdf_count; ++i) {
+//            Vector3f wo1 = dr::normalize(M_inv[i] * wo);
+//            Float G2     = G2_HD_0<Float>(tau0[i], wi1[i], wo1);
+//            v2 *= dr::select(active, G2, 1.f);
+//        }
+//        return dr::clamp(v2, 0.f, 1.f);
+//    }
+//
+//
+//    MI_DECLARE_CLASS(PolyMicrograin)
+//
+//protected:
+//    PolyMicrograin(const Properties &props) : Base(props) {
+//        for (size_t i = 0; i < NbGrainMax; ++i)
+//            m_micrograin_bsdfs[i] = nullptr;
+//        // get all sub mono micrgrain bsdfs
+//        m_bsdf_count = 0;
+//        for (auto &prop : props.objects()) {
+//            if (MicrograinBSDF<Float, Spectrum> *bsdf =
+//                    prop.try_get<MicrograinBSDF<Float, Spectrum>>()) {
+//                if (m_bsdf_count == NbGrainMax) {
+//                    Throw("Too many micrograin bsdfs: {} exceeds maximum {}",
+//                          m_bsdf_count + 1, NbGrainMax);
+//                }
+//                m_micrograin_bsdfs[m_bsdf_count] = bsdf;
+//                m_bsdf_count++;
+//            }
+//        }
+//        if (m_bsdf_count == 0) {
+//            Throw("PolyMicrograin: At least one MicrograinBSDF must be "
+//                  "specified.");
+//        }
+//        this->m_components.clear();
+//        for (size_t i = 0; i < m_bsdf_count; ++i) {
+//            this->m_flags |= m_micrograin_bsdfs[i]->flags();
+//            for (size_t j = 0; j < m_micrograin_bsdfs[i]->component_count();
+//                 ++j) {
+//                this->m_components.push_back(m_micrograin_bsdfs[i]->flags(j));
+//            }
+//        }
+//    }
+//
+//protected:
+//    ref<MicrograinBSDF<Float, Spectrum>> m_micrograin_bsdfs[NbGrainMax];
+//    size_t m_bsdf_count;
+//
+//    MI_TRAVERSE_CB(Base, m_bsdf_count, m_micrograin_bsdfs[0],
+//                   m_micrograin_bsdfs[1], m_micrograin_bsdfs[2],
+//                   m_micrograin_bsdfs[3], m_micrograin_bsdfs[4],
+//                   m_micrograin_bsdfs[5], m_micrograin_bsdfs[6],
+//                   m_micrograin_bsdfs[7], m_micrograin_bsdfs[8],
+//                   m_micrograin_bsdfs[9], m_micrograin_bsdfs[10],
+//                   m_micrograin_bsdfs[11], m_micrograin_bsdfs[12],
+//                   m_micrograin_bsdfs[13], m_micrograin_bsdfs[14],
+//                   m_micrograin_bsdfs[15])
+//};
+
+
+
+
 template <typename Float, typename Spectrum>
 class PolyMicrograin : public BSDF<Float, Spectrum> {
 public:
@@ -557,49 +982,318 @@ public:
     MI_IMPORT_TYPES(Texture)
 
 public:
-    ~PolyMicrograin() {};
+    // ✅ 关键：让 Blend 能访问类型与常量（只改可见性，不改数学）
+    static constexpr size_t NbGrainMax = 16;
 
-    MI_INLINE Float eval_global_tau_0(const SurfaceInteraction3f &si,
+    struct PackedCache {
+        // M = [a b; c d]
+        Float a[NbGrainMax], b[NbGrainMax], c[NbGrainMax], d[NbGrainMax];
+
+        Float r[NbGrainMax], r2[NbGrainMax], inv_r[NbGrainMax],
+            inv_r2[NbGrainMax];
+        Float tau0[NbGrainMax], log_base[NbGrainMax]; // log(1 - tau0)
+
+        Float abs_det[NbGrainMax], inv_det[NbGrainMax];
+        Vector3f wi1[NbGrainMax]; // normalize(M^{-1} * wi)
+    };
+
+protected:
+    // ===== 2x2 embedded ops (faster than Matrix3f inverse/transpose) =====
+    MI_INLINE Vector3f mul_Mt(const Float a, const Float b, const Float c,
+                              const Float d, const Vector3f &v) const {
+        // M^T * [x y]^T = [a c; b d] * [x y]
+        return Vector3f(a * v.x() + c * v.y(), b * v.x() + d * v.y(), v.z());
+    }
+
+    MI_INLINE Vector3f mul_Minv(const Float a, const Float b, const Float c,
+                                const Float d, const Float inv_det,
+                                const Vector3f &v) const {
+        // M^{-1} = 1/det [ d -b; -c a]
+        return Vector3f((d * v.x() - b * v.y()) * inv_det,
+                        (-c * v.x() + a * v.y()) * inv_det, v.z());
+    }
+
+    MI_INLINE Vector3f mul_MinvT(const Float a, const Float b, const Float c,
+                                 const Float d, const Float inv_det,
+                                 const Vector3f &v) const {
+        // (M^{-1})^T = 1/det [ d -c; -b a]
+        return Vector3f((d * v.x() - c * v.y()) * inv_det,
+                        (-b * v.x() + a * v.y()) * inv_det, v.z());
+    }
+
+    // ===== one-shot cache (no wo) =====
+    MI_INLINE void cache_packed(const SurfaceInteraction3f &si, PackedCache &pc,
+                                Mask active = true) const {
+        for (size_t k = 0; k < m_bsdf_count; ++k) {
+            Float a, b, c, d, r, tau0, abs_det, inv_det;
+            m_micrograin_bsdfs[k]->eval_params_abcd_r_tau0_det(
+                si, a, b, c, d, r, tau0, abs_det, inv_det, active);
+
+            pc.a[k] = a;
+            pc.b[k] = b;
+            pc.c[k] = c;
+            pc.d[k] = d;
+
+            pc.r[k]      = r;
+            pc.r2[k]     = r * r;
+            pc.inv_r[k]  = dr::rcp(r);
+            pc.inv_r2[k] = dr::rcp(pc.r2[k]);
+
+            pc.tau0[k]     = tau0;
+            pc.log_base[k] = dr::log(1.f - tau0);
+
+            pc.abs_det[k] = abs_det;
+            pc.inv_det[k] = inv_det;
+
+            pc.wi1[k] = dr::normalize(mul_Minv(a, b, c, d, inv_det, si.wi));
+        }
+    }
+
+    // ===== Packed helpers: log-domain products to shrink DrJit graph =====
+    MI_INLINE Float packed_log_prod_1_minus_tau0(const PackedCache &pc,
+                                                 Mask active = true) const {
+        // log Π (1 - tau0_i) = Σ log(1 - tau0_i)
+        Float log_prod = 0.f;
+        for (size_t i = 0; i < m_bsdf_count; ++i) {
+            log_prod += dr::select(active, pc.log_base[i], 0.f);
+        }
+        return log_prod;
+    }
+
+    MI_INLINE Float packed_global_tau0(const PackedCache &pc,
+                                       Mask active = true) const {
+        // global_tau0 = 1 - Π(1 - tau0_i) = 1 - exp(Σ log(1 - tau0_i))
+        Float log_prod = packed_log_prod_1_minus_tau0(pc, active);
+        Float prod     = dr::exp(log_prod);
+        return dr::clamp(1.f - prod, 0.f, 0.9999f);
+    }
+
+    MI_INLINE Float packed_log_term_lambda(const PackedCache &pc,
+                                           Mask active = true) const {
+        // term_lambda = Π (1 - tau0_i)^(-1/r_i^2)
+        // log term_lambda = Σ [ log(1 - tau0_i) * (-1/r_i^2) ]
+        Float log_lambda = 0.f;
+        for (size_t i = 0; i < m_bsdf_count; ++i) {
+            Float log_lambda_i =
+                -pc.log_base[i] * pc.inv_r2[i]; // -(log(1-tau0))/r^2
+            log_lambda += dr::select(active, log_lambda_i, 0.f);
+        }
+        return log_lambda;
+    }
+
+    MI_INLINE Float packed_term_lambda(const PackedCache &pc,
+                                       Mask active = true) const {
+        return dr::exp(packed_log_term_lambda(pc, active));
+    }
+
+    MI_INLINE Float packed_log_lambda_i(const PackedCache &pc, size_t i) const {
+        // log lambda_i = log((1 - tau0_i)^(-1/r_i^2)) = -(log_base_i)/r^2
+        return -pc.log_base[i] * pc.inv_r2[i];
+    }
+
+    MI_INLINE Float packed_proba_level_type_from_logs(
+        Float log_lambda_i, Float log_term_lambda) const {
+        // proba_level_type = log(lambda_i) / log(term_lambda)
+        return dr::clamp(log_lambda_i / log_term_lambda, 0.f, 1.f);
+    }
+
+    // ===== wo1 cache (PackedCache + wo) =====
+    MI_INLINE void cache_wo1_from_packed(const PackedCache &pc,
+                                         const Vector3f &wo,
+                                         Vector3f wo1[NbGrainMax],
+                                         Mask /*active*/ = true) const {
+        for (size_t k = 0; k < m_bsdf_count; ++k) {
+            wo1[k] = dr::normalize(mul_Minv(pc.a[k], pc.b[k], pc.c[k], pc.d[k],
+                                            pc.inv_det[k], wo));
+        }
+    }
+
+public:
+    ~PolyMicrograin() {}
+
+    // ============================================================
+    // ✅ 新增：外部可控的 cache 构建 / wo1 构建（给 Blend 复用用）
+    // ============================================================
+    MI_INLINE void build_packed_cache(const SurfaceInteraction3f &si,
+                                      PackedCache &pc,
                                       Mask active = true) const {
-        Float value = 1.f;
-        for (size_t i = 0; i < m_bsdf_count; ++i) {
-            Float tau_0 = m_micrograin_bsdfs[i]->eval_tau_0(si, active);
-            value *= dr::select(active, (1.f - tau_0), 1.f);
-        }
-        return dr::clamp(1.f - value, 0.f, 0.9999f);
+        cache_packed(si, pc, active);
     }
 
-    MI_INLINE Float eval_visibility1_bulk(const SurfaceInteraction3f &si,
-                                          Mask active = true) const {
-        Float value = 1.f;
-        for (size_t i = 0; i < m_bsdf_count; ++i) {
-            Float tau_0 = m_micrograin_bsdfs[i]->eval_tau_0(si, active);
-            Matrix3f M =
-                m_micrograin_bsdfs[i]->eval_stretching_matrix3f(si, active);
-            Matrix3f M_inv   = dr::inverse(M);
-            Vector3f wi_1    = dr::normalize(M_inv * si.wi);
-            Float G1_dist_h0 = G1_HD_0<Float>(tau_0, wi_1);
-            value *= dr::select(active, G1_dist_h0, 1.f);
-        }
-        return dr::clamp(value, 0.f, 1.f);
+    MI_INLINE void build_wo1_from_cache(const PackedCache &pc,
+                                        const Vector3f &wo,
+                                        Vector3f wo1[NbGrainMax],
+                                        Mask active = true) const {
+        cache_wo1_from_packed(pc, wo, wo1, active);
     }
 
-    MI_INLINE Float eval_visibility2_bulk(const SurfaceInteraction3f &si,
-                                          const Vector3f &wo,
-                                          Mask active = true) const {
-        Float value = 1.f;
+    // ============================================================
+    // ✅ 新增：from_cache 版本（严格复刻你原 public API 的数学形式）
+    // ============================================================
+    MI_INLINE Float eval_global_tau_0_from_cache(const PackedCache &pc,
+                                                 Mask active = true) const {
+        /*Float prod = 1.f;
         for (size_t i = 0; i < m_bsdf_count; ++i) {
-            Float tau_0 = m_micrograin_bsdfs[i]->eval_tau_0(si, active);
-            Matrix3f M =
-                m_micrograin_bsdfs[i]->eval_stretching_matrix3f(si, active);
-            Matrix3f M_inv   = dr::inverse(M);
-            Vector3f wi_1    = dr::normalize(M_inv * si.wi);
-            Vector3f wo_1    = dr::normalize(M_inv * wo);
-            Float G2_dist_h0 = G2_HD_0<Float>(tau_0, wi_1, wo_1);
-            value *= dr::select(active, G2_dist_h0, 1.f);
+            prod *= dr::select(active, (1.f - pc.tau0[i]), 1.f);
         }
-        return dr::clamp(value, 0.f, 1.f);
+        return dr::clamp(1.f - prod, 0.f, 0.9999f);*/
+        return packed_global_tau0(pc, active);
     }
+
+    MI_INLINE Float eval_visibility1_bulk_from_cache(const PackedCache &pc,
+                                                     Mask active = true) const {
+        Float v1 = 1.f;
+        for (size_t i = 0; i < m_bsdf_count; ++i) {
+            Float G1 = G1_HD_0<Float>(pc.tau0[i], pc.wi1[i]);
+            v1 *= dr::select(active, G1, 1.f);
+        }
+        return dr::clamp(v1, 0.f, 1.f);
+    }
+
+    MI_INLINE Float eval_visibility2_bulk_from_cache(
+        const PackedCache &pc, const Vector3f wo1[NbGrainMax],
+        Mask active = true) const {
+        Float v2 = 1.f;
+        for (size_t i = 0; i < m_bsdf_count; ++i) {
+            Float G2 = G2_HD_0<Float>(pc.tau0[i], pc.wi1[i], wo1[i]);
+            v2 *= dr::select(active, G2, 1.f);
+        }
+        return dr::clamp(v2, 0.f, 1.f);
+    }
+
+    MI_INLINE std::pair<Float, Float>
+    eval_visibility12_bulk_from_cache(const PackedCache &pc,
+                                      const Vector3f wo1[NbGrainMax],
+                                      Mask active = true) const {
+        Float v1 = 1.f, v2 = 1.f;
+        for (size_t i = 0; i < m_bsdf_count; ++i) {
+            Float G1 = G1_HD_0<Float>(pc.tau0[i], pc.wi1[i]);
+            v1 *= dr::select(active, G1, 1.f);
+
+            Float G2 = G2_HD_0<Float>(pc.tau0[i], pc.wi1[i], wo1[i]);
+            v2 *= dr::select(active, G2, 1.f);
+        }
+        return { dr::clamp(v1, 0.f, 1.f), dr::clamp(v2, 0.f, 1.f) };
+    }
+
+    MI_INLINE std::pair<Float, Float>
+    eval_global_tau0_and_visibility1_bulk_from_cache(const PackedCache &pc,
+                                                     Mask active = true) const {
+        Float prod = 1.f;
+        Float v1   = 1.f;
+
+        for (size_t i = 0; i < m_bsdf_count; ++i) {
+            prod *= dr::select(active, (1.f - pc.tau0[i]), 1.f);
+
+            Float G1 = G1_HD_0<Float>(pc.tau0[i], pc.wi1[i]);
+            v1 *= dr::select(active, G1, 1.f);
+        }
+
+        Float global_tau0 = dr::clamp(1.f - prod, 0.f, 0.9999f);
+        return { global_tau0, dr::clamp(v1, 0.f, 1.f) };
+    }
+
+    MI_INLINE std::tuple<Float, Float, Float>
+    eval_global_tau0_and_visibility12_bulk_from_cache(
+        const PackedCache &pc, const Vector3f wo1[NbGrainMax],
+        Mask active = true) const {
+        Float prod = 1.f;
+        Float v1   = 1.f;
+        Float v2   = 1.f;
+
+        for (size_t i = 0; i < m_bsdf_count; ++i) {
+            prod *= dr::select(active, (1.f - pc.tau0[i]), 1.f);
+
+            Float G1 = G1_HD_0<Float>(pc.tau0[i], pc.wi1[i]);
+            v1 *= dr::select(active, G1, 1.f);
+
+            Float G2 = G2_HD_0<Float>(pc.tau0[i], pc.wi1[i], wo1[i]);
+            v2 *= dr::select(active, G2, 1.f);
+        }
+
+        Float global_tau0 = dr::clamp(1.f - prod, 0.f, 0.9999f);
+        return { global_tau0, dr::clamp(v1, 0.f, 1.f),
+                 dr::clamp(v2, 0.f, 1.f) };
+    }
+
+    // ============================================================
+    // 你原来的 Public fast APIs：改成“薄封装”（仍是同一数学）
+    // ============================================================
+
+    //MI_INLINE Float eval_global_tau_0(const SurfaceInteraction3f &si,
+    //                                  Mask active = true) const {
+    //    PackedCache pc;
+    //    build_packed_cache(si, pc, active);
+    //    return eval_global_tau_0_from_cache(pc, active);
+    //}
+
+    //MI_INLINE Float eval_visibility1_bulk(const SurfaceInteraction3f &si,
+    //                                      Mask active = true) const {
+    //    PackedCache pc;
+    //    build_packed_cache(si, pc, active);
+    //    return eval_visibility1_bulk_from_cache(pc, active);
+    //}
+
+    //MI_INLINE Float eval_visibility2_bulk(const SurfaceInteraction3f &si,
+    //                                      const Vector3f &wo,
+    //                                      Mask active = true) const {
+    //    PackedCache pc;
+    //    build_packed_cache(si, pc, active);
+
+    //    Vector3f wo1[NbGrainMax];
+    //    build_wo1_from_cache(pc, wo, wo1, active);
+
+    //    return eval_visibility2_bulk_from_cache(pc, wo1, active);
+    //}
+
+    //MI_INLINE std::pair<Float, Float>
+    //eval_visibility12_bulk(const SurfaceInteraction3f &si, const Vector3f &wo,
+    //                       Mask active = true) const {
+    //    PackedCache pc;
+    //    build_packed_cache(si, pc, active);
+
+    //    Vector3f wo1[NbGrainMax];
+    //    build_wo1_from_cache(pc, wo, wo1, active);
+
+    //    return eval_visibility12_bulk_from_cache(pc, wo1, active);
+    //}
+
+    //// combo: global_tau0 + v1
+    //MI_INLINE std::pair<Float, Float>
+    //eval_global_tau0_and_visibility1_bulk(const SurfaceInteraction3f &si,
+    //                                      Mask active = true) const {
+    //    PackedCache pc;
+    //    build_packed_cache(si, pc, active);
+    //    return eval_global_tau0_and_visibility1_bulk_from_cache(pc, active);
+    //}
+
+    //// combo: global_tau0 + v1 + v2
+    //MI_INLINE std::tuple<Float, Float, Float>
+    //eval_global_tau0_and_visibility12_bulk(const SurfaceInteraction3f &si,
+    //                                       const Vector3f &wo,
+    //                                       Mask active = true) const {
+    //    PackedCache pc;
+    //    build_packed_cache(si, pc, active);
+
+    //    Vector3f wo1[NbGrainMax];
+    //    build_wo1_from_cache(pc, wo, wo1, active);
+
+    //    return eval_global_tau0_and_visibility12_bulk_from_cache(pc, wo1,
+    //                                                             active);
+    //}
+
+    //// v2 only after you already have wo (fast path)
+    //MI_INLINE Float eval_visibility2_bulk_fast(const SurfaceInteraction3f &si,
+    //                                           const Vector3f &wo,
+    //                                           Mask active = true) const {
+    //    PackedCache pc;
+    //    build_packed_cache(si, pc, active);
+
+    //    Vector3f wo1[NbGrainMax];
+    //    build_wo1_from_cache(pc, wo, wo1, active);
+
+    //    return eval_visibility2_bulk_from_cache(pc, wo1, active);
+    //}
 
     MI_DECLARE_CLASS(PolyMicrograin)
 
@@ -607,35 +1301,33 @@ protected:
     PolyMicrograin(const Properties &props) : Base(props) {
         for (size_t i = 0; i < NbGrainMax; ++i)
             m_micrograin_bsdfs[i] = nullptr;
-        // get all sub mono micrgrain bsdfs
+
         m_bsdf_count = 0;
         for (auto &prop : props.objects()) {
-            if (MicrograinBSDF<Float, Spectrum> *bsdf =
-                    prop.try_get<MicrograinBSDF<Float, Spectrum>>()) {
+            if (auto *bsdf = prop.try_get<MicrograinBSDF<Float, Spectrum>>()) {
                 if (m_bsdf_count == NbGrainMax) {
                     Throw("Too many micrograin bsdfs: {} exceeds maximum {}",
                           m_bsdf_count + 1, NbGrainMax);
                 }
-                m_micrograin_bsdfs[m_bsdf_count] = bsdf;
-                m_bsdf_count++;
+                m_micrograin_bsdfs[m_bsdf_count++] = bsdf;
             }
         }
-        if (m_bsdf_count == 0) {
+
+        if (m_bsdf_count == 0)
             Throw("PolyMicrograin: At least one MicrograinBSDF must be "
                   "specified.");
-        }
+
         this->m_components.clear();
+        this->m_flags = 0;
         for (size_t i = 0; i < m_bsdf_count; ++i) {
             this->m_flags |= m_micrograin_bsdfs[i]->flags();
             for (size_t j = 0; j < m_micrograin_bsdfs[i]->component_count();
-                 ++j) {
+                 ++j)
                 this->m_components.push_back(m_micrograin_bsdfs[i]->flags(j));
-            }
         }
     }
 
 protected:
-    static constexpr size_t NbGrainMax = 16;
     ref<MicrograinBSDF<Float, Spectrum>> m_micrograin_bsdfs[NbGrainMax];
     size_t m_bsdf_count;
 
@@ -649,10 +1341,6 @@ protected:
                    m_micrograin_bsdfs[13], m_micrograin_bsdfs[14],
                    m_micrograin_bsdfs[15])
 };
-
-
-
-
 
 
 NAMESPACE_END(mitsuba)
