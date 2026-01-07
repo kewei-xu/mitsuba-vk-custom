@@ -206,16 +206,53 @@ public:
         CS(13, 14);
     }
 
-    // ---- gather helpers (idx -> value) ----
+
+    // ---- gather helpers (idx -> value), Scheme: tree gather (4-stage) ----
+
+    // Use 4 bit-masks (b0..b3) to avoid recomputing comparisons per field.
+    // b0 = (id & 1)!=0, b1 = (id & 2)!=0, b2 = (id & 4)!=0, b3 = (id & 8)!=0
+    template <typename T>
+    MI_INLINE T gather16_by_bits(const T (&arr)[NbGrainMax], const UInt32 &id,
+                                 const Mask &valid_k, const Mask &b0,
+                                 const Mask &b1, const Mask &b2,
+                                 const Mask &b3) const {
+        // Stage 0: 8 pairs
+        T p0 = dr::select(b0, arr[1], arr[0]);
+        T p1 = dr::select(b0, arr[3], arr[2]);
+        T p2 = dr::select(b0, arr[5], arr[4]);
+        T p3 = dr::select(b0, arr[7], arr[6]);
+        T p4 = dr::select(b0, arr[9], arr[8]);
+        T p5 = dr::select(b0, arr[11], arr[10]);
+        T p6 = dr::select(b0, arr[13], arr[12]);
+        T p7 = dr::select(b0, arr[15], arr[14]);
+
+        // Stage 1: 4 quads
+        T q0 = dr::select(b1, p1, p0);
+        T q1 = dr::select(b1, p3, p2);
+        T q2 = dr::select(b1, p5, p4);
+        T q3 = dr::select(b1, p7, p6);
+
+        // Stage 2: 2 octets
+        T o0 = dr::select(b2, q1, q0);
+        T o1 = dr::select(b2, q3, q2);
+
+        // Stage 3: final
+        T out = dr::select(b3, o1, o0);
+
+        // Gate invalid lanes to zero (important!)
+        return dr::select(valid_k, out, dr::zeros<T>());
+    }
+
+    // Backward-compatible wrapper (computes bit masks internally)
     template <typename T>
     MI_INLINE T gather16_by_idx(const T (&arr)[NbGrainMax], const UInt32 &id,
                                 Mask active) const {
-        T out = dr::zeros<T>();
-        for (size_t k = 0; k < NbGrainMax; ++k) {
-            Mask m = active & (id == (UInt32) k);
-            out    = dr::select(m, arr[k], out);
-        }
-        return out;
+        Mask valid_k = active;
+        Mask b0      = dr::neq(id & (UInt32) 1u, (UInt32) 0u);
+        Mask b1      = dr::neq(id & (UInt32) 2u, (UInt32) 0u);
+        Mask b2      = dr::neq(id & (UInt32) 4u, (UInt32) 0u);
+        Mask b3      = dr::neq(id & (UInt32) 8u, (UInt32) 0u);
+        return gather16_by_bits(arr, id, valid_k, b0, b1, b2, b3);
     }
 
     // Materialize sorted PackedCache + sorted p_spec from (pc_local,
@@ -224,84 +261,103 @@ public:
         const PackedCache &pc_local, const Float (&p_spec_local)[NbGrainMax],
         const UInt32 (&idx)[NbGrainMax], PackedCache &pc_sorted,
         Float (&p_spec_sorted)[NbGrainMax], size_t count, Mask active) const {
+
+        // Optional: zero-init outputs once (keeps behavior deterministic)
         for (size_t k = 0; k < NbGrainMax; ++k) {
-            // Only lanes with idx[k] < count are meaningful; others become
-            // zeros.
-            Mask valid_k = active & (idx[k] < (UInt32) count);
+            pc_sorted.a[k] = pc_sorted.b[k] = pc_sorted.c[k] = pc_sorted.d[k] =
+                0.f;
+            pc_sorted.r[k] = pc_sorted.r2[k] = pc_sorted.inv_r[k] =
+                pc_sorted.inv_r2[k]          = 0.f;
+            pc_sorted.tau0[k] = pc_sorted.log_base[k] = 0.f;
+            pc_sorted.abs_det[k] = pc_sorted.inv_det[k] = 0.f;
+            pc_sorted.wi1[k]                            = Vector3f(0.f);
+            p_spec_sorted[k]                            = 0.f;
+        }
 
-            pc_sorted.a[k] = gather16_by_idx(pc_local.a, idx[k], valid_k);
-            pc_sorted.b[k] = gather16_by_idx(pc_local.b, idx[k], valid_k);
-            pc_sorted.c[k] = gather16_by_idx(pc_local.c, idx[k], valid_k);
-            pc_sorted.d[k] = gather16_by_idx(pc_local.d, idx[k], valid_k);
+        for (size_t k = 0; k < NbGrainMax; ++k) {
+            UInt32 id = idx[k];
 
-            pc_sorted.r[k]  = gather16_by_idx(pc_local.r, idx[k], valid_k);
-            pc_sorted.r2[k] = gather16_by_idx(pc_local.r2, idx[k], valid_k);
+            // Only lanes with id < count are meaningful
+            Mask valid_k = active & (id < (UInt32) count);
+
+            // Compute bit masks ONCE per k (reused for all fields)
+            Mask b0 = dr::neq(id & (UInt32) 1u, (UInt32) 0u);
+            Mask b1 = dr::neq(id & (UInt32) 2u, (UInt32) 0u);
+            Mask b2 = dr::neq(id & (UInt32) 4u, (UInt32) 0u);
+            Mask b3 = dr::neq(id & (UInt32) 8u, (UInt32) 0u);
+
+            pc_sorted.a[k] =
+                gather16_by_bits(pc_local.a, id, valid_k, b0, b1, b2, b3);
+            pc_sorted.b[k] =
+                gather16_by_bits(pc_local.b, id, valid_k, b0, b1, b2, b3);
+            pc_sorted.c[k] =
+                gather16_by_bits(pc_local.c, id, valid_k, b0, b1, b2, b3);
+            pc_sorted.d[k] =
+                gather16_by_bits(pc_local.d, id, valid_k, b0, b1, b2, b3);
+
+            pc_sorted.r[k] =
+                gather16_by_bits(pc_local.r, id, valid_k, b0, b1, b2, b3);
+            pc_sorted.r2[k] =
+                gather16_by_bits(pc_local.r2, id, valid_k, b0, b1, b2, b3);
             pc_sorted.inv_r[k] =
-                gather16_by_idx(pc_local.inv_r, idx[k], valid_k);
+                gather16_by_bits(pc_local.inv_r, id, valid_k, b0, b1, b2, b3);
             pc_sorted.inv_r2[k] =
-                gather16_by_idx(pc_local.inv_r2, idx[k], valid_k);
+                gather16_by_bits(pc_local.inv_r2, id, valid_k, b0, b1, b2, b3);
 
-            pc_sorted.tau0[k] = gather16_by_idx(pc_local.tau0, idx[k], valid_k);
-            pc_sorted.log_base[k] =
-                gather16_by_idx(pc_local.log_base, idx[k], valid_k);
+            pc_sorted.tau0[k] =
+                gather16_by_bits(pc_local.tau0, id, valid_k, b0, b1, b2, b3);
+            pc_sorted.log_base[k] = gather16_by_bits(pc_local.log_base, id,
+                                                     valid_k, b0, b1, b2, b3);
 
             pc_sorted.abs_det[k] =
-                gather16_by_idx(pc_local.abs_det, idx[k], valid_k);
+                gather16_by_bits(pc_local.abs_det, id, valid_k, b0, b1, b2, b3);
             pc_sorted.inv_det[k] =
-                gather16_by_idx(pc_local.inv_det, idx[k], valid_k);
+                gather16_by_bits(pc_local.inv_det, id, valid_k, b0, b1, b2, b3);
 
-            pc_sorted.wi1[k] = gather16_by_idx(pc_local.wi1, idx[k], valid_k);
+            pc_sorted.wi1[k] =
+                gather16_by_bits(pc_local.wi1, id, valid_k, b0, b1, b2, b3);
 
-            p_spec_sorted[k] = gather16_by_idx(p_spec_local, idx[k], valid_k);
+            p_spec_sorted[k] =
+                gather16_by_bits(p_spec_local, id, valid_k, b0, b1, b2, b3);
         }
     }
 
 
 
-    //MI_INLINE void flush_packed_cache(const PackedCache &pc,
-    //                                  const Float (&p_spec)[NbGrainMax],
-    //                                  size_t count, Mask active) const {
-    //    // 把 packed 数组“物化”成一次/少数几次 kernel 的输出，切断后续大图的融合
-    //    for (size_t k = 0; k < NbGrainMax; ++k) {
-    //        Mask valid = active & (k < count);
-    //        dr::schedule(dr::select(valid, pc.a[k], 0.f));
-    //        dr::schedule(dr::select(valid, pc.b[k], 0.f));
-    //        dr::schedule(dr::select(valid, pc.c[k], 0.f));
-    //        dr::schedule(dr::select(valid, pc.d[k], 0.f));
+    // ---- Scheme D: suffix tables for log_lambda / log_term_lambda /
+    // term_lambda ----
+    // log_lambda[j] = log((1 - tau0_j)^(-1/r_j^2)) = -(log_base_j)/r_j^2
+    // log_term_lambda[i] = Σ_{k=i..n-1} log_lambda[k]
+    // term_lambda[i] = exp(log_term_lambda[i])
+    MI_INLINE void build_suffix_tables_lambda(
+        const PackedCache &pc, Float (&log_lambda)[NbGrainMax],
+        Float (&log_term_lambda)[NbGrainMax], Float (&term_lambda)[NbGrainMax],
+        size_t count, Mask active) const {
 
-    //        dr::schedule(dr::select(valid, pc.r[k], 0.f));
-    //        dr::schedule(dr::select(valid, pc.r2[k], 0.f));
-    //        dr::schedule(dr::select(valid, pc.inv_r[k], 0.f));
-    //        dr::schedule(dr::select(valid, pc.inv_r2[k], 0.f));
+        for (size_t k = 0; k < NbGrainMax; ++k) {
+            log_lambda[k]      = 0.f;
+            log_term_lambda[k] = 0.f;
+            term_lambda[k]     = 1.f;
+        }
 
-    //        dr::schedule(dr::select(valid, pc.tau0[k], 0.f));
-    //        dr::schedule(dr::select(valid, pc.log_base[k], 0.f));
+        // per-type log_lambda
+        for (size_t j = 0; j < count; ++j) {
+            // exactly same as your packed_log_lambda_i(pc, j)
+            log_lambda[j] = -pc.log_base[j] * pc.inv_r2[j];
+            (void) active; // keep signature consistent; active used by caller
+                           // masks
+        }
 
-    //        dr::schedule(dr::select(valid, pc.abs_det[k], 0.f));
-    //        dr::schedule(dr::select(valid, pc.inv_det[k], 0.f));
-
-    //        // Vector3f 也 schedule（normalize/点乘链太容易被融合膨胀）
-    //        dr::schedule(dr::select(valid, pc.wi1[k], Vector3f(0.f)));
-
-    //        dr::schedule(dr::select(valid, p_spec[k], 0.f));
-    //    }
-
-    //    // 触发一次 JIT 编译与执行（切断图）
-    //    dr::eval();
-    //}
-
-    //MI_INLINE void flush_scalars(const Float &x, const Float &y,
-    //                             Mask active) const {
-    //    // 小工具：再切一次（避免把 global_tau0、log_term_lambda 又 fuse 回去）
-    //    dr::schedule(dr::select(active, x, 0.f));
-    //    dr::schedule(dr::select(active, y, 0.f));
-    //    dr::eval();
-    //}
+        // suffix sum
+        Float acc = 0.f;
+        for (int jj = (int) count - 1; jj >= 0; --jj) {
+            acc += log_lambda[(size_t) jj];
+            log_term_lambda[(size_t) jj] = acc;
+            term_lambda[(size_t) jj]     = dr::exp(acc);
+        }
+    }
 
 
-
-    // ====================== sample_ex (Packed + manual 2x2)
-    // ======================
     std::pair<BSDFSample3f, Spectrum>
     sample_ex(const BSDFContext &ctx, const SurfaceInteraction3f &si,
               Float sample1, const Point2f &sample2,
@@ -377,14 +433,16 @@ public:
         materialize_sorted_from_index(pc_local, p_spec_local, idx, pc, p_spec,
                                       m_bsdf_count, active);
 
-        // global_tau0 (log-domain) from SORTED pc (only order changes; products
-        // are commutative)
+        // global_tau0
         Float global_tau_0 = this->packed_global_tau0(pc, active);
 
-        // --- init per-level term_lambda (log-domain) ---
-        Float log_term_lambda_cur = this->packed_log_term_lambda(pc, active);
+        // ===== Scheme D: suffix tables for lambda =====
+        Float log_lambda[NbGrainMax];
+        Float log_term_lambda_tab[NbGrainMax];
+        Float term_lambda_tab[NbGrainMax];
 
-        Float term_lambda_cur     = dr::exp(log_term_lambda_cur);
+        build_suffix_tables_lambda(pc, log_lambda, log_term_lambda_tab,
+                                   term_lambda_tab, m_bsdf_count, active);
 
         Float term_kappa = 1.f - global_tau_0;
 
@@ -396,8 +454,8 @@ public:
 
         // chosen per-lane
         Float ch_a = 0.f, ch_b = 0.f, ch_c = 0.f, ch_d = 0.f;
-        Float ch_r = 0.f, ch_tau0 = 0.f, ch_p_spec = 0.f;
-        Float ch_abs_det = 0.f, ch_inv_det = 0.f;
+        Float ch_r = 0.f, ch_p_spec = 0.f;
+        Float ch_inv_det = 0.f;
         Float ch_h_lower = 0.f, ch_h_upper = 0.f;
         Float ch_term_lambda  = 1.f;
         Float ch_sample1_2    = 0.f;
@@ -409,8 +467,13 @@ public:
         for (size_t i = 0; i < m_bsdf_count; ++i) {
             h_upper = pc.r[i];
 
-            Float p_level = this->proba_level(
-                global_tau_0, term_kappa, term_lambda_cur, h_upper, h_lower);
+            // use precomputed term_lambda(i)
+            Float term_lambda_i     = term_lambda_tab[i];
+            Float log_term_lambda_i = log_term_lambda_tab[i];
+
+            Float p_level = this->proba_level(global_tau_0, term_kappa,
+                                              term_lambda_i, h_upper, h_lower);
+
             Float p_level_cum_pre = p_level_cum;
             p_level_cum += p_level;
 
@@ -421,9 +484,13 @@ public:
 
             Float p_type_cum = 0.f;
 
+            // safe denom only affects degenerate log_term_lambda==0 case
+            Float denom = dr::maximum(log_term_lambda_i, 1e-8f);
+
             for (size_t j = i; j < m_bsdf_count; ++j) {
-                Float p_type =
-                    this->proba_level_type_packed(pc, j, log_term_lambda_cur);
+                // p_type == log_lambda[j] / log_term_lambda(i)  (exactly
+                // equivalent)
+                Float p_type = dr::clamp(log_lambda[j] / denom, 0.f, 1.f);
 
                 Float p_type_cum_pre = p_type_cum;
                 p_type_cum += p_type;
@@ -442,15 +509,13 @@ public:
                 dr::masked(ch_d, type_selected) = pc.d[j];
 
                 dr::masked(ch_r, type_selected)       = pc.r[j];
-                dr::masked(ch_tau0, type_selected)    = pc.tau0[j];
-                dr::masked(ch_abs_det, type_selected) = pc.abs_det[j];
                 dr::masked(ch_inv_det, type_selected) = pc.inv_det[j];
                 dr::masked(ch_p_spec, type_selected)  = p_spec[j];
 
                 dr::masked(ch_h_lower, type_selected) = h_lower;
                 dr::masked(ch_h_upper, type_selected) = h_upper;
 
-                dr::masked(ch_term_lambda, type_selected)   = term_lambda_cur;
+                dr::masked(ch_term_lambda, type_selected)   = term_lambda_i;
                 dr::masked(ch_sample1_2, type_selected)     = sample1_2;
                 dr::masked(ch_spec_selected, type_selected) = spec_selected;
 
@@ -459,13 +524,9 @@ public:
 
             h_lower = h_upper;
 
-            // recursion update (log-domain)
+            // only kappa recurses (same as your original)
             Float cur_term_kappa = 1.f - pc.tau0[i];
             term_kappa /= cur_term_kappa;
-
-            Float log_lambda_i = this->packed_log_lambda_i(pc, i);
-            log_term_lambda_cur -= log_lambda_i;
-            term_lambda_cur = dr::exp(log_term_lambda_cur);
         }
 
         Mask ok = active & ch_selected;
@@ -502,6 +563,7 @@ public:
 
         return { bs, result };
     }
+
 
     // ====================== pdf (Packed + manual 2x2) ======================
     Float pdf(const BSDFContext &ctx, const SurfaceInteraction3f &si,
@@ -581,12 +643,25 @@ public:
 
         Float global_tau_0 = this->packed_global_tau0(pc, active);
 
-        // --- init per-level term_lambda (log-domain) ---
-        Float log_term_lambda_cur = this->packed_log_term_lambda(pc, active);
+        // ===== Scheme D: suffix tables for lambda =====
+        Float log_lambda[NbGrainMax];
+        Float log_term_lambda_tab[NbGrainMax];
+        Float term_lambda_tab[NbGrainMax];
 
-        Float term_lambda_cur     = dr::exp(log_term_lambda_cur);
+        build_suffix_tables_lambda(pc, log_lambda, log_term_lambda_tab,
+                                   term_lambda_tab, m_bsdf_count, active);
 
-        Float term_kappa = 1.f - global_tau_0;
+        // additionally build suffix sums for diffuse factorization:
+        // S_i = Σ_{j=i..n-1} log_lambda[j] * (1 - p_spec[j])
+        Float suffix_mix[NbGrainMax];
+        for (size_t k = 0; k < NbGrainMax; ++k)
+            suffix_mix[k] = 0.f;
+
+        Float acc_mix = 0.f;
+        for (int jj = (int) m_bsdf_count - 1; jj >= 0; --jj) {
+            acc_mix += log_lambda[(size_t) jj] * (1.f - p_spec[(size_t) jj]);
+            suffix_mix[(size_t) jj] = acc_mix;
+        }
 
         Vector3f wh     = dr::normalize(si.wi + wo);
         Mask valid_spec = (dr::dot(si.wi, wh) > 0.f) & (dr::dot(wo, wh) > 0.f);
@@ -605,52 +680,75 @@ public:
 
         Float pdf_ = 0.f;
 
-        Float h_lower = 0.f;
-        Float h_upper = 0.f;
+        // ---- diffuse part: O(n) (exact algebraic reduction) ----
+        // pdf_diff * Σ_i p_level(i) * [ S_i / L_i ]
+        Float pdf_diff = warp::square_to_cosine_hemisphere_pdf(wo);
+
+        Float term_kappa = 1.f - global_tau_0;
+        Float h_lower    = 0.f;
 
         for (size_t i = 0; i < m_bsdf_count; ++i) {
-            h_upper = pc.r[i];
+            Float h_upper = pc.r[i];
 
-            Float p_level = this->proba_level(
-                global_tau_0, term_kappa, term_lambda_cur, h_upper, h_lower);
+            Float term_lambda_i     = term_lambda_tab[i];
+            Float log_term_lambda_i = log_term_lambda_tab[i];
+
+            Float p_level = this->proba_level(global_tau_0, term_kappa,
+                                              term_lambda_i, h_upper, h_lower);
+
+            // exact: Σ_{j>=i} p_type(i,j)*(1-p_spec[j]) = suffix_mix[i] /
+            // log_term_lambda_i
+            Float denom = dr::maximum(log_term_lambda_i, 1e-8f);
+            Float mix_i = suffix_mix[i] / denom;
+
+            pdf_ += dr::select(active, p_level * mix_i * pdf_diff, 0.f);
+
+            // update kappa (same as original)
+            term_kappa /= (1.f - pc.tau0[i]);
+            h_lower = h_upper;
+        }
+
+        // ---- specular part: keep (i,j) but cheaper p_type / term_lambda
+        // lookup ----
+        term_kappa = 1.f - global_tau_0;
+        h_lower    = 0.f;
+
+        for (size_t i = 0; i < m_bsdf_count; ++i) {
+            Float h_upper = pc.r[i];
+
+            Float term_lambda_i     = term_lambda_tab[i];
+            Float log_term_lambda_i = log_term_lambda_tab[i];
+            Float denom             = dr::maximum(log_term_lambda_i, 1e-8f);
+
+            Float p_level    = this->proba_level(global_tau_0, term_kappa,
+                                                 term_lambda_i, h_upper, h_lower);
             Mask valid_level = dr::neq(h_upper - h_lower, 0.f);
 
             for (size_t j = i; j < m_bsdf_count; ++j) {
-                Float p_type =
-                    this->proba_level_type_packed(pc, j, log_term_lambda_cur);
+                Float p_type = dr::clamp(log_lambda[j] / denom, 0.f, 1.f);
 
                 Mask inRange =
                     (hv_height[j] > h_lower) & (hv_height[j] <= h_upper);
 
                 Float pdf_spec =
                     this->square_to_micrograin_conditional_level_and_type_pdf(
-                        term_lambda_cur, pc.r[j], h_upper, h_lower,
-                        pc.abs_det[j], norm_sqr[j], wh) /
+                        term_lambda_i, pc.r[j], h_upper, h_lower, pc.abs_det[j],
+                        norm_sqr[j], wh) /
                     (4.f * dr::dot(wo, wh));
 
                 pdf_ +=
                     dr::select(active & valid_level & inRange & valid_spec,
                                p_level * p_type * p_spec[j] * pdf_spec, 0.f);
-
-                Float pdf_diff = warp::square_to_cosine_hemisphere_pdf(wo);
-                pdf_ += dr::select(
-                    active & valid_level,
-                    p_level * p_type * (1.f - p_spec[j]) * pdf_diff, 0.f);
             }
 
+            term_kappa /= (1.f - pc.tau0[i]);
             h_lower = h_upper;
-
-            // recursion update (log-domain)
-            Float cur_term_kappa = 1.f - pc.tau0[i];
-            term_kappa /= cur_term_kappa;
-
-            Float log_lambda_i = this->packed_log_lambda_i(pc, i);
-            log_term_lambda_cur -= log_lambda_i;
-            term_lambda_cur = dr::exp(log_term_lambda_cur);
         }
 
         return pdf_;
     }
+
+
 
     // ====================== eval_ex (Packed + log shared_product + manual 2x2)
     // ======================
