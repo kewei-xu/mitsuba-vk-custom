@@ -413,7 +413,7 @@ public:
 
     MI_INLINE Float eval_tau_0(const SurfaceInteraction3f &si,
                                Mask active = true) const {
-        return dr::clamp(m_tau_0->eval_1(si, active), 0.f, 0.9999f);
+        return dr::clamp(m_tau_0->eval_1(si, active), 0.0001f, 0.9999f);
     }
     MI_INLINE Float eval_a(const SurfaceInteraction3f &si,
                            Mask active = true) const {
@@ -434,7 +434,7 @@ public:
 
     MI_INLINE Float eval_radius(const SurfaceInteraction3f &si,
                                 Mask active = true) const {
-        return dr::maximum(m_radius->eval_1(si, active), 0.f);
+        return dr::maximum(m_radius->eval_1(si, active), 0.0001f);
     }
 
     MI_INLINE Matrix2f eval_stretching_matrix2f(const SurfaceInteraction3f &si,

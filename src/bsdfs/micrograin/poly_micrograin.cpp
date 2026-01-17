@@ -75,6 +75,27 @@ public:
 
     // ================= helper (Packed) =================
 
+
+    MI_INLINE Vector3f wo_trans_via_normal_m(const Vector3f& wo, 
+                                             const Vector3f& wm,
+                                             Mask active=true) const {
+        Vector3f wx(0.f); 
+        Vector3f wy(0.f);
+        Mask valid = wm.z() >= -0.999999f;
+        if (dr::any_or<true>(valid)) {
+            Float a = 1.f / (1.f + wm.z());
+            Float b = -wm.x() * wm.y() * a;
+            dr::masked(wx, valid) = Vector3f(1.f - wm.x() * wm.x() * a, b, -wm.x());
+            dr::masked(wy, valid) = Vector3f(b, 1.f - wm.y() * wm.y() * a, -wm.y());
+        } 
+        if (dr::any_or<true>(~valid)){
+            dr::masked(wx, ~valid) = Vector3f(0.f, -1.f, 0.f);
+            dr::masked(wy, ~valid) = Vector3f(-1.f, 0.f, 0.f);
+        }
+        
+        return dr::select(active, wx * wo.x() + wy * wo.y() + wm * wo.z(), wo);  
+    }
+
     MI_INLINE Float term_lambda_from_packed(const PackedCache &pc,
                                             Mask active = true) const {
         return this->packed_term_lambda(pc, active);
@@ -539,8 +560,14 @@ public:
         Normal3f wh = dr::normalize(
             this->mul_MinvT(ch_a, ch_b, ch_c, ch_d, ch_inv_det, wh_1));
 
+        //wo reframed
         Vector3f wo = dr::select(ch_spec_selected, reflect(si.wi, wh),
-                                 warp::square_to_cosine_hemisphere(sample2));
+                                 wo_trans_via_normal_m(warp::square_to_cosine_hemisphere(sample2), wh));
+        // wo no reframed
+   /*     Vector3f wo =
+            dr::select(ch_spec_selected, reflect(si.wi, wh),
+                           warp::square_to_cosine_hemisphere(sample2));*/
+
 
         Mask active_sel = ok & (Frame3f::cos_theta(wo) > 0.f);
         if (!dr::any_or<true>(active_sel))
