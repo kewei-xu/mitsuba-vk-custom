@@ -76,25 +76,25 @@ public:
     // ================= helper (Packed) =================
 
 
-    MI_INLINE Vector3f wo_trans_via_normal_m(const Vector3f& wo, 
-                                             const Vector3f& wm,
-                                             Mask active=true) const {
-        Vector3f wx(0.f); 
-        Vector3f wy(0.f);
-        Mask valid = wm.z() >= -0.999999f;
-        if (dr::any_or<true>(valid)) {
-            Float a = 1.f / (1.f + wm.z());
-            Float b = -wm.x() * wm.y() * a;
-            dr::masked(wx, valid) = Vector3f(1.f - wm.x() * wm.x() * a, b, -wm.x());
-            dr::masked(wy, valid) = Vector3f(b, 1.f - wm.y() * wm.y() * a, -wm.y());
-        } 
-        if (dr::any_or<true>(~valid)){
-            dr::masked(wx, ~valid) = Vector3f(0.f, -1.f, 0.f);
-            dr::masked(wy, ~valid) = Vector3f(-1.f, 0.f, 0.f);
-        }
-        
-        return dr::select(active, wx * wo.x() + wy * wo.y() + wm * wo.z(), wo);  
-    }
+    //MI_INLINE Vector3f wo_trans_via_normal_m(const Vector3f& wo, 
+    //                                         const Vector3f& wm,
+    //                                         Mask active=true) const {
+    //    Vector3f wx(0.f); 
+    //    Vector3f wy(0.f);
+    //    Mask valid = wm.z() >= -0.999999f;
+    //    if (dr::any_or<true>(valid)) {
+    //        Float a = 1.f / (1.f + wm.z());
+    //        Float b = -wm.x() * wm.y() * a;
+    //        dr::masked(wx, valid) = Vector3f(1.f - wm.x() * wm.x() * a, b, -wm.x());
+    //        dr::masked(wy, valid) = Vector3f(b, 1.f - wm.y() * wm.y() * a, -wm.y());
+    //    } 
+    //    if (dr::any_or<true>(~valid)){
+    //        dr::masked(wx, ~valid) = Vector3f(0.f, -1.f, 0.f);
+    //        dr::masked(wy, ~valid) = Vector3f(-1.f, 0.f, 0.f);
+    //    }
+    //    
+    //    return dr::select(active, wx * wo.x() + wy * wo.y() + wm * wo.z(), wo);  
+    //}
 
     MI_INLINE Float term_lambda_from_packed(const PackedCache &pc,
                                             Mask active = true) const {
@@ -474,6 +474,7 @@ public:
         Spectrum result(0.f);
 
         // chosen per-lane
+        Float ch_tau0 = 0.f;
         Float ch_a = 0.f, ch_b = 0.f, ch_c = 0.f, ch_d = 0.f;
         Float ch_r = 0.f, ch_p_spec = 0.f;
         Float ch_inv_det = 0.f;
@@ -524,6 +525,7 @@ public:
 
                 Mask spec_selected = type_selected & (sample1_2 < p_spec[j]);
 
+                dr::masked(ch_tau0, type_selected) = pc.tau0[j];
                 dr::masked(ch_a, type_selected) = pc.a[j];
                 dr::masked(ch_b, type_selected) = pc.b[j];
                 dr::masked(ch_c, type_selected) = pc.c[j];
@@ -560,13 +562,17 @@ public:
         Normal3f wh = dr::normalize(
             this->mul_MinvT(ch_a, ch_b, ch_c, ch_d, ch_inv_det, wh_1));
 
-        //wo reframed
+        //wo reframe
+        // sample normal 
+        /*Vector3f m_1 = square_to_sphere_micrograin<Float>(ch_tau0, sample2_extra);
+        Vector3f m = dr::normalize(this->mul_MinvT(ch_a, ch_b, ch_c, ch_d, ch_inv_det, m_1));
+
         Vector3f wo = dr::select(ch_spec_selected, reflect(si.wi, wh),
-                                 wo_trans_via_normal_m(warp::square_to_cosine_hemisphere(sample2), wh));
-        // wo no reframed
-   /*     Vector3f wo =
+                                 wo_trans_via_normal_m(warp::square_to_cosine_hemisphere(sample2), m));*/
+        // wo without reframed (cause base on NDF not VNDF)
+        Vector3f wo =
             dr::select(ch_spec_selected, reflect(si.wi, wh),
-                           warp::square_to_cosine_hemisphere(sample2));*/
+                           warp::square_to_cosine_hemisphere(sample2));
 
 
         Mask active_sel = ok & (Frame3f::cos_theta(wo) > 0.f);
