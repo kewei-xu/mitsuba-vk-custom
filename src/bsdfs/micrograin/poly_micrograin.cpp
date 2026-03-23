@@ -106,7 +106,7 @@ public:
         return this->packed_log_term_lambda(pc, active);
     }
 
-    // 你的原 proba_level 保留（无需改）
+    //  proba_level 
     MI_INLINE Float proba_level(const Float global_tau_0,
                                 const Float term_kappa, const Float term_lambda,
                                 const Float h_upper,
@@ -119,7 +119,7 @@ public:
         return dr::clamp(v, 0.f, 1.f);
     }
 
-    // 用 logs 的 Packed 版本代替你原 proba_level_type(tau0,r,term_lambda)
+    // logs version of proba_level_type(tau0,r,term_lambda)
     MI_INLINE Float proba_level_type_packed(const PackedCache &pc, size_t i,
                                             Float log_term_lambda) const {
         Float log_lambda_i = this->packed_log_lambda_i(pc, i);
@@ -151,7 +151,7 @@ public:
             swap_if(idx[i], idx[j], m);
         };
 
-        // same 16-input sorting network as your original
+        // 16-input sorting network 
         CS(0, 1);
         CS(2, 3);
         CS(4, 5);
@@ -552,8 +552,8 @@ public:
             term_kappa /= cur_term_kappa;
         }
 
-        Mask ok = active & ch_selected;
-        if (!dr::any_or<true>(ok))
+        Mask no_issue = active & ch_selected;
+        if (!dr::any_or<true>(no_issue))
             return { bs, 0.f };
 
         Vector3f wh_1 = square_to_sphere_micrograin_conditional_level_and_type(
@@ -575,7 +575,7 @@ public:
                            warp::square_to_cosine_hemisphere(sample2));
 
 
-        Mask active_sel = ok & (Frame3f::cos_theta(wo) > 0.f);
+        Mask active_sel = no_issue & (Frame3f::cos_theta(wo) > 0.f);
         if (!dr::any_or<true>(active_sel))
             return { bs, 0.f };
 
@@ -796,7 +796,7 @@ public:
         if (!dr::any_or<true>(active))
             return 0.f;
 
-        // packed once (原始顺序即可；eval_ex 不需要按 r 排序)
+        // packed once (original order；eval_ex don't need to sort by radius)
         PackedCache pc;
         this->cache_packed(si, pc, active);
 
@@ -901,7 +901,7 @@ public:
         return value;
     }
 
-    // ================== 原有 spherical sampling & pdf helper (不用动矩阵)
+    // ================== original spherical sampling & pdf helper (don't need to modifier the matrix)
     // ==================
 
     MI_INLINE Vector3f square_to_sphere_micrograin_conditional_level_and_type(

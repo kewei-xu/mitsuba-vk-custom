@@ -100,11 +100,11 @@ public:
         if (!dr::any_or<true>(active))
             return 0.f;
 
-        // ✅ build cache once
+        // build cache once
         typename PolyMicrograin<Float, Spectrum>::PackedCache pc;
         surf_bsdf->build_packed_cache(si, pc, active);
 
-        // ✅ reuse cache: global_tau0 + v1 + v2
+        // reuse cache: global_tau0 + v1 + v2
         Float weight_surf = surf_bsdf->eval_global_tau_0_from_cache(pc, active);
         Float v1_bulk = surf_bsdf->eval_visibility1_bulk_from_cache(pc, active);
 
@@ -140,11 +140,11 @@ public:
         if (!dr::any_or<true>(active))
             return 0.f;
 
-        // ✅ build cache once
+        // build cache once
         typename PolyMicrograin<Float, Spectrum>::PackedCache pc;
         surf_bsdf->build_packed_cache(si, pc, active);
 
-        // ✅ reuse cache: global_tau0 + v1
+        // reuse cache: global_tau0 + v1
         Float weight_surf = surf_bsdf->eval_global_tau_0_from_cache(pc, active);
         Float v1_bulk = surf_bsdf->eval_visibility1_bulk_from_cache(pc, active);
 
@@ -174,7 +174,7 @@ public:
         if (!dr::any_or<true>(active))
             return { dr::zeros<BSDFSample3f>(), 0.f };
 
-        // ✅ build cache once (for weight_surf + v1, later reuse for v2)
+        // build cache once (for weight_surf + v1, later reuse for v2)
         typename PolyMicrograin<Float, Spectrum>::PackedCache pc;
         surf_bsdf->build_packed_cache(si, pc, active);
 
@@ -226,7 +226,7 @@ public:
         if (!dr::any_or<true>(active))
             return { bs, 0.f };
 
-        // ✅ reuse the SAME cache pc to compute v2 (no second cache_packed)
+        // reuse the SAME cache pc to compute v2 (no second cache_packed)
         Vector3f wo1[PolyMicrograin<Float, Spectrum>::NbGrainMax];
         surf_bsdf->build_wo1_from_cache(pc, bs.wo, wo1, active);
         Float v2_bulk =
@@ -244,7 +244,7 @@ public:
         return { bs, dr::select(active, result, 0.f) };
     }
 
-    // ================= helper weights (不改你的公式) =================
+    // ================= helper weights  =================
     MI_INLINE Float eval_surf_sampling_weight(const SurfaceInteraction3f &si,
                                               const Float global_tau_0,
                                               const Float v1_bulk,
