@@ -130,7 +130,11 @@ public:
                 bulk_bsdf->eval_ex(ctx, si, wo, sample2_extra, need_bulk);
 
         Spectrum result = surf_val * weight_surf + bulk_val * weight_bulk;
-        return dr::select(active, result, 0.f);
+
+        result = dr::select(active, result, 0.f);
+
+        Mask accident_NaN = dr::any(dr::isnan(result));
+        return dr::select(accident_NaN, 0.f, result);
     }
 
     // ====================== pdf ======================
@@ -162,7 +166,10 @@ public:
         if (dr::any_or<true>(need_bulk))
             pdf_b = bulk_bsdf->pdf(ctx, si, wo, need_bulk);
 
-        return w_surf * pdf_s + w_bulk * pdf_b;
+        Float pdf_ = w_surf * pdf_s + w_bulk * pdf_b;
+
+        Mask accident_NaN = dr::isnan(pdf_);
+        return dr::select(accident_NaN, 0.f, pdf_);
     }
 
     // ====================== sample_ex ======================
@@ -241,7 +248,11 @@ public:
         result = dr::select(surf_selected, result * weight_surf * inv_ws,
                             result * weight_bulk * inv_wb);
 
-        return { bs, dr::select(active, result, 0.f) };
+        result = dr::select(active, result, 0.f);
+
+        /*in case!*/
+        Mask accident_NaN = dr::any(dr::isnan(result));
+        return { bs, result & ~accident_NaN };
     }
 
     // ================= helper weights  =================

@@ -594,7 +594,9 @@ public:
         Spectrum contrib = dr::select(active_sel & pdf_valid, val / pdf_, 0.f);
         dr::masked(result, ch_selected) = contrib;
 
-        return { bs, result };
+        /*in case!*/
+        Mask accident_NaN = dr::any(dr::isnan(result));
+        return { bs, result & ~accident_NaN };
     }
 
 
@@ -778,7 +780,8 @@ public:
             h_lower = h_upper;
         }
 
-        return pdf_;
+        Mask accident_NaN = dr::isnan(pdf_);
+        return dr::select(accident_NaN, 0.f, pdf_);
     }
 
 
@@ -898,7 +901,8 @@ public:
                                 brdf_diff, 0.f);
         }
 
-        return value;
+        Mask accident_NaN = dr::any(dr::isnan(value));
+        return dr::select(accident_NaN, 0.f, value);
     }
 
     // ================== original spherical sampling & pdf helper (don't need to modifier the matrix)
