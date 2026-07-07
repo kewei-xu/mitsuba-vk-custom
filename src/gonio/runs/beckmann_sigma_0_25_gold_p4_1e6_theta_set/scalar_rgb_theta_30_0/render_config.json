@@ -1,0 +1,21 @@
+{
+  "obj_path": "F:\\THESE\\Data\\PersonalTest\\surfaces\\beckmann_4096\\beckmann-sigma-0-25-0-25_0512-it-150_0.obj",
+  "variant": "scalar_rgb",
+  "sample_count": 1000000,
+  "precision": 4,
+  "theta_i_deg": 30.0,
+  "phi_i_deg": 0.0,
+  "merge_l1_l2": false,
+  "record_refraction": false,
+  "normalize": "surface",
+  "image_size": 512,
+  "seed": 0,
+  "bsdf_type": "conductor",
+  "material": "Au",
+  "reflectance": 1.0,
+  "alpha": 0.1,
+  "int_ior": 1.5,
+  "ext_ior": 1.0,
+  "max_depth": 8,
+  "rr_depth": 8
+}

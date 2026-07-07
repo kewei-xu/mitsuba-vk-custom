@@ -1,0 +1,28 @@
+{
+  "patch_count": 523910,
+  "patch_area": 1.1992871542030392e-05,
+  "surface_hits": 976876.0,
+  "surface_hit_source": "film_header",
+  "layers": [
+    {
+      "layer_index": 0,
+      "name": "sensor_L1_H+",
+      "sensor_hits": 933745.0,
+      "energy_rgb": [
+        0.8990425243254722,
+        0.7998175346240782,
+        0.5022667485169403
+      ]
+    },
+    {
+      "layer_index": 1,
+      "name": "sensor_L2_H+",
+      "sensor_hits": 28941.0,
+      "energy_rgb": [
+        0.027703544966629,
+        0.024756722720442013,
+        0.015510785390781693
+      ]
+    }
+  ]
+}

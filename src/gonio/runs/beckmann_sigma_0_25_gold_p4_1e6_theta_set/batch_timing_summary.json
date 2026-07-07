@@ -1,0 +1,42 @@
+[
+  {
+    "variant": "cuda_rgb",
+    "theta_i_deg": 0.0,
+    "phi_i_deg": 0.0,
+    "elapsed_seconds": 341.32053379999707,
+    "output_dir": "F:\\THESE\\Code\\mitsuba-3.7.1\\mitsuba3\\src\\gonio\\runs\\beckmann_sigma_0_25_gold_p4_1e6_theta_set\\cuda_rgb_theta_0_0",
+    "surface_hits": 999236.0
+  },
+  {
+    "variant": "cuda_rgb",
+    "theta_i_deg": 30.0,
+    "phi_i_deg": 0.0,
+    "elapsed_seconds": 349.68879970000125,
+    "output_dir": "F:\\THESE\\Code\\mitsuba-3.7.1\\mitsuba3\\src\\gonio\\runs\\beckmann_sigma_0_25_gold_p4_1e6_theta_set\\cuda_rgb_theta_30_0",
+    "surface_hits": 998068.0
+  },
+  {
+    "variant": "cuda_rgb",
+    "theta_i_deg": 45.0,
+    "phi_i_deg": 0.0,
+    "elapsed_seconds": 335.2770696999942,
+    "output_dir": "F:\\THESE\\Code\\mitsuba-3.7.1\\mitsuba3\\src\\gonio\\runs\\beckmann_sigma_0_25_gold_p4_1e6_theta_set\\cuda_rgb_theta_45_0",
+    "surface_hits": 997072.0
+  },
+  {
+    "variant": "cuda_rgb",
+    "theta_i_deg": 80.0,
+    "phi_i_deg": 0.0,
+    "elapsed_seconds": 354.9736862999998,
+    "output_dir": "F:\\THESE\\Code\\mitsuba-3.7.1\\mitsuba3\\src\\gonio\\runs\\beckmann_sigma_0_25_gold_p4_1e6_theta_set\\cuda_rgb_theta_80_0",
+    "surface_hits": 986487.0
+  },
+  {
+    "variant": "cuda_rgb",
+    "theta_i_deg": 89.0,
+    "phi_i_deg": 0.0,
+    "elapsed_seconds": 338.25985040000523,
+    "output_dir": "F:\\THESE\\Code\\mitsuba-3.7.1\\mitsuba3\\src\\gonio\\runs\\beckmann_sigma_0_25_gold_p4_1e6_theta_set\\cuda_rgb_theta_89_0",
+    "surface_hits": 994630.0
+  }
+]

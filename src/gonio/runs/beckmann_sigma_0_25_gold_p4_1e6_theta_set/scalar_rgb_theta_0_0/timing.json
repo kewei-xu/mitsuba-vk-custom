@@ -1,0 +1,8 @@
+{
+  "variant": "scalar_rgb",
+  "theta_i_deg": 0.0,
+  "phi_i_deg": 0.0,
+  "elapsed_seconds": 20.523962599996594,
+  "output_dir": "F:\\THESE\\Code\\mitsuba-3.7.1\\mitsuba3\\src\\gonio\\runs\\beckmann_sigma_0_25_gold_p4_1e6_theta_set\\scalar_rgb_theta_0_0",
+  "surface_hits": 999222.0
+}

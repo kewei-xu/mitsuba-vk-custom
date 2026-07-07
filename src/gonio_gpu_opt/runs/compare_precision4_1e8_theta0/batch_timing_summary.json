@@ -1,0 +1,18 @@
+[
+  {
+    "variant": "scalar_rgb",
+    "theta_i_deg": 0.0,
+    "phi_i_deg": 0.0,
+    "elapsed_seconds": 169.41060849999485,
+    "output_dir": "F:\\THESE\\Code\\mitsuba-3.7.1\\mitsuba3\\src\\gonio_gpu_opt\\runs\\compare_precision4_1e8_theta0\\scalar_rgb_theta_0_0",
+    "surface_hits": 16777216.0
+  },
+  {
+    "variant": "cuda_rgb",
+    "theta_i_deg": 0.0,
+    "phi_i_deg": 0.0,
+    "elapsed_seconds": 9.013280300001497,
+    "output_dir": "F:\\THESE\\Code\\mitsuba-3.7.1\\mitsuba3\\src\\gonio_gpu_opt\\runs\\compare_precision4_1e8_theta0\\cuda_rgb_theta_0_0",
+    "surface_hits": 99986272.0
+  }
+]

@@ -1,0 +1,8 @@
+{
+  "variant": "cuda_rgb",
+  "theta_i_deg": 0.0,
+  "phi_i_deg": 0.0,
+  "elapsed_seconds": 362.2211290999985,
+  "output_dir": "F:\\THESE\\Code\\mitsuba-3.7.1\\mitsuba3\\src\\gonio_gpu_opt\\runs\\benchmark_precision4_1e6_opt_v1\\cuda_rgb_theta_0_0",
+  "surface_hits": 1000000.0
+}

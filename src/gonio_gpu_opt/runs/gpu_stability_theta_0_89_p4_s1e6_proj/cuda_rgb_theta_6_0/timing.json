@@ -1,0 +1,8 @@
+{
+  "variant": "cuda_rgb",
+  "theta_i_deg": 6.0,
+  "phi_i_deg": 0.0,
+  "elapsed_seconds": 0.7540944999927888,
+  "output_dir": "F:\\THESE\\Code\\mitsuba-3.7.1\\mitsuba3\\src\\gonio_gpu_opt\\runs\\gpu_stability_theta_0_89_p4_s1e6_proj\\cuda_rgb_theta_6_0",
+  "surface_hits": 999100.0
+}
