@@ -1,3 +1,10 @@
+"""GPU-oriented gonio runner and low-overhead film exporter.
+
+The renderer still owns the transport computation. This module minimizes the
+CPU-side cost of decoding the raw film by using NumPy when available, caching
+grid/projection maps, and writing EXR for high-dynamic-range data.
+"""
+
 from __future__ import annotations
 
 import argparse
@@ -36,6 +43,7 @@ class ScalarGrid:
     rings: list[ScalarRing]
 
     def index(self, phi: float, theta: float) -> int:
+        """Map a spherical direction to the equal-area patch index."""
         phi = phi % (2.0 * math.pi)
         theta = max(0.0, min(theta, 0.5 * math.pi))
 
@@ -48,6 +56,7 @@ class ScalarGrid:
         return ring.base_index + patch
 
     def patch_centers(self) -> tuple[list[float], list[float]]:
+        """Return one representative (theta, phi) pair for every patch."""
         theta_values = [0.0] * self.patch_count
         phi_values = [0.0] * self.patch_count
 
@@ -87,6 +96,7 @@ def theta_cap(precision: int) -> float:
 
 
 def build_scalar_grid(precision: int) -> ScalarGrid:
+    """Build and cache the Python mirror of the C++ measurement grid."""
     cached = _GRID_CACHE.get(precision)
     if cached is not None:
         return cached
@@ -101,6 +111,8 @@ def build_scalar_grid(precision: int) -> ScalarGrid:
     radius_p = 2.0 * math.sin(0.5 * theta_p)
     k_p = 1
 
+    # The stereographic radius estimates the next ring population. The
+    # spherical-area equation below corrects that estimate to equal area.
     while theta_p < 0.5 * math.pi:
         theta = theta_p + 2.0 * math.sin(0.5 * theta_p) * math.sqrt(math.pi / k_p)
         radius = 2.0 * math.sin(0.5 * theta)
@@ -139,6 +151,7 @@ def build_scalar_grid(precision: int) -> ScalarGrid:
 
 
 def incident_direction(theta_i_deg: float, phi_i_deg: float) -> tuple[float, float, float]:
+    """Return the travel direction of the collimated incident light."""
     theta = math.radians(theta_i_deg)
     phi = math.radians(phi_i_deg)
     return (
@@ -149,6 +162,7 @@ def incident_direction(theta_i_deg: float, phi_i_deg: float) -> tuple[float, flo
 
 
 def ensure_plugin_search_path() -> None:
+    """Make locally built plugins discoverable by Mitsuba's resolver."""
     mi_module = Path(mi.__file__).resolve()
     release_root = mi_module.parent.parent.parent
     plugin_dir = release_root / "plugins"
@@ -160,6 +174,7 @@ def ensure_plugin_search_path() -> None:
 
 
 def layer_descriptors(merge_l1_l2: bool, record_refraction: bool, analytic_measurement: bool) -> list[tuple[str, str]]:
+    """Describe the film rows in the same order used by GonioSensor."""
     if analytic_measurement or merge_l1_l2:
         return [("L1", "H+"), ("L1", "H-")] if record_refraction else [("L1", "H+")]
     if record_refraction:
@@ -316,6 +331,8 @@ def patch_centers_cached(grid: ScalarGrid) -> tuple[array, array]:
     if cached is not None:
         return cached
 
+    # These maps are deterministic for a given precision/image size, so they
+    # can be reused across batch runs without touching the renderer.
     cache_path = patch_center_cache_path(grid)
     if cache_path.exists():
         if np is not None:
@@ -371,6 +388,8 @@ def projection_index_map(grid: ScalarGrid, image_size: int):
             _PROJECTION_INDEX_CACHE[key] = cached
             return cached
 
+    # Store only the patch index for each output pixel. A value of -1 marks
+    # pixels outside the circular hemisphere projection.
     center = image_size * 0.5
     if np is not None:
         indices = np.full(image_size * image_size, -1, dtype=np.int32)
@@ -414,6 +433,8 @@ def projection_src_offset_map(grid: ScalarGrid, image_size: int) -> array:
             _PROJECTION_SRC_OFFSET_CACHE[key] = cached
             return cached
 
+    # Convert patch indices to RGB-array offsets once, allowing projection to
+    # become a gather instead of a per-pixel spherical lookup.
     indices = projection_index_map(grid, image_size)
     if np is not None:
         offsets = np.empty(len(indices), dtype=np.int32)
@@ -476,6 +497,10 @@ def normalize_layer_channels(raw_r: array,
                              patch_area: float,
                              surface_hits: float,
                              normalize: str) -> tuple[array, tuple[float, float, float], float]:
+    # The raw film stores accumulated radiance and a per-cell sample count.
+    # Dividing by patch solid angle converts the cell sum to a density; the
+    # selected hit count controls whether the result is sensor- or surface-
+    # normalized.
     if np is not None and isinstance(raw_counts, np.ndarray):
         sensor_hits = float(raw_counts.sum(dtype=np.float64))
     else:
@@ -561,6 +586,8 @@ def render_gonio_bundle_from_obj(obj_path: str,
     if phi_i_deg < 0.0 or phi_i_deg >= 360.0:
         raise ValueError("phi_i_deg must be in [0, 360).")
 
+    # Keep scene construction here so the batch runner, profiler, and direct
+    # Python API all use the same plugin names and measurement options.
     mi.set_variant(variant)
     ensure_plugin_search_path()
     grid = build_scalar_grid(precision)
@@ -602,6 +629,8 @@ def render_gonio_bundle_from_obj(obj_path: str,
             "bsdf": make_bsdf_dict(bsdf_type, material, reflectance, alpha, int_ior, ext_ior),
         },
     }
+    # samples_per_pass and coalesce are optimization controls exposed by the
+    # GPU integrator; leaving them unset preserves its defaults.
     if samples_per_pass > 0:
         scene_dict["integrator"]["samples_per_pass"] = samples_per_pass
     if coalesce is not None:
@@ -615,6 +644,8 @@ def render_gonio_bundle_from_obj(obj_path: str,
     integrator = scene.integrator()
 
     t0 = time.perf_counter()
+    # develop=False avoids a preview conversion during the measurement pass.
+    # The raw film is decoded below and remains the authoritative data source.
     integrator.render(scene, sensor=sensor, seed=seed, develop=False, evaluate=True)
     timings["render_s"] = time.perf_counter() - t0
 
@@ -665,6 +696,8 @@ def render_gonio_bundle_from_obj(obj_path: str,
     t_extract = 0.0
     t_normalize = 0.0
     t_project = 0.0
+    # The first film column is a header counter in non-analytic mode. Skip it
+    # before extracting the angular cells.
     for layer_idx, (bounce_label, hemi_label) in enumerate(layer_info):
         t1 = time.perf_counter()
         layer_r, layer_g, layer_b, layer_counts = extract_layer_channels(
@@ -763,6 +796,8 @@ def render_gonio_bundle_from_obj(obj_path: str,
 def export_gonio_from_obj(obj_path: str,
                           output_dir: str,
                           **kwargs) -> dict:
+    # The old BMP preview switch is accepted for CLI compatibility, but the
+    # optimized exporter intentionally writes the lossless raw film as EXR.
     kwargs.pop("write_raw_preview", None)
     kwargs["include_preview"] = False
     kwargs.setdefault("include_projection", False)

@@ -1,7 +1,7 @@
-# Gonio IO
+# Gonio GPU-optimized IO contract
 
-Future home of tensor decoding, `.dat` export, and hemisphere projection image
-generation.
+The current optimized exporter is implemented in `python/gonio_export.py`; it
+decodes raw film directly and writes `.dat` plus EXR outputs.
 
-This layer should consume rendered tensors or film data directly instead of
-requiring an EXR round trip.
+The output contract and file meanings are documented in the repository-level
+`README.md`.

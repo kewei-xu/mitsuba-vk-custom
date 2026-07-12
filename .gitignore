@@ -26,6 +26,12 @@ __pycache__
 # Default build directory
 /build*
 
+# Gonio local test inputs and generated run results
+/src/gonio/runs/
+/src/gonio/tests/
+/src/gonio_gpu_opt/runs/
+/src/gonio_gpu_opt/tests/
+
 # Auto-generated documentation files
 /docs/generated/plugins_*.rst
 /docs/src/rendering

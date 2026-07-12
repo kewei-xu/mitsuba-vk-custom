@@ -5,6 +5,9 @@
 
 NAMESPACE_BEGIN(mitsuba)
 
+// A delta-direction, infinite emitter that launches parallel rays through
+// the scene bounding box. It is intended to model the collimated source of a
+// gonioreflectometer rather than a camera-visible environment light.
 MI_VARIANT class DirectionalSimpleEmitter final : public Emitter<Float, Spectrum> {
 public:
     MI_IMPORT_BASE(Emitter, m_flags, m_to_world, m_needs_sample_3)
@@ -13,6 +16,9 @@ public:
     DirectionalSimpleEmitter(const Properties &props) : Base(props) {
         m_aabb = ScalarBoundingBox3f();
 
+        // "direction" is the direction in which light travels. Mitsuba's
+        // emitter transform describes the local +Z direction, hence the
+        // negation below when constructing the launch ray.
         if (props.has_property("direction")) {
             if (props.has_property("to_world"))
                 Throw("Only one of the parameters 'direction' and 'to_world' can be specified.");
@@ -46,6 +52,9 @@ public:
             Throw("DirectionalSimpleEmitter requires a valid scene bounding box.");
 
         m_aabb = scene->bbox();
+        // Start rays on a plane just outside the scene. The small padding
+        // prevents the initial ray-box intersection from landing exactly on
+        // a scene boundary.
         ScalarFloat padding =
             m_aabb.max.z() - m_aabb.min.z() < 0.1f ? 1.f : 0.1f;
         ScalarVector3f delta(padding);
@@ -72,6 +81,8 @@ public:
         Point3f origin = dr::zeros<Point3f>();
         Point3f center = m_aabb.center();
         Vector3f extents = m_aabb.extents();
+        // Sample a point on the scene's XY extent and use the AABB
+        // intersection to place the origin on the upstream face.
         Point3f seed(
             m_aabb.min.x() + extents.x() * spatial_sample.x(),
             m_aabb.min.y() + extents.y() * spatial_sample.y(),

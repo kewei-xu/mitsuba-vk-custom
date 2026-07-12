@@ -10,6 +10,8 @@
 NAMESPACE_BEGIN(mitsuba)
 NAMESPACE_BEGIN(gonio)
 
+// A ring is one annulus of the equal-area spherical measurement grid. The
+// patches in a ring share the same polar interval and azimuthal step.
 struct ScalarRing {
     float theta_min = 0.f;
     float theta_max = 0.f;
@@ -18,6 +20,9 @@ struct ScalarRing {
     uint32_t patch_count = 0;
 };
 
+// The scalar representation is built once on the host. JIT variants receive
+// the same data through GridBuffers below so that indexing can run in a
+// Dr.Jit kernel.
 struct ScalarGrid {
     uint32_t precision = 1;
     uint32_t patch_count = 0;
@@ -55,6 +60,8 @@ inline ScalarGrid build_scalar_grid(uint32_t precision) {
     if (grid.patch_count == 0 || grid.theta_cap == 0.f)
         Throw("Gonio grid precision must be in the range [1, 4].");
 
+    // The first cell is a spherical cap. All later cells are constructed to
+    // have this same solid angle.
     grid.cell_solid_angle =
         2.f * dr::Pi<float> * (1.f - std::cos(grid.theta_cap));
 
@@ -71,6 +78,9 @@ inline ScalarGrid build_scalar_grid(uint32_t precision) {
     double radius_p = 2.0 * std::sin(0.5 * theta_p);
     uint32_t k_p = 1u;
 
+    // Grow rings until the complete upper hemisphere is covered. The
+    // stereographic radius estimates the ring population; the acos
+    // expression then enforces the target equal-area cell size.
     while (theta_p < 0.5 * dr::Pi<double>) {
         double theta = theta_p +
             2.0 * std::sin(0.5 * theta_p) *
@@ -123,6 +133,8 @@ GridBuffers<Float> upload_grid_buffers(const ScalarGrid &grid) {
     std::vector<dr::scalar_t<UInt32>> base_index(grid.rings.size()),
                                       patch_count(grid.rings.size());
 
+    // DynamicBuffer is the representation that can be gathered from a JIT
+    // kernel. Keep the host-side ScalarGrid as the source of truth.
     for (size_t i = 0; i < grid.rings.size(); ++i) {
         theta_max[i] = (dr::scalar_t<Float>) grid.rings[i].theta_max;
         phi_step[i] = (dr::scalar_t<Float>) grid.rings[i].phi_step;

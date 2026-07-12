@@ -1,4 +1,0 @@
-Phi-i (deg): 0.0
-Theta-i (deg): 29.0
-Phi-i (rad): 0.0
-Theta-i (rad): 0.5061454830783556

@@ -1,7 +1,6 @@
-# Gonio IO
+# Gonio stable IO contract
 
-Future home of tensor decoding, `.dat` export, and hemisphere projection image
-generation.
+The current stable exporter is implemented in `python/gonio_export.py`; this
+directory documents the intended home for a future shared C++ IO layer.
 
-This layer should consume rendered tensors or film data directly instead of
-requiring an EXR round trip.
+The output contract is documented in the repository-level `README.md`.

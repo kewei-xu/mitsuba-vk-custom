@@ -1,6 +1,4 @@
-# Gonio integrators
+# Gonio stable integrators
 
-Future home of the GPU-first measurement integrators.
-
-The first target should be the BRDF/gonio tracer. NDF and G1 meters should move
-here after the main gonio path is stable.
+`gtracer.cpp` is the light-tracing integrator. It follows rays from
+`directionalsimple` and deposits escaped directions into `GonioSensor`.

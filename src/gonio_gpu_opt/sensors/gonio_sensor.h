@@ -9,6 +9,9 @@
 
 NAMESPACE_BEGIN(mitsuba)
 
+// Measurement-only sensor used as a spherical accumulator. It deliberately
+// has no camera ray generation: gtracer launches rays from the emitter and
+// writes escaped rays into this sensor's film coordinates.
 template <typename Float, typename Spectrum>
 class GonioSensor final : public Sensor<Float, Spectrum> {
 public:
@@ -26,6 +29,9 @@ public:
         if constexpr (dr::is_jit_v<Float>)
             m_grid = gonio::upload_grid_buffers<Float>(m_scalar_grid);
 
+        // Film height encodes the requested measurement channels. A normal
+        // run separates first/second-bounce paths; optional refraction adds
+        // a second hemisphere for each bounce class.
         uint32_t layer_count = 1u;
         if (m_analytic_measurement) {
             if (!m_merge_l1_l2) {
@@ -39,6 +45,8 @@ public:
             layer_count = m_record_refraction ? 4u : 2u;
         }
 
+        // Non-analytic mode reserves x=0 for the surface-hit counter. The
+        // exporter reads this header before decoding the angular cells.
         uint32_t header_cells = m_analytic_measurement ? 0u : 1u;
         m_film->set_size(ScalarPoint2u(m_scalar_grid.patch_count + header_cells,
                                        layer_count));
@@ -47,6 +55,9 @@ public:
     }
 
     UInt32 index(Float phi, Float theta, Mask active = true) const {
+        // Directions are stored as an upper-hemisphere ring grid. The scalar
+        // path uses host vectors; the JIT path performs the same lookup using
+        // a binary search and gathers from uploaded ring buffers.
         phi = dr::select(phi < 0.f, phi + dr::TwoPi<Float>, phi);
         phi = dr::select(phi >= dr::TwoPi<Float>, phi - dr::TwoPi<Float>, phi);
         theta = dr::clip(theta, 0.f, dr::Pi<Float> * 0.5f);
@@ -104,6 +115,8 @@ public:
     }
 
     Float fold_theta(Float theta) const {
+        // When refraction is recorded, the lower hemisphere is folded onto
+        // the same angular grid while layer_index() preserves its sign.
         Float half_pi = dr::Pi<Float> * 0.5f;
         if (m_record_refraction)
             theta = dr::select(theta >= half_pi, theta - half_pi, theta);
@@ -121,6 +134,8 @@ public:
         DRJIT_MARK_USED(active);
 
         Float half_pi = dr::Pi<Float> * 0.5f;
+        // H+ is the outgoing upper hemisphere and H- the lower one. L1/L2
+        // classify whether the path escaped after the first surface event.
         UInt32 hemisphere = dr::select(theta >= half_pi, UInt32(1u), UInt32(0u));
 
         if (m_analytic_measurement || m_merge_l1_l2)

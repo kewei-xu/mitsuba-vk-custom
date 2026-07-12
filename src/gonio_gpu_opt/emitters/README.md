@@ -1,4 +1,4 @@
-# Gonio emitters
+# Gonio GPU-optimized emitters
 
-Future home of the migrated directional measurement emitter, starting from the
-old `directionalsimple` behavior.
+`directionalsimple.cpp` is the GPU-variant copy of the collimated emitter. It
+is exported as `directionalsimple_gpu_opt`.

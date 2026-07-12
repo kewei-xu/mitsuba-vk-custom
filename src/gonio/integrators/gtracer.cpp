@@ -13,6 +13,9 @@
 
 NAMESPACE_BEGIN(mitsuba)
 
+// Light-tracing integrator for gonio measurements. Each sample starts at the
+// directional emitter, follows BSDF scattering through the scene, and bins
+// the final escaped direction in GonioSensor's spherical film.
 MI_VARIANT class GonioTracerIntegrator final : public Integrator<Float, Spectrum> {
 public:
     MI_IMPORT_BASE(Integrator, should_stop, aov_names, m_stop, m_timeout,
@@ -71,6 +74,9 @@ public:
         TensorXf result;
         m_render_timer.reset();
 
+        // Keep a scalar loop for debugging/reference runs. JIT variants use
+        // a wavefront and Dr.Jit's loop recording to process many rays at
+        // once, while preserving the same film layout.
         if constexpr (!dr::is_jit_v<Float>) {
             Log(Info, "Starting gonio render job (%u sample%s)",
                 total_samples, total_samples == 1 ? "" : "s");
@@ -196,6 +202,8 @@ public:
                          Spectrum throughput,
                          ImageBlock *block,
                          Mask active = true) const {
+        // The loop state must contain every value that changes per lane so
+        // Dr.Jit can record the transport loop for scalar and GPU variants.
         Float eta(1.f);
         Int32 depth = 0;
 
@@ -239,6 +247,8 @@ public:
                 ls.active &= (wi_dot_geo_n * Frame3f::cos_theta(si.wi) > 0.f) &&
                              (wo_dot_geo_n * Frame3f::cos_theta(bs.wo) > 0.f);
 
+                // Convert the sampled BSDF value from the local frame to the
+                // geometric-normal measure used by the light-tracing ray.
                 Float correction = dr::abs(
                     (Frame3f::cos_theta(si.wi) * wo_dot_geo_n) /
                     (Frame3f::cos_theta(bs.wo) * wi_dot_geo_n));
@@ -250,6 +260,8 @@ public:
                 if (dr::none_or<false>(ls.active))
                     return;
 
+                // Russian roulette starts after rr_depth and is compensated
+                // in throughput to keep the estimator unbiased.
                 Mask use_rr = ls.depth > m_rr_depth;
                 if (dr::any_or<true>(use_rr)) {
                     Float q = dr::minimum(
@@ -311,6 +323,8 @@ public:
         if (dr::none_or<false>(active))
             return;
 
+        // Convert the escaped ray to spherical coordinates. The sensor folds
+        // theta when needed and independently chooses the output layer.
         Vector3f dir = dr::normalize(output_ray.d);
         Float phi = dr::atan2(dir.y(), dir.x());
         Float theta = dr::acos(dr::clip(dir.z(), -1.f, 1.f));

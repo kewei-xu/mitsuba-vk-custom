@@ -1,8 +1,0 @@
-{
-  "variant": "cuda_rgb",
-  "theta_i_deg": 80.0,
-  "phi_i_deg": 0.0,
-  "elapsed_seconds": 354.9736862999998,
-  "output_dir": "F:\\THESE\\Code\\mitsuba-3.7.1\\mitsuba3\\src\\gonio\\runs\\beckmann_sigma_0_25_gold_p4_1e6_theta_set\\cuda_rgb_theta_80_0",
-  "surface_hits": 986487.0
-}

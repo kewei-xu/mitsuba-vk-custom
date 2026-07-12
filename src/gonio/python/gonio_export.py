@@ -1,3 +1,10 @@
+"""Run a gonio scene and convert Mitsuba's film into research-file outputs.
+
+The C++ plugins produce a one-dimensional angular measurement layout. This
+module reconstructs the same grid in Python, decodes the raw film, applies an
+explicit normalization policy, and writes the legacy ``.dat``/BMP bundle.
+"""
+
 from __future__ import annotations
 
 import argparse
@@ -30,6 +37,7 @@ class ScalarGrid:
     rings: list[ScalarRing]
 
     def index(self, phi: float, theta: float) -> int:
+        """Map a spherical direction to the equal-area patch index."""
         phi = phi % (2.0 * math.pi)
         theta = max(0.0, min(theta, 0.5 * math.pi))
 
@@ -42,6 +50,7 @@ class ScalarGrid:
         return ring.base_index + patch
 
     def patch_centers(self) -> tuple[list[float], list[float]]:
+        """Return one representative (theta, phi) pair for every patch."""
         theta_values = [0.0] * self.patch_count
         phi_values = [0.0] * self.patch_count
 
@@ -74,6 +83,7 @@ def theta_cap(precision: int) -> float:
 
 
 def build_scalar_grid(precision: int) -> ScalarGrid:
+    """Rebuild the C++ ring construction exactly for Python-side decoding."""
     patch_count = expected_patch_count(precision)
     cap = theta_cap(precision)
     if patch_count == 0 or cap == 0.0:
@@ -84,6 +94,8 @@ def build_scalar_grid(precision: int) -> ScalarGrid:
     radius_p = 2.0 * math.sin(0.5 * theta_p)
     k_p = 1
 
+    # The stereographic radius estimates the next ring population. The
+    # spherical-area equation below corrects that estimate to equal area.
     while theta_p < 0.5 * math.pi:
         theta = theta_p + 2.0 * math.sin(0.5 * theta_p) * math.sqrt(math.pi / k_p)
         radius = 2.0 * math.sin(0.5 * theta)
@@ -120,6 +132,7 @@ def build_scalar_grid(precision: int) -> ScalarGrid:
 
 
 def incident_direction(theta_i_deg: float, phi_i_deg: float) -> tuple[float, float, float]:
+    """Return the travel direction of the collimated incident light."""
     theta = math.radians(theta_i_deg)
     phi = math.radians(phi_i_deg)
     return (
@@ -130,6 +143,7 @@ def incident_direction(theta_i_deg: float, phi_i_deg: float) -> tuple[float, flo
 
 
 def layer_descriptors(merge_l1_l2: bool, record_refraction: bool, analytic_measurement: bool) -> list[tuple[str, str]]:
+    """Describe the film rows in the same order used by GonioSensor."""
     if analytic_measurement or merge_l1_l2:
         return [("L1", "H+"), ("L1", "H-")] if record_refraction else [("L1", "H+")]
     if record_refraction:
@@ -264,6 +278,10 @@ def normalize_layer(raw_values: list[tuple[float, float, float]],
                     patch_area: float,
                     surface_hits: float,
                     normalize: str) -> tuple[list[tuple[float, float, float]], tuple[float, float, float], float]:
+    # The raw film stores accumulated radiance and a per-cell sample count.
+    # Dividing by patch solid angle converts the cell sum to a density; the
+    # selected hit count controls whether the result is sensor- or surface-
+    # normalized.
     sensor_hits = float(sum(raw_counts))
     if normalize == "sensor":
         denom = sensor_hits * patch_area if sensor_hits > 0.0 else 1.0
@@ -320,6 +338,8 @@ def render_gonio_bundle_from_obj(obj_path: str,
     if phi_i_deg < 0.0 or phi_i_deg >= 360.0:
         raise ValueError("phi_i_deg must be in [0, 360).")
 
+    # Keep scene construction here so the command-line and Python APIs use
+    # precisely the same plugin names and measurement options.
     mi.set_variant(variant)
     grid = build_scalar_grid(precision)
 
@@ -365,6 +385,8 @@ def render_gonio_bundle_from_obj(obj_path: str,
     sensor = scene.sensors()[0]
     integrator = scene.integrator()
 
+    # develop=False avoids an unnecessary preview conversion during the
+    # measurement pass; the raw film is the authoritative data source.
     integrator.render(scene, sensor=sensor, seed=seed, develop=False, evaluate=True)
 
     preview = sensor.film().develop()
@@ -388,6 +410,8 @@ def render_gonio_bundle_from_obj(obj_path: str,
 
     per_layer_summary = []
     layer_outputs = []
+    # The first film column is a header counter in non-analytic mode, so the
+    # exported angular arrays start at x=1.
     for layer_idx, (bounce_label, hemi_label) in enumerate(layer_info):
         layer_rgb: list[tuple[float, float, float]] = []
         layer_counts: list[float] = []
@@ -467,6 +491,8 @@ def render_gonio_bundle_from_obj(obj_path: str,
 def export_gonio_from_obj(obj_path: str,
                           output_dir: str,
                           **kwargs) -> dict:
+    # Rendering and serialization are intentionally separate: callers that
+    # need in-memory arrays can use render_gonio_bundle_from_obj directly.
     bundle = render_gonio_bundle_from_obj(obj_path, **kwargs)
 
     output_path = Path(output_dir).resolve()

@@ -1,6 +1,5 @@
-# Gonio integrators
+# Gonio GPU-optimized integrators
 
-Future home of the GPU-first measurement integrators.
-
-The first target should be the BRDF/gonio tracer. NDF and G1 meters should move
-here after the main gonio path is stable.
+`gtracer.cpp` is the wavefront-oriented light-tracing integrator exported as
+`gtracer_gpu_opt`. It adds configurable wavefront sizing and coalescing while
+keeping the stable film layout.

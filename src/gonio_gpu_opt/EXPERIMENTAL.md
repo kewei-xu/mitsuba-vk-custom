@@ -4,8 +4,11 @@ Current policy:
 
 - `src/gonio` remains the stable, validated implementation.
 - Changes for GPU performance experiments should be made in `src/gonio_gpu_opt` first.
-- This directory is not wired into the build yet, so the existing `gonio`,
-  `directionalsimple`, and `gtracer` plugins remain unchanged.
+- The directory is currently wired into `src/CMakeLists.txt` under separate
+  plugin names: `gonio_gpu_opt`, `directionalsimple_gpu_opt`, and
+  `gtracer_gpu_opt`. This keeps the stable plugins available for A/B tests.
+- The optimized exporter writes the raw film as EXR and uses optional NumPy
+  arrays plus deterministic `.cache` lookup tables to reduce CPU decode cost.
 
 When the optimized implementation is validated, we can either:
 
