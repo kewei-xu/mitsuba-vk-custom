@@ -13,10 +13,10 @@ NAMESPACE_BEGIN(mitsuba)
 template <typename Float, typename Spectrum>
 class PolyMicrograinBSDF final : public PolyMicrograin<Float, Spectrum> {
 public:
-    MI_IMPORT_BASE(PolyMicrograin, m_flags, m_components)
+    MI_IMPORT_BASE(PolyMicrograin, m_flags, m_components, m_micrograin_bsdfs, m_bsdf_count)
     MI_IMPORT_TYPES(Texture)
 
-    using Base                         = PolyMicrograin<Float, Spectrum>;
+    //using Base                         = PolyMicrograin<Float, Spectrum>;
     static constexpr size_t NbGrainMax = Base::NbGrainMax;
     using PackedCache                  = typename Base::PackedCache;
 
@@ -858,7 +858,7 @@ public:
             Float G_dist = g_dist_from_height(height, active & G_local_h);
 
             Spectrum F = m_micrograin_bsdfs[i]->eval_fresnel(
-                ctx, si, h, active & G_local_h);
+                ctx, si, wo, h, active & G_local_h);
 
             Spectrum brdf_spec =
                 D_type_normal_joint * F * G_dist / (4.f * cos_theta_i);

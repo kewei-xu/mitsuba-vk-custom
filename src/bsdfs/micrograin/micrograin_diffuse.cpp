@@ -14,7 +14,7 @@ NAMESPACE_BEGIN(mitsuba)
 template <typename Float, typename Spectrum>
 class MicrograinDiffuse final : public MicrograinBSDF<Float, Spectrum> {
 public:
-    MI_IMPORT_BASE(MicrograinBSDF, m_flags, m_components)
+    MI_IMPORT_BASE(MicrograinBSDF, m_flags, m_components, m_tau_0, m_a, m_b, m_c, m_d, m_radius)
     MI_IMPORT_TYPES(Texture)
 
     MicrograinDiffuse(const Properties &props) : Base(props) {

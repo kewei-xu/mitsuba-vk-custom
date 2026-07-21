@@ -512,6 +512,7 @@ public:
 
     virtual Spectrum eval_fresnel(const BSDFContext &ctx,
                                   const SurfaceInteraction3f &si,
+                                  const Vector3f &wo,
                                   const Vector3f &m, Mask active = true) const {
         return 0.f;
     }

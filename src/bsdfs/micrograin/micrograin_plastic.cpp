@@ -17,7 +17,7 @@ NAMESPACE_BEGIN(mitsuba)
 template <typename Float, typename Spectrum>
 class MicrograinPlastic final : public MicrograinBSDF<Float, Spectrum>{
 public:
-    MI_IMPORT_BASE(MicrograinBSDF, m_flags, m_components)
+    MI_IMPORT_BASE(MicrograinBSDF, m_flags, m_components, m_tau_0, m_a, m_b, m_c, m_d, m_radius)
     MI_IMPORT_TYPES(Texture)
 
     MicrograinPlastic(const Properties &props) : Base(props) {
@@ -247,6 +247,7 @@ public:
 
     Spectrum eval_fresnel(const BSDFContext & /* ctx*/,
                           const SurfaceInteraction3f &si,
+                          const Vector3f &wo,
                           const Vector3f &m,
                           Mask active = true) const override {
         Spectrum F             = std::get<0>(fresnel(dr::dot(si.wi, m), m_eta));

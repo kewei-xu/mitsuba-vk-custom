@@ -13,7 +13,7 @@ NAMESPACE_BEGIN(mitsuba)
 template <typename Float, typename Spectrum>
 class MicrograinConductor final : public MicrograinBSDF<Float, Spectrum> {
 public:
-    MI_IMPORT_BASE(MicrograinBSDF, m_flags, m_components)
+    MI_IMPORT_BASE(MicrograinBSDF, m_flags, m_components, m_tau_0, m_a, m_b, m_c, m_d, m_radius)
     MI_IMPORT_TYPES(Texture)
     MicrograinConductor(const Properties &props) : Base(props) {
         std::string_view material = props.get<std::string_view>("material", "none");
@@ -187,6 +187,7 @@ public:
 
     Spectrum eval_fresnel(const BSDFContext &ctx,
                           const SurfaceInteraction3f &si, 
+                          const Vector3f &wo,
                           const Vector3f &m, 
                           Mask active = true) const override {
         dr::Complex<UnpolarizedSpectrum> eta_c(m_eta->eval(si, active),
