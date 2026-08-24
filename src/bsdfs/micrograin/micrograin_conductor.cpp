@@ -185,13 +185,56 @@ public:
         return dr::select(active & valid, value /* * cos_theta_o*/, 0.f);
     }
 
+
+    // Spectrum eval_fresnel(const BSDFContext &ctx,
+    //                       const SurfaceInteraction3f &si,
+    //                       const Vector3f &wi,
+    //                       const Vector3f &wo,
+    //                       const Vector3f &m,
+    //                       Float ext_ior,
+    //                       Mask active = true) const override {
+    //     dr::Complex<UnpolarizedSpectrum> eta_c(m_eta->eval(si, active),
+    //                                            m_k->eval(si, active));
+    //     // rescalling via exterior material (ext_ior)
+    //     eta_c /= ext_ior;
+
+    //     Spectrum F;
+    //     if constexpr (is_polarized_v<Spectrum>) {
+    //         Vector3f wo_hat = ctx.mode == TransportMode::Radiance ? wo : wi,
+    //                  wi_hat = ctx.mode == TransportMode::Radiance ? wi : wo;
+    //         F               = mueller::specular_reflection(
+    //             UnpolarizedSpectrum(dot(wo_hat, m)), eta_c);
+    //         Vector3f s_axis_in  = dr::cross(m, -wo_hat);
+    //         Vector3f s_axis_out = dr::cross(m, wi_hat);
+    //         Mask collinear      = dr::all(s_axis_in == Vector3f(0));
+    //         s_axis_in           = dr::select(collinear, Vector3f(1, 0, 0),
+    //                                          dr::normalize(s_axis_in));
+    //         s_axis_out          = dr::select(collinear, Vector3f(1, 0, 0),
+    //                                          dr::normalize(s_axis_out));
+    //         F                   = mueller::rotate_mueller_basis(
+    //             F, -wo_hat, s_axis_in, mueller::stokes_basis(-wo_hat), wi_hat,
+    //             s_axis_out, mueller::stokes_basis(wi_hat));
+    //     } else {
+    //         F = fresnel_conductor(UnpolarizedSpectrum(dr::dot(wi, m)),
+    //                               eta_c);
+    //     }
+    //     if (m_specular_reflectance) {
+    //         F *= m_specular_reflectance->eval(si, active);
+    //     }
+    //     return F;
+    // }
+
     Spectrum eval_fresnel(const BSDFContext &ctx,
-                          const SurfaceInteraction3f &si, 
+                          const SurfaceInteraction3f &si,
                           const Vector3f &wo,
-                          const Vector3f &m, 
+                          const Vector3f &m,
+                          Float ext_ior,
                           Mask active = true) const override {
         dr::Complex<UnpolarizedSpectrum> eta_c(m_eta->eval(si, active),
                                                m_k->eval(si, active));
+        // rescalling via exterior material (ext_ior)
+        eta_c /= ext_ior;
+
         Spectrum F;
         if constexpr (is_polarized_v<Spectrum>) {
             Vector3f wo_hat = ctx.mode == TransportMode::Radiance ? wo : si.wi,
@@ -217,6 +260,8 @@ public:
         }
         return F;
     }
+
+    
 
     Float specular_component_sampling_probability(
         const Float /* cos_theta_i*/) const override { 
