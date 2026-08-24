@@ -150,6 +150,7 @@ public:
     Spectrum eval_weighted_albedo(const SurfaceInteraction3f &si,
                                   const Vector3f &wo, 
                                   const Vector3f &m,
+                                  Float ext_ior,
                                   Mask active = true) const override {
         Float cos_theta_im = dr::clamp(dr::dot(si.wi, m), 0.f, 1.f);
         Float cos_theta_om = dr::clamp(dr::dot(wo, m), 0.f, 1.f);
