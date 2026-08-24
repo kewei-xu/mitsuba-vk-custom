@@ -5,6 +5,8 @@
 #include <mitsuba/render/integrator.h>
 #include <mitsuba/render/records.h>
 
+#include <csignal>
+
 NAMESPACE_BEGIN(mitsuba)
 
 /**!
@@ -266,6 +268,18 @@ public:
 
             auto [bsdf_val, bsdf_pdf, bsdf_sample, bsdf_weight]
                 = bsdf->eval_pdf_sample_ex(bsdf_ctx, si, wo, sample_1, sample_2, sample_2_extra);
+
+            // if constexpr (!dr::is_array_v<Float>) {
+            //     bool bad =
+            //         !dr::all_nested(dr::isfinite(bsdf_val)) ||
+            //         !dr::isfinite(bsdf_pdf) ||
+            //         !dr::all_nested(dr::isfinite(bsdf_sample.wo)) ||
+            //         !dr::isfinite(bsdf_sample.pdf) ||
+            //         !dr::all_nested(dr::isfinite(bsdf_weight));
+
+            //     if (bad)
+            //         std::raise(SIGTRAP);
+            // }
 
             // --------------- Emitter sampling contribution ----------------
 
