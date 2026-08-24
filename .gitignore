@@ -17,6 +17,7 @@ __pycache__
 *.pyc
 /wheelhouse
 /.venv/
+/.envrc
 
 # macOS
 \.DS_Store
