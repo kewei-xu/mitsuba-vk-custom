@@ -106,15 +106,18 @@ public:
 
         // reuse cache: global_tau0 + v1 + v2
         Float weight_surf = surf_bsdf->eval_global_tau_0_from_cache(pc, active);
-        Float v1_bulk = surf_bsdf->eval_visibility1_bulk_from_cache(pc, active);
+        Float v1_bulk_wi =
+            surf_bsdf->eval_visibility1_bulk_from_cache(pc, active);
 
         Vector3f wo1[PolyMicrograin<Float, Spectrum>::NbGrainMax];
         surf_bsdf->build_wo1_from_cache(pc, wo, wo1, active);
+        Float v1_bulk_wo =
+            surf_bsdf->eval_visibility1_bulk_from_cache(pc, wo1, active);
         Float v2_bulk =
             surf_bsdf->eval_visibility2_bulk_from_cache(pc, wo1, active);
 
-        Float weight_bulk =
-            eval_bulk_weight(si, wo, weight_surf, v1_bulk, v2_bulk, active);
+        Float weight_bulk = eval_bulk_weight(si, wo, weight_surf, v1_bulk_wi,
+                                             v1_bulk_wo, v2_bulk, active);
 
         Mask need_surf = active & (weight_surf > 0.f);
         Mask need_bulk = active & (weight_bulk > 0.f);
@@ -150,10 +153,11 @@ public:
 
         // reuse cache: global_tau0 + v1
         Float weight_surf = surf_bsdf->eval_global_tau_0_from_cache(pc, active);
-        Float v1_bulk = surf_bsdf->eval_visibility1_bulk_from_cache(pc, active);
+        Float v1_bulk_wi =
+            surf_bsdf->eval_visibility1_bulk_from_cache(pc, active);
 
         Float w_surf =
-            eval_surf_sampling_weight(si, weight_surf, v1_bulk, active);
+            eval_surf_sampling_weight(si, weight_surf, v1_bulk_wi, active);
         w_surf       = dr::clamp(w_surf, 0.f, 1.f);
         Float w_bulk = 1.f - w_surf;
 
@@ -186,10 +190,11 @@ public:
         surf_bsdf->build_packed_cache(si, pc, active);
 
         Float weight_surf = surf_bsdf->eval_global_tau_0_from_cache(pc, active);
-        Float v1_bulk = surf_bsdf->eval_visibility1_bulk_from_cache(pc, active);
+        Float v1_bulk_wi =
+            surf_bsdf->eval_visibility1_bulk_from_cache(pc, active);
 
         Float w_surf =
-            eval_surf_sampling_weight(si, weight_surf, v1_bulk, active);
+            eval_surf_sampling_weight(si, weight_surf, v1_bulk_wi, active);
         w_surf       = dr::clamp(w_surf, 0.f, 1.f);
         Float w_bulk = 1.f - w_surf;
 
@@ -236,11 +241,13 @@ public:
         // reuse the SAME cache pc to compute v2 (no second cache_packed)
         Vector3f wo1[PolyMicrograin<Float, Spectrum>::NbGrainMax];
         surf_bsdf->build_wo1_from_cache(pc, bs.wo, wo1, active);
+        Float v1_bulk_wo =
+            surf_bsdf->eval_visibility1_bulk_from_cache(pc, wo1, active);
         Float v2_bulk =
             surf_bsdf->eval_visibility2_bulk_from_cache(pc, wo1, active);
 
-        Float weight_bulk =
-            eval_bulk_weight(si, bs.wo, weight_surf, v1_bulk, v2_bulk, active);
+        Float weight_bulk = eval_bulk_weight(
+            si, bs.wo, weight_surf, v1_bulk_wi, v1_bulk_wo, v2_bulk, active);
 
         Float inv_ws = dr::rcp(dr::maximum(w_surf, 1e-8f));
         Float inv_wb = dr::rcp(dr::maximum(w_bulk, 1e-8f));
@@ -252,7 +259,7 @@ public:
 
         /*in case!*/
         Mask accident_NaN = dr::any(dr::isnan(result));
-        return { bs, result & ~accident_NaN };
+        return { bs, result & !accident_NaN };
     }
 
     // ================= helper weights  =================
@@ -268,17 +275,21 @@ public:
     MI_INLINE Float eval_bulk_weight(const SurfaceInteraction3f &si,
                                      const Vector3f &wo,
                                      const Float global_tau_0,
-                                     const Float v1_bulk, const Float v2_bulk,
+                                     const Float v1_bulk_wi,
+                                     const Float v1_bulk_wo,
+                                     const Float v2_bulk,
                                      Mask /*active*/ = true) const {
         Float weight = 1.f - global_tau_0;
 
         Mask wi_top  = (Frame3f::cos_theta(si.wi) > 0.f);
         Mask wo_top  = (Frame3f::cos_theta(wo) > 0.f);
         Mask all_top = wi_top & wo_top;
+        Mask wi_only = wi_top & (~wo_top);
+        Mask wo_only = wo_top & (~wi_top);
 
         weight = dr::select(all_top, weight * v2_bulk, weight);
-        weight = dr::select(wi_top & (~all_top), weight * v1_bulk, weight);
-        weight = dr::select(wo_top & (~all_top), weight * v1_bulk, weight);
+        weight = dr::select(wi_only, weight * v1_bulk_wi, weight);
+        weight = dr::select(wo_only, weight * v1_bulk_wo, weight);
         return weight;
     }
 
