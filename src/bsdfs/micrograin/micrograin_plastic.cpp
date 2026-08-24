@@ -21,21 +21,23 @@ public:
     MI_IMPORT_TYPES(Texture)
 
     MicrograinPlastic(const Properties &props) : Base(props) {
-        ScalarFloat int_ior = lookup_ior(props, "int_ior", "polypropylene");
-        ScalarFloat ext_ior = lookup_ior(props, "ext_ior", "air");
-        if (int_ior < 0.f || ext_ior < 0.f || int_ior == ext_ior) {
+        m_int_ior = lookup_ior(props, "int_ior", "polypropylene");
+        m_ext_ior = lookup_ior(props, "ext_ior", "air");
+        if (m_int_ior < 0.f || m_ext_ior < 0.f || m_int_ior == m_ext_ior) {
             Throw("The interior and exterior indices of "
                   "refraction must be positive and differ!");
         }
-        m_eta = int_ior / ext_ior;
+        m_eta = m_int_ior / m_ext_ior;
         m_diffuse_reflectance = props.get_texture<Texture>("diffuse_reflectance", 0.5f);
         if (props.has_property("specular_reflectance")) {
             m_specular_reflectance = props.get_texture<Texture>("specular_reflectance", 0.5f);
         }
         Float d_mean = m_diffuse_reflectance->mean();
-        Float s_mean = std::get<0>(fresnel(Float(0.f), m_eta));
+        //Float s_mean = std::get<0>(fresnel(Float(0.f), m_eta));
+        Float s_mean = 1.f;
         if (m_specular_reflectance) {
-            s_mean *= m_specular_reflectance->mean();
+            //s_mean *= m_specular_reflectance->mean();
+            s_mean = m_specular_reflectance->mean();
         }
         m_specular_sampling_weight = s_mean / (s_mean + d_mean);
 
@@ -245,29 +247,46 @@ public:
         return { bs, value };
     }
 
+    // Spectrum eval_fresnel(const BSDFContext & /* ctx*/,
+    //                       const SurfaceInteraction3f &si,
+    //                       const Vector3f &wi,
+    //                       const Vector3f &wo,
+    //                       const Vector3f &m,
+    //                       Float ext_ior,
+    //                       Mask active = true) const override {
+    //     Spectrum F             = std::get<0>(fresnel(dr::dot(wi, m), m_eta / ext_ior));
+    //     if (m_specular_reflectance) {
+    //         F *= m_specular_reflectance->eval(si, active);
+    //     }
+    //     return F;
+    // }
+
     Spectrum eval_fresnel(const BSDFContext & /* ctx*/,
                           const SurfaceInteraction3f &si,
-                          const Vector3f &wo,
+                          const Vector3f &wo, 
                           const Vector3f &m,
+                          Float ext_ior,
                           Mask active = true) const override {
-        Spectrum F             = std::get<0>(fresnel(dr::dot(si.wi, m), m_eta));
+        Spectrum F             = std::get<0>(fresnel(dr::dot(si.wi, m), m_eta / ext_ior));
         if (m_specular_reflectance) {
             F *= m_specular_reflectance->eval(si, active);
         }
         return F;
     }
 
+
     Spectrum eval_weighted_albedo(const SurfaceInteraction3f &si,
                                   const Vector3f &wo, 
                                   const Vector3f &m,
+                                  Float ext_ior,
                                   Mask active = true) const override {
         Spectrum Kd        = m_diffuse_reflectance->eval(si, active);
 
         Float cos_theta_im = dr::clamp(dr::dot(si.wi, m), 0.f, 1.f);
         Float cos_theta_om = dr::clamp(dr::dot(wo, m), 0.f, 1.f);
 
-        Float f_i = std::get<0>(fresnel(cos_theta_im, m_eta));
-        Float f_o = std::get<0>(fresnel(cos_theta_om, m_eta));
+        Float f_i = std::get<0>(fresnel(cos_theta_im, m_eta / ext_ior));
+        Float f_o = std::get<0>(fresnel(cos_theta_om, m_eta / ext_ior));
 
         Float T = (1.f - f_o) * (1.f - f_i);
 
@@ -276,13 +295,24 @@ public:
         return value;
     }
 
-    Float specular_component_sampling_probability(
-        const Float cos_theta_i) const override {
-        Float f_i            = std::get<0>(fresnel(cos_theta_i, m_eta));
+    MI_INLINE Float specular_probability_from_eta(Float cos_theta_i, 
+                                                  Float eta) const {
+        Float f_i            = std::get<0>(fresnel(cos_theta_i, eta));
         Float proba_specular = f_i * m_specular_sampling_weight;
         Float proba_diffuse  = (1.f - f_i) * (1.f - m_specular_sampling_weight);
-        proba_specular = proba_specular / (proba_specular + proba_diffuse);
-        return dr::clamp(proba_specular, 0.f, 1.f);
+        Float sum = proba_specular + proba_diffuse;
+        
+        return dr::select(sum > 0.f, 
+                          dr::clamp(proba_specular / sum, 0.f, 1.f), 0.f);
+    }
+
+    Float specular_component_sampling_probability(Float cos_theta_i) const override {
+        return specular_probability_from_eta(cos_theta_i, m_eta);
+    }
+
+    Float specular_component_sampling_probability(Float cos_theta_i, 
+                                                  Float ext_ior) const override {
+        return specular_probability_from_eta(cos_theta_i, Float(m_int_ior) / ext_ior);
     }
 
     MI_DECLARE_CLASS(MicrograinPlastic)
@@ -290,6 +320,8 @@ public:
 private:
     ref<Texture> m_diffuse_reflectance;
     ref<Texture> m_specular_reflectance;
+    ScalarFloat m_int_ior;
+    ScalarFloat m_ext_ior;
     Float m_eta;
     Float m_specular_sampling_weight;
 
