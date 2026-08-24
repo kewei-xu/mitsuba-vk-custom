@@ -596,7 +596,7 @@ public:
 
         /*in case!*/
         Mask accident_NaN = dr::any(dr::isnan(result));
-        return { bs, result & ~accident_NaN };
+        return { bs, result & !accident_NaN };
     }
 
 
@@ -858,7 +858,7 @@ public:
             Float G_dist = g_dist_from_height(height, active & G_local_h);
 
             Spectrum F = m_micrograin_bsdfs[i]->eval_fresnel(
-                ctx, si, wo, h, active & G_local_h);
+                ctx, si, wo, h, Mask(active & G_local_h));
 
             Spectrum brdf_spec =
                 D_type_normal_joint * F * G_dist / (4.f * cos_theta_i);
@@ -892,7 +892,7 @@ public:
             Float G_dist_m = g_dist_from_height(height_m, active & G_local_m);
 
             Spectrum refl = m_micrograin_bsdfs[i]->eval_weighted_albedo(
-                si, wo, m, active & G_local_m & valid_normal_sample);
+                si, wo, m, Mask(active & G_local_m & valid_normal_sample));
 
             Spectrum brdf_diff =
                 refl * D_type_normal_joint_m * G_dist_m / pdf_m / cos_theta_i;
